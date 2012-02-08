@@ -10,16 +10,16 @@ import de.proskor.model.Repository
 object MergeAlgorithm {
   var repository: Repository = null
 
-  private def targets(source: Element, target: Element): Boolean = source match {
+  def targets(source: Element, target: Element): Boolean = source match {
     case source: Source => targets(source, target)
     case component: Component => targets(component, target)
     case _ => false
   }
-  private def targets(source: Source, target: Element): Boolean = (source == target) || source.targets.exists(targets(_, target))
-  private def targets(source: Source, target: Component): Boolean = target.inputs.exists(targets(source, _))
-  private def targets(source: Component, target: Element): Boolean = source.outputs.exists(targets(_, target))
+  def targets(source: Source, target: Element): Boolean = (source == target) || source.targets.exists(targets(_, target))
+  def targets(source: Source, target: Component): Boolean = target.inputs.exists(targets(source, _))
+  def targets(source: Component, target: Element): Boolean = source.outputs.exists(targets(_, target))
 
-  private def linearize(elements: Seq[Element]) = elements.sortWith(targets)
+  def linearize(elements: Seq[Element]) = elements.sortWith(targets)
   var mergeResult: Component = null
   var conflicts = List[Element]()
 

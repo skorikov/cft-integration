@@ -5,5 +5,6 @@ trait Node {
   var top: Int
   var width: Int
   var height: Int
-  val element: Element
+  var element: Element
+  var sequence: Int
 }

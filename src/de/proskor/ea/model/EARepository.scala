@@ -2,6 +2,12 @@ package de.proskor.ea.model
 import de.proskor.model._
 import EATraversable._
 import javax.swing.JOptionPane
+import de.proskor.ea.model.cft.EAOutput
+import de.proskor.ea.model.cft.EAOr
+import de.proskor.ea.model.cft.EAEvent
+import de.proskor.ea.model.cft.EAAnd
+import de.proskor.ea.model.cft.EAInput
+import de.proskor.ea.model.cft.EAComponent
 
 class EARepository(val repository: cli.EA.IRepository) extends Repository {
   val name = "/"
@@ -9,20 +15,30 @@ class EARepository(val repository: cli.EA.IRepository) extends Repository {
 
   var outputInitialized = false
 
-  val id: Long = 0
+  val id: Int = 0
 
   val parent = None
 
   val kids = models
 
   def selected = {
-    this write repository.GetContextItemType().toString + " is selected"
+  //  this write repository.GetContextItemType().toString + " is selected"
     repository.GetContextItemType.Value match {
-    case cli.EA.ObjectType.otElement => Some(new EAElement(repository.GetContextObject().asInstanceOf[cli.EA.IElement], repository))
+    case cli.EA.ObjectType.otElement => Some(getElement(repository.GetContextObject().asInstanceOf[cli.EA.IElement]))
     case cli.EA.ObjectType.otPackage => Some(new EAPackage(repository.GetContextObject().asInstanceOf[cli.EA.IPackage], repository))
     case cli.EA.ObjectType.otDiagram => Some(new EADiagram(repository.GetContextObject().asInstanceOf[cli.EA.IDiagram], repository))
     case _ => None
   }}
+
+  protected def getElement(element: cli.EA.IElement): Element = element.get_Stereotype match {
+    case "Event" =>  new EAEvent(element, repository)
+    case "Input" => new EAInput(element, repository)
+    case "Output" => new EAOutput(element, repository)
+    case "OR" => new EAOr(element, repository)
+    case "AND" => new EAAnd(element, repository)
+    case "Component" => new EAComponent(element, repository)
+    case _ => new EAElement(element, repository)
+  }
 
   def write(text: String) {
     if (!outputInitialized) {
@@ -36,6 +52,10 @@ class EARepository(val repository: cli.EA.IRepository) extends Repository {
   val models = {
     val collection: Traversable[cli.EA.IPackage] = repository.get_Models.asInstanceOf[cli.EA.Collection]
     (for (model <- collection) yield new EAModel(model, repository)).toList
+  }
+
+  def show(diagram: Diagram) {
+    repository.OpenDiagram(diagram.id)
   }
 
   def query(sql: String) = repository.SQLQuery(sql)

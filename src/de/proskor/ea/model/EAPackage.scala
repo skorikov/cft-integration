@@ -10,7 +10,7 @@ class EAPackage(pkg: cli.EA.IPackage, repository: cli.EA.IRepository) extends Pa
     pkg.Update()
   }
 
-  val id: Long = pkg.get_PackageID
+  val id: Int = pkg.get_PackageID
 
   def diagrams = {
     val collection: Traversable[cli.EA.IDiagram] = pkg.get_Diagrams.asInstanceOf[cli.EA.Collection]

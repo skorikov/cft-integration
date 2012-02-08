@@ -27,6 +27,7 @@ import org.eclipse.swt.events.DisposeEvent
 import org.eclipse.swt.widgets.Control
 import de.proskor.core.MergeAlgorithm
 import de.proskor.core.MergeTrace
+import de.proskor.core.DiagramCreator
 
 class MergeDialog(repository: Repository) {
   val display = new Display
@@ -119,6 +120,9 @@ class MergeDialog(repository: Repository) {
       override def run {
         val map = MergeAlgorithm.merge(left, right, target)
         val trace = map._1 ++ map._2
+        val diagram = target.createDiagram(left.name + "_DIAGRAM")
+        DiagramCreator.create(MergeAlgorithm.mergeResult, diagram)
+        repository.show(diagram)
         printTrace(MergeAlgorithm.mergeResult, trace)
         finished
       }

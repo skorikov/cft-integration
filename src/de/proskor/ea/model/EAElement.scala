@@ -1,6 +1,12 @@
 package de.proskor.ea.model
 import de.proskor.model._
 import EATraversable._
+import de.proskor.ea.model.cft.EAOutput
+import de.proskor.ea.model.cft.EAOr
+import de.proskor.ea.model.cft.EAComponent
+import de.proskor.ea.model.cft.EAEvent
+import de.proskor.ea.model.cft.EAAnd
+import de.proskor.ea.model.cft.EAInput
 
 class EAElement(val element: cli.EA.IElement, val repository: cli.EA.IRepository) extends Element {
   def name = element.get_Name.asInstanceOf[String]
@@ -9,7 +15,7 @@ class EAElement(val element: cli.EA.IElement, val repository: cli.EA.IRepository
     element.Update()
   }
 
-  val id: Long = element.get_ElementID
+  val id: Int = element.get_ElementID
 
   val typ = element.get_Type.asInstanceOf[String]
 
@@ -41,9 +47,19 @@ class EAElement(val element: cli.EA.IElement, val repository: cli.EA.IRepository
     element.Update()
   }
 
+  protected def getElement(element: cli.EA.IElement): Element = element.get_Stereotype match {
+    case "Event" =>  new EAEvent(element, repository)
+    case "Input" => new EAInput(element, repository)
+    case "Output" => new EAOutput(element, repository)
+    case "OR" => new EAOr(element, repository)
+    case "AND" => new EAAnd(element, repository)
+    case "Component" => new EAComponent(element, repository)
+    case _ => new EAElement(element, repository)
+  }
+
   def parent: Option[Container] = {
     if (element.get_ParentID > 0) {
-      Some(new EAElement(repository.GetElementByID(element.get_ParentID).asInstanceOf[cli.EA.IElement], repository))
+      Some(getElement(repository.GetElementByID(element.get_ParentID).asInstanceOf[cli.EA.IElement]))
     } else {
       Some(new EAPackage(repository.GetPackageByID(element.get_PackageID).asInstanceOf[cli.EA.IPackage], repository))
     }

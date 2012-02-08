@@ -1,5 +1,5 @@
 package de.proskor.model
 
 trait Identity {
-  val id: Long
+  val id: Int
 }

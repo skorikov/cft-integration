@@ -20,14 +20,14 @@ abstract class EAGate(element: cli.EA.IElement, repository: cli.EA.IRepository) 
       yield repository.GetElementByID(connector.get_SupplierID).asInstanceOf[cli.EA.IElement]
   }
 
-  protected def getElement(element: cli.EA.IElement): Element = element.get_Stereotype match {
+/*  protected def getElement(element: cli.EA.IElement): Element = element.get_Stereotype match {
     case "Event" =>  new EAEvent(element, repository)
     case "Input" => new EAInput(element, repository)
     case "Output" => new EAOutput(element, repository)
     case "OR" => new EAOr(element, repository)
     case "AND" => new EAAnd(element, repository)
     case _ => new EAElement(element, repository)
-  }
+  }*/
 
   def sources = connectedElements.map(getElement).asInstanceOf[List[Source]]
 
