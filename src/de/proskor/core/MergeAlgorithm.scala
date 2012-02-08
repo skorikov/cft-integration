@@ -20,6 +20,8 @@ object MergeAlgorithm {
   private def targets(source: Component, target: Element): Boolean = source.outputs.exists(targets(_, target))
 
   private def linearize(elements: Seq[Element]) = elements.sortWith(targets)
+  var mergeResult: Component = null
+  var conflicts = List[Element]()
 
   def copyComponent(component: Component, target: Component, parentMap: Map[Source, Source]): (Map[Source, Source], Map[Component, Component]) = {
     var map = parentMap
@@ -64,7 +66,6 @@ object MergeAlgorithm {
           val copyMap = copyComponent(component, result, map)
           map ++= copyMap._1
           componentMap ++= copyMap._2
-        //  map ++= copyComponent(component, result, map)
         }
       }
     }
@@ -86,9 +87,8 @@ object MergeAlgorithm {
   def merge(left: Component, right: Component, target: { def addComponent: Component }, parentMap: Map[Source, Source] = Map()): (Map[Source, Source], Map[Component, Component]) = {
     var map = parentMap
     var componentMap = Map[Component, Component]()
-  //  repository.write("merging " + left.name + " with " + right.name)
     val result = target.addComponent
-    result.name = left.name// + "-merged-with-" + right.name
+    result.name = left.name
     componentMap += (left -> result)
     componentMap += (right -> result)
 
@@ -108,7 +108,6 @@ object MergeAlgorithm {
         }
       }
     }
-  //  repository.write("events done")
 
     // INPUTS
     for (input <- left.inputs) {
@@ -124,14 +123,15 @@ object MergeAlgorithm {
       result.inputs.find(input matches _) match {
         case Some(copy) => {
           // MERGE
-        //  repository.write("merging input " + input.elementName)
           copy.source match {
             case None => input.source match {
               case Some(source: Source) => copy += map(source)
               case None =>
             }
             case Some(source) => input.source match {
-              case Some(that: Source) if (source != map(that)) => repository.write("conflict detected: " + copy.elementName + " is already connected")
+              case Some(that: Source) if (source != map(that)) => {
+                conflicts ::= copy
+              }
               case None =>
             }
           }
@@ -148,11 +148,6 @@ object MergeAlgorithm {
         }
       }
     }
-  //  repository.write("inputs done")
-
-  //  for (element <- linearize(left.gates ::: left.components)) {
-  //    repository.write(element.name)
-  //  }
 
     // GATES & COMPONENTS
     for (element <- linearize(left.gates ::: left.components)) {
@@ -170,18 +165,15 @@ object MergeAlgorithm {
         }
         case component: Component => {
           right.components.find(component matches _) match {
-          //  case None => map ++= merge(component, component, result, map)
             case None => {
               val copyMap = copyComponent(component, result, map)
               map ++= copyMap._1
           	  componentMap ++= copyMap._2
-            //  map ++= copyComponent(component, result, map)
             }
             case Some(that: Component) => {
               val mergeMap = merge(component, that, result, map)
               map ++= mergeMap._1
           	  componentMap ++= mergeMap._2
-            //  map ++= merge(component, that, result, map)
             }
           }
         }
@@ -214,16 +206,13 @@ object MergeAlgorithm {
 	        }
 	      }
         }
-      //  case component: Component => map ++= merge(component, component, result, map)
         case component: Component => {
           val copyMap = copyComponent(component, result, map)
           map ++= copyMap._1
           componentMap ++= copyMap._2
-        //  map ++= copyComponent(component, result, map)
         }
       }
     }
-  //  repository.write("gates done")
 
     // OUTPUTS
     for (output <- left.outputs) {
@@ -245,7 +234,9 @@ object MergeAlgorithm {
               case None =>
             }
             case Some(source) => output.source match {
-              case Some(that: Source) if (source != map(that)) => repository.write("conflict detected: " + copy.elementName + " is already connected")
+              case Some(that: Source) if (source != map(that)) => {
+                conflicts ::= copy
+              }
               case None =>
             }
           }
@@ -263,10 +254,7 @@ object MergeAlgorithm {
       }
     }
 
-  //  for (line <- result.toString.split("\n")) {
-  //    repository.write(line)
-  //  }
-  //  repository.write("done")
+    mergeResult = result
     (map, componentMap)
   }
 }

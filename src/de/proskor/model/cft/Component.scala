@@ -17,7 +17,7 @@ trait Component extends Element {
 
   override def toString = {
     "component " + name + " {" +
-    indent(events map ("\n" + _ + ";") mkString) +
+    indent(events map ("\n" + _) mkString) +
     indent(inputs map ("\n" + _) mkString) +
     indent(outputs map ("\n" + _) mkString) +
     indent(gates map ("\n" + _) mkString) +

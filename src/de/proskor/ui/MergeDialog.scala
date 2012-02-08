@@ -26,6 +26,7 @@ import org.eclipse.swt.events.DisposeListener
 import org.eclipse.swt.events.DisposeEvent
 import org.eclipse.swt.widgets.Control
 import de.proskor.core.MergeAlgorithm
+import de.proskor.core.MergeTrace
 
 class MergeDialog(repository: Repository) {
   val display = new Display
@@ -112,19 +113,19 @@ class MergeDialog(repository: Repository) {
   private def merge(left: Component, right: Component, target: Package) {
     disableAllKids(shell)
     shell.update()
+    MergeAlgorithm.conflicts = List()
     MergeAlgorithm.repository = repository
     val mergeThread = new Thread {
       override def run {
         val map = MergeAlgorithm.merge(left, right, target)
         val trace = map._1 ++ map._2
-        printTrace(trace)
+        printTrace(MergeAlgorithm.mergeResult, trace)
         finished
       }
       private def finished {
         display.asyncExec(new Runnable {
           def run {
             enableAllKids(shell)
-            shell.setActive()
           }
         })
       }
@@ -132,12 +133,9 @@ class MergeDialog(repository: Repository) {
     mergeThread.run()
   }
 
-  private def printTrace (trace: Map[Element, Element]) {
-    repository.write("-- BEGIN TRACE --")
-    for ((target, sources) <- reverseTrace(trace)) {
-      repository.write(target.elementName + " <- " + sources.map(_.fullName).mkString(" + "))
-    }
-    repository.write("-- END TRACE --")
+  private def printTrace(component: Component, trace: Map[Element, Element]) {
+    val mergeTrace = MergeTrace.calculate(component, reverseTrace(trace), MergeAlgorithm.conflicts)
+    new TraceDialog(display, mergeTrace)
   }
 
   private def reverseTrace(trace: Map[Element, Element]): Map[Element, List[Element]] = {
