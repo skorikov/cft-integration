@@ -146,11 +146,9 @@ class TraceDialog(display: Display, trace: MergeTrace) {
       case output: Output => outputIcon
       case event: Event => eventIcon
     })
-    treeItem.setText(trace.element.elementName)
+    treeItem.setText(trace.element.name)
     treeItem.setData("DATA", trace)
-    for (kid <- trace.kids) {
-      populateKids(treeItem, kid)
-    }
+    trace.kids.foreach(populateKids(treeItem, _))
   }
 
   private def populateKids(tree: TreeItem, trace: MergeTrace) {
@@ -167,7 +165,7 @@ class TraceDialog(display: Display, trace: MergeTrace) {
       case output: Output => outputIcon
       case event: Event => eventIcon
     })
-    treeItem.setText(trace.element.elementName)
+    treeItem.setText(trace.element.name)
     treeItem.setData("DATA", trace)
     for (kid <- trace.kids) {
       populateKids(treeItem, kid)
