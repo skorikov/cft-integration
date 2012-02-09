@@ -23,6 +23,25 @@ class EADiagram(val diagram: cli.EA.IDiagram, val repository: cli.EA.IRepository
     node
   }
 
+  def style: Map[String, String] = {
+    val map = scala.collection.mutable.Map[String, String]()
+    for (pair <- diagram.get_ExtendedStyle.asInstanceOf[String].split(";").map(_.split("="))) {
+      map += pair(0) -> (if (pair.size > 1) pair(1) else "")
+    }
+    map.toMap
+  }
+  def style_=(style: Map[String, String]) {
+    val pairs = for ((key, value) <- style) yield key + "=" + value
+    diagram.set_ExtendedStyle(pairs.mkString(";"))
+    diagram.Update()
+    repository.ReloadDiagram(diagram.get_DiagramID)
+  }
+
+  def stereotypesVisible = style("HideEStereo") == "0"
+  def stereotypesVisible_=(visible: Boolean) {
+    style += "HideEStereo" -> "1"
+  }
+
   override def equals(that: Any) = that match {
     case other: EADiagram => diagram.get_DiagramGUID == other.diagram.get_DiagramGUID
     case _ => false

@@ -47,7 +47,9 @@ class EAPackage(pkg: cli.EA.IPackage, repository: cli.EA.IRepository) extends Pa
   def createDiagram(name: String): Diagram = {
     val diagram = pkg.get_Diagrams.asInstanceOf[cli.EA.Collection].AddNew(name, "Logical").asInstanceOf[cli.EA.IDiagram]
     diagram.Update()
-    new EADiagram(diagram, repository)
+    val result = new EADiagram(diagram, repository)
+    result.stereotypesVisible = false
+    result
   }
 
   def addComponent = {
