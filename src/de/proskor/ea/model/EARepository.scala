@@ -19,7 +19,7 @@ class EARepository(val repository: cli.EA.IRepository) extends Repository {
 
   val parent = None
 
-  val kids = models
+  def kids = models
 
   def selected = {
   //  this write repository.GetContextItemType().toString + " is selected"
@@ -29,6 +29,8 @@ class EARepository(val repository: cli.EA.IRepository) extends Repository {
     case cli.EA.ObjectType.otDiagram => Some(new EADiagram(repository.GetContextObject().asInstanceOf[cli.EA.IDiagram], repository))
     case _ => None
   }}
+
+  def get(id: Int) = getElement(repository.GetElementByID(id).asInstanceOf[cli.EA.IElement])
 
   protected def getElement(element: cli.EA.IElement): Element = element.get_Stereotype match {
     case "Event" =>  new EAEvent(element, repository)
@@ -49,7 +51,7 @@ class EARepository(val repository: cli.EA.IRepository) extends Repository {
     repository.WriteOutput("CFT Integration", text, 1)
   }
 
-  val models = {
+  def models = {
     val collection: Traversable[cli.EA.IPackage] = repository.get_Models.asInstanceOf[cli.EA.Collection]
     (for (model <- collection) yield new EAModel(model, repository)).toList
   }

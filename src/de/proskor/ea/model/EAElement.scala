@@ -7,6 +7,8 @@ import de.proskor.ea.model.cft.EAComponent
 import de.proskor.ea.model.cft.EAEvent
 import de.proskor.ea.model.cft.EAAnd
 import de.proskor.ea.model.cft.EAInput
+import de.proskor.model.fel.FailureMode
+import de.proskor.ea.EADataBase
 
 class EAElement(val element: cli.EA.IElement, val repository: cli.EA.IRepository) extends Element {
   def name = element.get_Name.asInstanceOf[String]
@@ -64,6 +66,17 @@ class EAElement(val element: cli.EA.IElement, val repository: cli.EA.IRepository
       Some(new EAPackage(repository.GetPackageByID(element.get_PackageID).asInstanceOf[cli.EA.IPackage], repository))
     }
   }
+
+  protected def parentElements = {
+    val collection: Traversable[cli.EA.IConnector] = element.get_Connectors.asInstanceOf[cli.EA.Collection]
+    for (connector <- collection if connector.get_ClientID == element.get_ElementID && connector.get_Type == "Generalization")
+      yield repository.GetElementByID(connector.get_SupplierID).asInstanceOf[cli.EA.IElement]
+  }
+
+  def ancestors: Seq[Element] = parentElements.map(getElement).toSeq
+
+  def failureModes = EADataBase.failureModes(this, new EARepository(repository))
+  def failureModes_=(failureModes: Seq[FailureMode]) {}
 
   override def equals(that: Any) = that match {
     case other: EAElement => element.get_ElementGUID == other.element.get_ElementGUID

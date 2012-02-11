@@ -9,4 +9,5 @@ trait Repository extends Container {
   def allPackages: List[Package] =  models.flatMap(_.allPackages)
   def allComponents: List[Component] = models.flatMap(_.allComponents)
   def show(diagram: Diagram)
+  def get(id: Int): Element
 }

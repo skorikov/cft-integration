@@ -10,9 +10,12 @@ import org.eclipse.swt.widgets.Shell
 import de.proskor.ui.MergeDialog
 import de.proskor.model.cft.Component
 import de.proskor.core.DiagramCreator
+import de.proskor.ui.FailureModesDialog
+import de.proskor.ea.EADataBase
 
 class Main extends Extension with EAAdapter {
-  def close() {}
+  def start(repository: Repository) {}
+  def close() = EADataBase.saveFailureModes()
 
   def merge(repository: Repository) {
     new MergeDialog(repository)
@@ -26,6 +29,22 @@ class Main extends Extension with EAAdapter {
         DiagramCreator.create(component, diagram)
         repository.show(diagram)
       }
+    }
+  }
+
+  def failureModes(repository: Repository) {
+    repository.selected foreach {
+      case element: Element => {
+        new FailureModesDialog(element, repository)
+      }
+      case _ =>
+    }
+  }
+
+  def printId(repository: Repository) {
+    repository.selected.foreach {
+      case element: Element => repository.write(element.id.toString)
+      case _ =>
     }
   }
 }
