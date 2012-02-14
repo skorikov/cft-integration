@@ -75,8 +75,8 @@ class EAElement(val element: cli.EA.IElement, val repository: cli.EA.IRepository
 
   def ancestors: Seq[Element] = parentElements.map(getElement).toSeq
 
-  def failureModes = EADataBase.failureModes(this, new EARepository(repository))
-  def failureModes_=(failureModes: Seq[FailureMode]) {}
+  def failureModes = EADataBase.failureModes(this)
+  def failureModes_=(failureModes: Seq[FailureMode]) = EADataBase.setFailureModes(this, failureModes)
 
   override def equals(that: Any) = that match {
     case other: EAElement => element.get_ElementGUID == other.element.get_ElementGUID

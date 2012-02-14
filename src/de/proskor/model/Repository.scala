@@ -1,6 +1,11 @@
 package de.proskor.model
 import de.proskor.model.cft.Component
 
+object Repository {
+  var current: Option[Repository] = None
+  def getCurrent: Repository = current.get
+}
+
 trait Repository extends Container {
   def selected: Option[Identity]
   def write(text: String)

@@ -22,7 +22,6 @@ class EARepository(val repository: cli.EA.IRepository) extends Repository {
   def kids = models
 
   def selected = {
-  //  this write repository.GetContextItemType().toString + " is selected"
     repository.GetContextItemType.Value match {
     case cli.EA.ObjectType.otElement => Some(getElement(repository.GetContextObject().asInstanceOf[cli.EA.IElement]))
     case cli.EA.ObjectType.otPackage => Some(new EAPackage(repository.GetContextObject().asInstanceOf[cli.EA.IPackage], repository))

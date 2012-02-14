@@ -12,16 +12,23 @@ import de.proskor.model.cft.Component
 import de.proskor.core.DiagramCreator
 import de.proskor.ui.FailureModesDialog
 import de.proskor.ea.EADataBase
+import cli.EA.App
+import cli.EA.AppClass
+import org.eclipse.swt.widgets.MessageBox
+import org.eclipse.swt.SWT
+import de.proskor.ea.model.EARepository
 
 class Main extends Extension with EAAdapter {
-  def start(repository: Repository) {}
-  def close() = EADataBase.saveFailureModes()
+  def start() {}
+  def stop() {}
 
-  def merge(repository: Repository) {
+  def merge() {
+    val repository = Repository.getCurrent
     new MergeDialog(repository)
   }
 
-  def createDiagram(repository: Repository) {
+  def createDiagram() {
+    val repository = Repository.getCurrent
     repository.selected foreach {
       case component: Component => {
         val pkg = component.parent.get.asInstanceOf[Package]
@@ -32,7 +39,8 @@ class Main extends Extension with EAAdapter {
     }
   }
 
-  def failureModes(repository: Repository) {
+  def failureModes() {
+    val repository = Repository.getCurrent
     repository.selected foreach {
       case element: Element => {
         new FailureModesDialog(element, repository)
@@ -41,10 +49,15 @@ class Main extends Extension with EAAdapter {
     }
   }
 
-  def printId(repository: Repository) {
+  def printId() {
+    val repository = Repository.getCurrent
     repository.selected.foreach {
       case element: Element => repository.write(element.id.toString)
       case _ =>
     }
+  }
+
+  def test() {
+    Repository.getCurrent.write("hello")
   }
 }

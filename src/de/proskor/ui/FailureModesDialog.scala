@@ -1,22 +1,29 @@
 package de.proskor.ui
+import org.eclipse.swt.events.DisposeEvent
+import org.eclipse.swt.events.DisposeListener
 import org.eclipse.swt.graphics.Image
 import org.eclipse.swt.widgets.Display
 import org.eclipse.swt.widgets.Shell
-import org.eclipse.swt.events.DisposeListener
 import org.eclipse.swt.SWT
-import org.eclipse.swt.events.DisposeEvent
+
+import de.proskor.ea.model.fel.EABasicFailureMode
 import de.proskor.model.Element
 import de.proskor.model.Repository
 
 class FailureModesDialog(element: Element, repository: Repository) {
-  val display = new Display
-  val shell = createShell(display)
-  shell.open()
-  while (!shell.isDisposed) {
-    if (!display.readAndDispatch())
-      display.sleep()
+//  val display = new Display
+//  val shell = createShell(display)
+//  shell.open()
+//  while (!shell.isDisposed) {
+//    if (!display.readAndDispatch())
+//      display.sleep()
+//  }
+//  display.dispose()
+
+  val newFM = new EABasicFailureMode(element, "test", "desc", "bob")
+  for (failureMode <- element.allFailureModes) {
+    repository.write(failureMode.toString)
   }
-  display.dispose()
 
   private def createShell(display: Display): Shell = {
     val shell = new Shell(display, SWT.CLOSE | SWT.TITLE)
@@ -32,9 +39,5 @@ class FailureModesDialog(element: Element, repository: Repository) {
     shell
   }
 
-  private def buildGui(shell: Shell) {
-    for (failureMode <- element.allFailureModes) {
-      repository.write(failureMode.toString)
-    }
-  }
+  private def buildGui(shell: Shell) {}
 }
