@@ -27,6 +27,6 @@
 		</exec>
 	</target>
 	<target name="deploy" depends="ikvm">
-		<scp sftp="true" file="dist/${dll}" todir="andrey:trash@${host}:/" />
+		<scp sftp="true" keyfile="/home/andrey/.ssh/id_rsa" file="dist/${dll}" todir="andrey:@${host}:/" />
 	</target>
 </project>
