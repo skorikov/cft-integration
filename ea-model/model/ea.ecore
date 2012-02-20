@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="ea"
+    nsURI="http://ea/1.0" nsPrefix="ea">
+  <eClassifiers xsi:type="ecore:EClass" name="EAPeer" abstract="true">
+    <eOperations name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eOperations name="parent" lowerBound="1" eType="#//EAPeer"/>
+    <eOperations name="elements" lowerBound="1"/>
+    <eOperations name="elementsOfType" lowerBound="1">
+      <eParameters name="stereotype" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="addElement" lowerBound="1" eType="#//EAPeer">
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="stereotype" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="deleteElement" lowerBound="1">
+      <eParameters name="peer" eType="#//EAPeer"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="stereotype" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EAElement" abstract="true" eSuperTypes="../../cft-model/model/cft.ecore#//Element">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="peer" lowerBound="1" eType="#//EAPeer"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EAProxyPeer" eSuperTypes="#//EAPeer"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EAElementPeer" eSuperTypes="#//EAPeer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="instance" lowerBound="1"
+        eType="#//EA/IElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EAPackagePeer" eSuperTypes="#//EAPeer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="instance" lowerBound="1"
+        eType="#//EA/IPackage"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EARepositoryPeer" eSuperTypes="#//EAPeer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="instance" lowerBound="1"
+        eType="#//EA/IRepository"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EAFactory" eSuperTypes="../../cft-model/model/cft.ecore#//CftFactory"/>
+  <eSubpackages name="EA" nsURI="http://EA/1.0" nsPrefix="EA">
+    <eClassifiers xsi:type="ecore:EClass" name="IElement" abstract="true" interface="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IPackage" abstract="true" interface="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IRepository" abstract="true" interface="true"/>
+  </eSubpackages>
+</ecore:EPackage>
