@@ -26,6 +26,14 @@ class Main extends Extension with Adapter {
         write("-" * 60)
       }
     })
+    val runner2 = new org.scalatest.junit.JUnitRunner(classOf[de.proskor.cft.test.MergeTests].asInstanceOf[Class[org.scalatest.Suite]])
+    runner2.run(new org.junit.runner.notification.RunNotifier() {
+      override def fireTestFailure(failure: Failure) {
+        write(" !!! TEST FAILED: " + failure.getDescription() + " !!!")
+        failure.getTrace.split("\n").map(_.trim).map(write)
+        write("-" * 60)
+      }
+    })
     write("ALL TESTS DONE")
   //  runner.
   }

@@ -11,6 +11,7 @@
 			<fileset dir="cft-model/bin" />
 			<fileset dir="cft-test/bin" />
 			<fileset dir="ea-model/bin" />
+			<fileset dir="merge-algorithm/bin" />
 			<fileset dir="ea-extension/bin" />
 		</jar>
 	</target>
