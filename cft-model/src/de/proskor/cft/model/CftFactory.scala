@@ -11,7 +11,7 @@ abstract class CftFactory {
   def createOutport(name: String): Outport
 
   def createPackage(parent: Package, name: String): Package = addTo(parent, createPackage(name))
-  def createComponent(parent: Package, name: String): Component = addTo(parent, createComponent(name))
+  def createComponent(parent: Container, name: String): Component = addTo(parent, createComponent(name))
   def createEvent(parent: Component, name: String): Event = addTo(parent, createEvent(name))
   def createAnd(parent: Component, name: String): And = addTo(parent, createAnd(name))
   def createOr(parent: Component, name: String): Or = addTo(parent, createOr(name))
