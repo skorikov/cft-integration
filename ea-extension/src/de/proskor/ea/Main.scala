@@ -6,6 +6,7 @@ import de.proskor.cft.test.CftTests
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
+import de.proskor.ea.ui.MergeDialog
 
 class Main extends Extension with Adapter {
   def start() {}
@@ -35,7 +36,10 @@ class Main extends Extension with Adapter {
       }
     })
     write("ALL TESTS DONE")
-  //  runner.
+  }
+
+  def merge() {
+    new MergeDialog(Repository("/"))
   }
 
   def allPackages(pkg: Package): Set[Package] = pkg.packages ++ pkg.packages.flatMap(allPackages)

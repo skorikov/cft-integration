@@ -20,7 +20,7 @@ private class EAComponent(initialPeer: EAPeer) extends EAElement(initialPeer) wi
   }
 
   def -=(element: Element) {
-    require(element.isInstanceOf[EAEvent])
+    require(element.isInstanceOf[EAElement])
     val el = element.asInstanceOf[EAElement]
     el.peer match {
       case peer: EAProxyPeer =>

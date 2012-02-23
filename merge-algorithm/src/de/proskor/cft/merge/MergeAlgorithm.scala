@@ -9,6 +9,8 @@ import de.proskor.cft.model.Source
 import de.proskor.cft.model.Outport
 import de.proskor.cft.model.Gate
 import de.proskor.cft.model.Port
+import de.proskor.cft.model.And
+import de.proskor.cft.model.Or
 
 class MergeAlgorithm {
   def merge[T <: Element](left: T, right: T, target: Container, trace: MergeTrace): T = (left, right, target) match {
@@ -20,6 +22,8 @@ class MergeAlgorithm {
       mergeInports(leftInport, rightInport, component, trace).asInstanceOf[T]
     case (leftOutport: Outport, rightOutport: Outport, component: Component) =>
       mergeOutports(leftOutport, rightOutport, component, trace).asInstanceOf[T]
+    case (leftGate: Gate, rightGate: Gate, component: Component) =>
+      mergeGates(leftGate, rightGate, component, trace).asInstanceOf[T]
   }
 
   def layers(elements: Set[Element]): Seq[Set[Element]] = {
@@ -47,10 +51,32 @@ class MergeAlgorithm {
     trace.map(left, right, result)
     process(left.events, right.events, result, copyEvent(_: Event, result, trace), trace)
     process(left.inports, right.inports, result, copyInport(_: Inport, result, trace), trace)
-    // gates and subcomponents
-    // ???
+    for ((leftLayer, rightLayer) <- layers(left.components ++ left.gates).zipAll(layers(right.components ++ right.gates), Set[Element](), Set[Element]())) {
+      process(leftLayer, rightLayer, result, copyElement(_: Element, result, trace), trace)
+    }
     process(left.outports, right.outports, result, copyOutport(_: Outport, result, trace), trace)
     result
+  }
+
+  def copyElement(element: Element, parent: Container, trace: MergeTrace): Element = element match {
+    case Gate(name, inputs) => {
+      val result = element match {
+        case and: And => And(name)
+        case or: Or => Or(name)
+      }
+      parent += result
+      inputs.foreach(result += trace.target(_).asInstanceOf[Source])
+      result
+    }
+    case Component(name, events, inports, outports, gates, components) => {
+      val result = Component(name)
+      parent += result
+      for (event <- events) {
+        trace.mapLeft(event, copyEvent(event, result, trace))
+        
+      }
+      result
+    }
   }
 
   def copyEvent(event: Event, parent: Container, trace: MergeTrace): Event = {
@@ -91,6 +117,15 @@ class MergeAlgorithm {
 
   def mergeOutports(left: Outport, right: Outport, target: Component, trace: MergeTrace): Outport = {
     val result = Outport(target, left.name)
+    trace.map(left, right, result)
+    result
+  }
+
+  def mergeGates(left: Gate, right: Gate, target: Component, trace: MergeTrace): Gate = {
+    val result = left match {
+      case and: And => And(target, left.name)
+      case or: Or => Or(target, left.name)
+    }
     trace.map(left, right, result)
     result
   }

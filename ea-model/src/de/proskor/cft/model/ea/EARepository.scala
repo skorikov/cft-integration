@@ -8,8 +8,8 @@ private class EARepository(initialPeer: EARepositoryPeer) extends EAElement(init
   override def parent: Option[Container] = None
 
   def packages: Set[Package] = peer.packages.map(EAFactory.create).asInstanceOf[Set[Package]]
-  def components: Set[Component] = null
-  def elements: Set[Element] = null
+  def components: Set[Component] = peer.elementsOfType("Component").map(EAFactory.create).asInstanceOf[Set[Component]]
+  def elements: Set[Element] =  peer.elements.map(EAFactory.create)
 
   def +=(element: Element) {
     require(element.isInstanceOf[EAPackage])
