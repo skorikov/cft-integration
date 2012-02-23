@@ -42,7 +42,8 @@ class MergeAlgorithm {
   }
 
   def target(element: Source): Element = element match {
-    case gate: Gate => element
+    case event: Event => event
+    case gate: Gate => gate
     case port: Port => port.parent.get
   }
 
@@ -73,7 +74,15 @@ class MergeAlgorithm {
       parent += result
       for (event <- events) {
         trace.mapLeft(event, copyEvent(event, result, trace))
-        
+      }
+      for (inport <- inports) {
+        trace.mapLeft(inport, copyInport(inport, result, trace))
+      }
+      for (layer <- layers(gates ++ components)) {
+        layer.foreach(element => trace.mapLeft(element, copyElement(element, result, trace)))
+      }
+      for (outport <- outports) {
+        trace.mapLeft(outport, copyOutport(outport, result, trace))
       }
       result
     }
@@ -98,7 +107,7 @@ class MergeAlgorithm {
     val result = Outport(outport.name)
     parent += result
     outport.input foreach {
-      case value => result += trace.target(value).asInstanceOf[Source]
+      case source => result += trace.target(source).asInstanceOf[Source]
     }
     result
   }
@@ -111,12 +120,38 @@ class MergeAlgorithm {
 
   def mergeInports(left: Inport, right: Inport, target: Component, trace: MergeTrace): Inport = {
     val result = Inport(target, left.name)
+    left.input match {
+      case Some(source) => {
+        result += trace.target(source).asInstanceOf[Source]
+        right.input match {
+          case Some(source) => // conflict
+          case None =>
+        }
+      }
+      case None => right.input match {
+          case Some(source) => result += trace.target(source).asInstanceOf[Source]
+          case None =>
+        }
+    }
     trace.map(left, right, result)
     result
   }
 
   def mergeOutports(left: Outport, right: Outport, target: Component, trace: MergeTrace): Outport = {
     val result = Outport(target, left.name)
+    left.input match {
+      case Some(source) => {
+        result += trace.target(source).asInstanceOf[Source]
+        right.input match {
+          case Some(source) => // conflict
+          case None =>
+        }
+      }
+      case None => right.input match {
+          case Some(source) => result += trace.target(source).asInstanceOf[Source]
+          case None =>
+        }
+    }
     trace.map(left, right, result)
     result
   }
@@ -126,6 +161,13 @@ class MergeAlgorithm {
       case and: And => And(target, left.name)
       case or: Or => Or(target, left.name)
     }
+    val (leftInputs, rightInputs, matchingInputs) = decompose(left.inputs, right.inputs)
+    for (input <- leftInputs ++ rightInputs) {
+      result += trace.target(input).asInstanceOf[Source]
+    }
+    for (input <- matchingInputs.map(_._1)) {
+      result += trace.target(input).asInstanceOf[Source]
+    }
     trace.map(left, right, result)
     result
   }
@@ -134,12 +176,10 @@ class MergeAlgorithm {
     val (leftElements, rightElements, matchingElements) = decompose(left, right)
     for (element <- leftElements) {
       val copy = constructor(element)
-      target += copy
       trace.mapLeft(element, copy)
     }
     for (element <- rightElements) {
       val copy = constructor(element)
-      target += copy
       trace.mapRight(element, copy)
     }
     for ((left, right) <- matchingElements) {

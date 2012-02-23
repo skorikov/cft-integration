@@ -12,8 +12,8 @@ object EAFactory extends CftFactory {
   def createComponent(name: String): Component = new EAComponent(new EAProxyPeer(name, "Component"))
   def createOutport(name: String): Outport = new EAOutport(new EAProxyPeer(name, "Output"))
   def createInport(name: String): Inport = new EAInport(new EAProxyPeer(name, "Input"))
-  def createAnd(name: String): And = new EAAnd(new EAProxyPeer(name, "And"))
-  def createOr(name: String): Or = new EAOr(new EAProxyPeer(name, "Or"))
+  def createAnd(name: String): And = new EAAnd(new EAProxyPeer(name, "AND"))
+  def createOr(name: String): Or = new EAOr(new EAProxyPeer(name, "OR"))
   def createPackage(name: String): Package = new EAPackage(new EAProxyPeer(name, ""))
   def createRepository(name: String): Repository = repository match {
     case Some(repository) => repository
@@ -38,8 +38,8 @@ object EAFactory extends CftFactory {
 
   private[ea] def createElement(peer: EAElementPeer): EAElement = peer.stereotype match {
     case "Event" => new EAEvent(peer)
-    case "And" => new EAAnd(peer)
-    case "Or" => new EAOr(peer)
+    case "AND" => new EAAnd(peer)
+    case "OR" => new EAOr(peer)
     case "Input" => new EAInport(peer)
     case "Output" => new EAOutport(peer)
     case "Component" => new EAComponent(peer)

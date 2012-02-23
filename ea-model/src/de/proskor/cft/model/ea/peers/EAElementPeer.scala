@@ -26,7 +26,7 @@ class EAElementPeer(var instance: cli.EA.IElement) extends EAPeer {
 
   def addElement(name: String, stereotype: String): EAPeer = {
     val collection = instance.get_Elements.asInstanceOf[cli.EA.ICollection]
-    val element = collection.AddNew(name, "Object").asInstanceOf[cli.EA.IElement]
+    val element = collection.AddNew(name, if (Set("Input", "Output").contains(stereotype)) "Port" else "Object").asInstanceOf[cli.EA.IElement]
     element.set_Stereotype(stereotype)
     element.Update()
     collection.Refresh()

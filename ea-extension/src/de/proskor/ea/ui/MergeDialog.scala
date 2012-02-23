@@ -59,8 +59,8 @@ class MergeDialog(repository: Repository) {
   private def allPackages(pkg: Package): Set[Package] = pkg.packages ++ pkg.packages.flatMap(allPackages)
 
   private def buildGui(shell: Shell) {
-    val components = allComponents(repository).toSeq
-    val packages = allPackages(repository).toSeq
+    val components = allComponents(repository).toSeq.sortBy(_.fullName)
+    val packages = allPackages(repository).toSeq.sortBy(_.fullName)
 
 	val mainLayout = new GridLayout
 	mainLayout.numColumns = 2

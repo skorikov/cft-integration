@@ -18,24 +18,20 @@ class Main extends Extension with Adapter {
     val subpkg = Package(pkg, "SUB")
   }
 
+  def testRunner(clazz: Class[_]) = new org.scalatest.junit.JUnitRunner(clazz.asInstanceOf[Class[org.scalatest.Suite]])
+
+  def testNotifier = new org.junit.runner.notification.RunNotifier() {
+    override def fireTestFailure(failure: Failure) {
+      write("---- TEST FAILED! " + failure.getDescription() + " ----")
+      failure.getTrace.split("\n").map(_.trim).map(write)
+      write("-" * 60)
+    }
+  }
+
   def runTests() {
-    val runner = new org.scalatest.junit.JUnitRunner(classOf[de.proskor.cft.test.CftTests].asInstanceOf[Class[org.scalatest.Suite]])
-    runner.run(new org.junit.runner.notification.RunNotifier() {
-      override def fireTestFailure(failure: Failure) {
-        write(" !!! TEST FAILED: " + failure.getDescription() + " !!!")
-        failure.getTrace.split("\n").map(_.trim).map(write)
-        write("-" * 60)
-      }
-    })
-    val runner2 = new org.scalatest.junit.JUnitRunner(classOf[de.proskor.cft.test.MergeTests].asInstanceOf[Class[org.scalatest.Suite]])
-    runner2.run(new org.junit.runner.notification.RunNotifier() {
-      override def fireTestFailure(failure: Failure) {
-        write(" !!! TEST FAILED: " + failure.getDescription() + " !!!")
-        failure.getTrace.split("\n").map(_.trim).map(write)
-        write("-" * 60)
-      }
-    })
-    write("ALL TESTS DONE")
+    testRunner(classOf[de.proskor.cft.test.CftTests]).run(testNotifier)
+    testRunner(classOf[de.proskor.cft.test.MergeTests]).run(testNotifier)
+    write("---- ALL TESTS DONE ----")
   }
 
   def merge() {

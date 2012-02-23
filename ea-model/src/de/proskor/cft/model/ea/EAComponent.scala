@@ -5,7 +5,7 @@ import de.proskor.cft.model.ea.peers._
 private class EAComponent(initialPeer: EAPeer) extends EAElement(initialPeer) with Component {
   def elements: Set[Element] = peer.elements.map(EAFactory.create)
   def components: Set[Component] = peer.elementsOfType("Component").map(EAFactory.create).asInstanceOf[Set[Component]]
-  def gates: Set[Gate] = peer.elementsOfType("And", "Or").map(EAFactory.create).asInstanceOf[Set[Gate]]
+  def gates: Set[Gate] = peer.elementsOfType("AND", "OR").map(EAFactory.create).asInstanceOf[Set[Gate]]
   def outports: Set[Outport] = peer.elementsOfType("Output").map(EAFactory.create).asInstanceOf[Set[Outport]]
   def inports: Set[Inport] = peer.elementsOfType("Input").map(EAFactory.create).asInstanceOf[Set[Inport]]
   def events: Set[Event] = peer.elementsOfType("Event").map(EAFactory.create).asInstanceOf[Set[Event]]
