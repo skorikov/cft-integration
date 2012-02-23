@@ -188,6 +188,27 @@ class CftTests extends JUnitSuite {
     outport -= event
     assertEquals(None, outport.input)
   }
+
+  @Test
+  def testNestedComponents() {
+    val repository = Repository("/")
+    val pkg = Package(repository, "P1")
+    val component = Component(pkg, "C1")
+    val subcomponent = Component(component, "C2")
+    assertTrue(component.components.contains(subcomponent))
+    assertEquals(Some(component), subcomponent.parent)
+  }
+
+  @Test
+  def testNestedComponentRemoval() {
+    val repository = Repository("/")
+    val pkg = Package(repository, "P1")
+    val component = Component(pkg, "C1")
+    val subcomponent = Component(component, "C2")
+    component -= subcomponent
+    assertTrue(component.components.isEmpty)
+    assertEquals(None, subcomponent.parent)
+  }
 }
 
 object CftTests {
