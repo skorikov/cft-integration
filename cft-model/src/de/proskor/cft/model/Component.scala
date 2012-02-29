@@ -9,8 +9,8 @@ trait Component extends Container {
 }
 
 object Component {
-  def apply(name: String): Component = CftFactory.default.createComponent(name)
-  def apply(parent: Container, name: String): Component = CftFactory.default.createComponent(parent, name)
+  def apply(name: String): Component = Factory.createComponent(name)
+  def apply(parent: Container, name: String): Component = Factory.createComponent(parent, name)
   def unapply(component: Component): Option[(String, Set[Event], Set[Inport], Set[Outport], Set[Gate], Set[Component])] =
     Some(component.name, component.events, component.inports, component.outports, component.gates, component.components)
 }
