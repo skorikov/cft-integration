@@ -1,7 +1,7 @@
 package de.proskor.cft.model.ea.peers
 import de.proskor.cft.model.ea._
 
-class EAElementPeer(var instance: cli.EA.IElement) extends EAPeer {
+class EAElementPeer(val instance: cli.EA.IElement) extends EAPeer {
   val id: Int = instance.get_ElementID
 
   def name = instance.get_Name.asInstanceOf[String]

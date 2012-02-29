@@ -1,25 +1,25 @@
 package de.proskor.cft.model.ea.peers
 import de.proskor.cft.model.ea._
 
-class EAPackagePeer(var peer: cli.EA.IPackage) extends EAPeer {
-  val id: Int = peer.get_PackageID
+class EAPackagePeer(val instance: cli.EA.IPackage) extends EAPeer {
+  val id: Int = instance.get_PackageID
 
-  def name = peer.get_Name.asInstanceOf[String]
-  def name_=(name: String) = peer.set_Name(name)
+  def name = instance.get_Name.asInstanceOf[String]
+  def name_=(name: String) = instance.set_Name(name)
 
-  def stereotype: String = peer.get_StereotypeEx.asInstanceOf[String]
-  def stereotype_=(stereotype: String) = peer.set_StereotypeEx(stereotype)
+  def stereotype: String = instance.get_StereotypeEx.asInstanceOf[String]
+  def stereotype_=(stereotype: String) = instance.set_StereotypeEx(stereotype)
 
   private def elementKids: Set[cli.EA.IElement] = {
-    val collection = peer.get_Elements.asInstanceOf[cli.EA.ICollection]
-    val peers = for (i <- 0 until collection.get_Count) yield collection.GetAt(i.toShort).asInstanceOf[cli.EA.IElement]
-    peers.toSet
+    val collection = instance.get_Elements.asInstanceOf[cli.EA.ICollection]
+    val instances = for (i <- 0 until collection.get_Count) yield collection.GetAt(i.toShort).asInstanceOf[cli.EA.IElement]
+    instances.toSet
   }
 
   private def packageKids: Set[cli.EA.IPackage] = {
-    val collection = peer.get_Packages.asInstanceOf[cli.EA.ICollection]
-    val peers = for (i <- 0 until collection.get_Count) yield collection.GetAt(i.toShort).asInstanceOf[cli.EA.IPackage]
-    peers.toSet
+    val collection = instance.get_Packages.asInstanceOf[cli.EA.ICollection]
+    val instances = for (i <- 0 until collection.get_Count) yield collection.GetAt(i.toShort).asInstanceOf[cli.EA.IPackage]
+    instances.toSet
   }
 
   def elements: Set[EAPeer] =
@@ -32,13 +32,13 @@ class EAPackagePeer(var peer: cli.EA.IPackage) extends EAPeer {
     for (kid <- packageKids) yield new EAPackagePeer(kid)
 
   def parent: EAPeer = 
-    if (peer.get_ParentID > 0)
-      new EAPackagePeer(EAFactory.pkg(peer.get_ParentID))
+    if (instance.get_ParentID > 0)
+      new EAPackagePeer(EAFactory.pkg(instance.get_ParentID))
     else
       new EARepositoryPeer(EAFactory.repositoryPeer)
 
   def addPackage(name: String): EAPeer = {
-    val collection = peer.get_Packages.asInstanceOf[cli.EA.ICollection]
+    val collection = instance.get_Packages.asInstanceOf[cli.EA.ICollection]
     val pkgPeer = collection.AddNew(name, "Package").asInstanceOf[cli.EA.IPackage]
     pkgPeer.Update()
     collection.Refresh()
@@ -47,11 +47,11 @@ class EAPackagePeer(var peer: cli.EA.IPackage) extends EAPeer {
   }
 
   def deletePackage(pkg: EAPeer) {
-    val collection = peer.get_Packages.asInstanceOf[cli.EA.ICollection]
+    val collection = instance.get_Packages.asInstanceOf[cli.EA.ICollection]
     var i = 0
     var found = false
     while (i < collection.get_Count && !found) {
-      if (collection.GetAt(i.toShort).asInstanceOf[cli.EA.IPackage].get_PackageID == pkg.asInstanceOf[EAPackagePeer].peer.get_PackageID)
+      if (collection.GetAt(i.toShort).asInstanceOf[cli.EA.IPackage].get_PackageID == pkg.asInstanceOf[EAPackagePeer].instance.get_PackageID)
         found = true
       else
         i += 1
@@ -64,7 +64,7 @@ class EAPackagePeer(var peer: cli.EA.IPackage) extends EAPeer {
   }
 
   def addElement(name: String, stereotype: String): EAPeer = {
-    val collection = peer.get_Elements.asInstanceOf[cli.EA.ICollection]
+    val collection = instance.get_Elements.asInstanceOf[cli.EA.ICollection]
     val elPeer = collection.AddNew(name, "Object").asInstanceOf[cli.EA.IElement]
     elPeer.set_StereotypeEx(stereotype)
     elPeer.Update()
@@ -74,7 +74,7 @@ class EAPackagePeer(var peer: cli.EA.IPackage) extends EAPeer {
   }
 
   def deleteElement(element: EAPeer) {
-    val collection = peer.get_Elements.asInstanceOf[cli.EA.ICollection]
+    val collection = instance.get_Elements.asInstanceOf[cli.EA.ICollection]
     var i = 0
     var found = false
     while (i < collection.get_Count && !found) {
