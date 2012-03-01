@@ -3,9 +3,7 @@ import cli.EA.IRepository
 import de.proskor.cft.model.ea.EAFactory
 import de.proskor.cft.model.Factory
 
-trait Adapter {
-  this: Extension =>
-
+trait Adapter extends Extension {
   var outputReady = false
   var repositoryPeer: cli.EA.IRepository = null
 
