@@ -3,7 +3,6 @@ import de.proskor.cft.model.Component
 import de.proskor.cft.model.Container
 import de.proskor.cft.model.Event
 import de.proskor.cft.model.Element
-import de.proskor.cft.model.CftFactory
 import de.proskor.cft.model.Inport
 import de.proskor.cft.model.Source
 import de.proskor.cft.model.Outport
@@ -13,178 +12,190 @@ import de.proskor.cft.model.And
 import de.proskor.cft.model.Or
 
 class MergeAlgorithm {
-  def merge[T <: Element](left: T, right: T, target: Container, trace: MergeTrace): T = (left, right, target) match {
-    case (leftComponent: Component, rightComponent: Component, _) =>
-      mergeComponents(leftComponent, rightComponent, target, trace).asInstanceOf[T]
-    case (leftEvent: Event, rightEvent: Event, component: Component) =>
-      mergeEvents(leftEvent, rightEvent, component, trace).asInstanceOf[T]
-    case (leftInport: Inport, rightInport: Inport, component: Component) =>
-      mergeInports(leftInport, rightInport, component, trace).asInstanceOf[T]
-    case (leftOutport: Outport, rightOutport: Outport, component: Component) =>
-      mergeOutports(leftOutport, rightOutport, component, trace).asInstanceOf[T]
-    case (leftGate: Gate, rightGate: Gate, component: Component) =>
-      mergeGates(leftGate, rightGate, component, trace).asInstanceOf[T]
+  def copyLeft(component: Component, target: Container, trace: MergeTrace): Component = {
+    val result = Component(target, component.name)
+    trace.mapLeft(component, result)
+
+    // copy elements
+    for (event <- component.events) {
+      trace.mapLeft(event, Event(result, event.name))
+    }
+    for (inport <- component.inports) {
+      trace.mapLeft(inport, Inport(result, inport.name))
+    }
+    for (outport <- component.outports) {
+      trace.mapLeft(outport, Outport(result, outport.name))
+    }
+    for (gate <- component.gates) gate match {
+      case And(name, _) => trace.mapLeft(gate, And(result, name))
+      case Or(name, _) => trace.mapLeft(gate, Or(result, name))
+    }
+    for (subcomponent <- component.components) {
+      copyLeft(subcomponent, result, trace)
+    }
+
+    // connect ports
+    for (port <- component.outports ++ component.components.flatten(_.inports)) {
+      port.input foreach {
+        case input => trace.target(port).asInstanceOf[Port] += trace.target(input).asInstanceOf[Source]
+      }
+
+    // connect gates
+      for (gate <- component.gates) {
+        for (input <- gate.inputs) {
+          trace.target(gate).asInstanceOf[Gate] += trace.target(input).asInstanceOf[Source]
+        }
+      }
+    }
+
+    result
   }
 
-  def layers(elements: Set[Element]): Seq[Set[Element]] = {
-    val groups = elements.groupBy(level(_, elements))
-    for (i <- 0 until groups.keys.size) yield groups(i)
-  }
+  def copyRight(component: Component, target: Container, trace: MergeTrace): Component = {
+    val result = Component(target, component.name)
+    trace.mapRight(component, result)
 
-  def level(element: Element, set: Set[Element]): Int = element match {
-    case Gate(_, inputs) => level(inputs, set)
-    case Component(_, _, inports, _, _, _) => level(inports.map(_.input.get), set)
-  }
+    // copy elements
+    for (event <- component.events) {
+      trace.mapRight(event, Event(result, event.name))
+    }
+    for (inport <- component.inports) {
+      trace.mapRight(inport, Inport(result, inport.name))
+    }
+    for (outport <- component.outports) {
+      trace.mapRight(outport, Outport(result, outport.name))
+    }
+    for (gate <- component.gates) gate match {
+      case And(name, _) => trace.mapRight(gate, And(result, name))
+      case Or(name, _) => trace.mapRight(gate, Or(result, name))
+    }
+    for (subcomponent <- component.components) {
+      copyRight(subcomponent, result, trace)
+    }
 
-  def level(inputs: Set[Source], set: Set[Element]): Int = {
-    val kids = set.intersect(inputs.map(target))
-    if (kids.isEmpty) 0 else 1 + kids.map(level(_, set)).max
-  }
+    // connect ports
+    for (port <- component.outports ++ component.components.flatten(_.inports)) {
+      port.input foreach {
+        case input => trace.target(port).asInstanceOf[Port] += trace.target(input).asInstanceOf[Source]
+      }
 
-  def target(element: Source): Element = element match {
-    case event: Event => event
-    case gate: Gate => gate
-    case port: Port => port.parent.get
+    // connect gates
+      for (gate <- component.gates) {
+        for (input <- gate.inputs) {
+          trace.target(gate).asInstanceOf[Gate] += trace.target(input).asInstanceOf[Source]
+        }
+      }
+    }
+
+    result
   }
 
   def mergeComponents(left: Component, right: Component, target: Container, trace: MergeTrace): Component = {
     val result = Component(target, left.name)
     trace.map(left, right, result)
-    process(left.events, right.events, result, copyEvent(_: Event, result, trace), trace)
-    process(left.inports, right.inports, result, copyInport(_: Inport, result, trace), trace)
-    for ((leftLayer, rightLayer) <- layers(left.components ++ left.gates).zipAll(layers(right.components ++ right.gates), Set[Element](), Set[Element]())) {
-      process(leftLayer, rightLayer, result, copyElement(_: Element, result, trace), trace)
+
+    // merge events
+    val (leftEvents, rightEvents, matchingEvents) = decompose(left.events, right.events)
+    for (event <- leftEvents) {
+      trace.mapLeft(event, Event(result, event.name))
     }
-    process(left.outports, right.outports, result, copyOutport(_: Outport, result, trace), trace)
-    result
-  }
-
-  def copyElement(element: Element, parent: Container, trace: MergeTrace): Element = element match {
-    case Gate(name, inputs) => {
-      val result = element match {
-        case and: And => And(name)
-        case or: Or => Or(name)
-      }
-      parent += result
-      inputs.foreach(result += trace.target(_).asInstanceOf[Source])
-      result
+    for (event <- rightEvents) {
+      trace.mapRight(event, Event(result, event.name))
     }
-    case Component(name, events, inports, outports, gates, components) => {
-      val result = Component(name)
-      parent += result
-      for (event <- events) {
-        trace.mapLeft(event, copyEvent(event, result, trace))
-      }
-      for (inport <- inports) {
-        trace.mapLeft(inport, copyInport(inport, result, trace))
-      }
-      for (layer <- layers(gates ++ components)) {
-        layer.foreach(element => trace.mapLeft(element, copyElement(element, result, trace)))
-      }
-      for (outport <- outports) {
-        trace.mapLeft(outport, copyOutport(outport, result, trace))
-      }
-      result
+    for ((leftEvent, rightEvent) <- matchingEvents) {
+      trace.map(leftEvent, rightEvent, Event(result, leftEvent.name))
     }
-  }
 
-  def copyEvent(event: Event, parent: Container, trace: MergeTrace): Event = {
-    val result = Event(event.name)
-    parent += result
-    result
-  }
-
-  def copyInport(inport: Inport, parent: Container, trace: MergeTrace): Inport = {
-    val result = Inport(inport.name)
-    parent += result
-    inport.input foreach {
-      case value => result += trace.target(value).asInstanceOf[Source]
+    // merge inports
+    val (leftInports, rightInports, matchingInports) = decompose(left.inports, right.inports)
+    for (inport <- leftInports) {
+      trace.mapLeft(inport, Inport(result, inport.name))
     }
-    result
-  }
-
-  def copyOutport(outport: Outport, parent: Container, trace: MergeTrace): Outport = {
-    val result = Outport(outport.name)
-    parent += result
-    outport.input foreach {
-      case source => result += trace.target(source).asInstanceOf[Source]
+    for (inport <- rightInports) {
+      trace.mapRight(inport, Inport(result, inport.name))
     }
-    result
-  }
+    for ((leftInport, rightInport) <- matchingInports) {
+      trace.map(leftInport, rightInport, Inport(result, leftInport.name))
+    }
 
-  def mergeEvents(left: Event, right: Event, target: Component, trace: MergeTrace): Event = {
-    val result = Event(target, left.name)
-    trace.map(left, right, result)
-    result
-  }
+    // merge outports
+    val (leftOutports, rightOutports, matchingOutports) = decompose(left.outports, right.outports)
+    for (outport <- leftOutports) {
+      trace.mapLeft(outport, Outport(result, outport.name))
+    }
+    for (outport <- rightOutports) {
+      trace.mapRight(outport, Outport(result, outport.name))
+    }
+    for ((leftOutport, rightOutport) <- matchingOutports) {
+      trace.map(leftOutport, rightOutport, Outport(result, leftOutport.name))
+    }
 
-  def mergeInports(left: Inport, right: Inport, target: Component, trace: MergeTrace): Inport = {
-    val result = Inport(target, left.name)
-    left.input match {
-      case Some(source) => {
-        result += trace.target(source).asInstanceOf[Source]
-        right.input match {
-          case Some(source) => // conflict
-          case None =>
+    // merge gates
+    val (leftGates, rightGates, matchingGates) = decompose(left.gates, right.gates)
+    for (gate <- leftGates) {
+      trace.mapLeft(gate, gate match {
+        case And(name, _) => And(result, name)
+        case Or(name, _) => Or(result, name)
+      })
+    }
+    for (gate <- rightGates) {
+      trace.mapRight(gate, gate match {
+        case And(name, _) => And(result, name)
+        case Or(name, _) => Or(result, name)
+      })
+    }
+    for ((leftGate, rightGate) <- matchingGates) {
+      trace.map(leftGate, rightGate, leftGate match {
+        case And(name, _) => And(result, name)
+        case Or(name, _) => Or(result, name)
+      })
+    }
+
+    // merge components
+    val (leftComponents, rightComponents, matchingComponents) = decompose(left.components, right.components)
+    for (component <- leftComponents) {
+      copyLeft(component, result, trace)
+    }
+    for (component <- rightComponents) {
+      copyRight(component, result, trace)
+    }
+    for ((leftComponent, rightComponent) <- matchingComponents) {
+      mergeComponents(leftComponent, rightComponent, result, trace)
+    }
+
+    // connect ports
+    for (port <- result.outports ++ result.components.flatten(_.inports)) {
+      trace.sources(port) match {
+        case (Some(leftSource: Port), Some(rightSource: Port)) => leftSource.input foreach {
+          case input => port += trace.target(input).asInstanceOf[Source]
         }
+        case (Some(leftSource: Port), None) => leftSource.input foreach {
+          case input => port += trace.target(input).asInstanceOf[Source]
+        }
+        case (None, Some(rightSource: Port)) => rightSource.input foreach {
+          case input => port += trace.target(input).asInstanceOf[Source]
+        }
+        case _ => throw new IllegalStateException
       }
-      case None => right.input match {
-          case Some(source) => result += trace.target(source).asInstanceOf[Source]
-          case None =>
-        }
     }
-    trace.map(left, right, result)
-    result
-  }
 
-  def mergeOutports(left: Outport, right: Outport, target: Component, trace: MergeTrace): Outport = {
-    val result = Outport(target, left.name)
-    left.input match {
-      case Some(source) => {
-        result += trace.target(source).asInstanceOf[Source]
-        right.input match {
-          case Some(source) => // conflict
-          case None =>
+    // connect gates
+    for (gate <- result.gates) {
+      trace.sources(gate) match {
+        case (Some(leftSource: Gate), Some(rightSource: Gate)) => leftSource.inputs foreach {
+          gate += trace.target(_).asInstanceOf[Source]
         }
+        case (Some(leftSource: Gate), None) => leftSource.inputs foreach {
+          gate += trace.target(_).asInstanceOf[Source]
+        }
+        case (None, Some(rightSource: Gate)) => rightSource.inputs foreach {
+          gate += trace.target(_).asInstanceOf[Source]
+        }
+        case _ => throw new IllegalStateException
       }
-      case None => right.input match {
-          case Some(source) => result += trace.target(source).asInstanceOf[Source]
-          case None =>
-        }
     }
-    trace.map(left, right, result)
-    result
-  }
 
-  def mergeGates(left: Gate, right: Gate, target: Component, trace: MergeTrace): Gate = {
-    val result = left match {
-      case and: And => And(target, left.name)
-      case or: Or => Or(target, left.name)
-    }
-    val (leftInputs, rightInputs, matchingInputs) = decompose(left.inputs, right.inputs)
-    for (input <- leftInputs ++ rightInputs) {
-      result += trace.target(input).asInstanceOf[Source]
-    }
-    for (input <- matchingInputs.map(_._1)) {
-      result += trace.target(input).asInstanceOf[Source]
-    }
-    trace.map(left, right, result)
     result
-  }
-
-  private def process[T <: Element](left: Set[T], right: Set[T], target: Container, constructor: T => T, trace: MergeTrace) {
-    val (leftElements, rightElements, matchingElements) = decompose(left, right)
-    for (element <- leftElements) {
-      val copy = constructor(element)
-      trace.mapLeft(element, copy)
-    }
-    for (element <- rightElements) {
-      val copy = constructor(element)
-      trace.mapRight(element, copy)
-    }
-    for ((left, right) <- matchingElements) {
-      merge(left, right, target, trace)
-    }
   }
 
   private def decompose[T <: Element](left: Set[T], right: Set[T]): (Set[T], Set[T], Iterable[(T, T)]) = {
@@ -199,7 +210,16 @@ class MergeAlgorithm {
     if matches(leftElement, rightElement)
   } yield (leftElement, rightElement)
 
-  private def matches(left: Element, right: Element): Boolean = left.name == right.name
+  private def matches(left: Set[Source], right: Set[Source]): Boolean =
+    left.size == right.size &&
+    left.forall(element => right.exists(matches(element, _))) &&
+    right.forall(element => left.exists(matches(element, _)))
+
+  private def matches(left: Element, right: Element): Boolean = (left.name == right.name) && (left match {
+    case And(_, inputs) => right.isInstanceOf[And] && matches(inputs, right.asInstanceOf[Gate].inputs)
+    case Or(_, inputs) => right.isInstanceOf[Or] && matches(inputs, right.asInstanceOf[Gate].inputs)
+    case _ => true
+  })
 
   private def singleElements[T <: Element](left: Set[T], right: Set[T], pairs: Iterable[(T, T)]): (Set[T], Set[T]) = {
     val singleLeft = left.filterNot(element => pairs.exists {
