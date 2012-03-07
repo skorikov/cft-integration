@@ -10,7 +10,7 @@ private class EAComponent(initialPeer: EAPeer) extends EAElement(initialPeer) wi
   def inports: Set[Inport] = peer.elementsOfType("Input").map(EAFactory.create).asInstanceOf[Set[Inport]]
   def events: Set[Event] = peer.elementsOfType("Event").map(EAFactory.create).asInstanceOf[Set[Event]]
 
-  def +=(element: Element) {
+  def add(element: Element) {
     require(element.isInstanceOf[EAElement])
     val el = element.asInstanceOf[EAElement]
     element.parent foreach {
@@ -19,7 +19,7 @@ private class EAComponent(initialPeer: EAPeer) extends EAElement(initialPeer) wi
     el.peer = peer.addElement(el.peer.name, el.peer.stereotype)
   }
 
-  def -=(element: Element) {
+  def remove(element: Element) {
     require(element.isInstanceOf[EAElement])
     val el = element.asInstanceOf[EAElement]
     el.peer match {

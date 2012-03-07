@@ -27,7 +27,7 @@ class CftTests extends JUnitSuite {
     assertEquals("P1", pkg.name)
     assertEquals(None, pkg.parent)
     repository += pkg
-    assertEquals(2, repository.packages.size)
+    assertEquals(1, repository.packages.size)
     assertTrue(repository.packages.contains(pkg))
     assertEquals(Some(repository), pkg.parent)
   }

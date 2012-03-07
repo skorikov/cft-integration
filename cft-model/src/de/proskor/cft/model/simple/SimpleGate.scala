@@ -6,12 +6,12 @@ private abstract class SimpleGate(initialName: String) extends SimpleElement(ini
   private var kids = Set[Source]()
   def inputs = kids
 
-  def +=(input: Source) {
+  def add(input: Source) {
     require(input.isInstanceOf[SimpleElement])
     kids += input
   }
 
-  def -=(input: Source) {
+  def remove(input: Source) {
     require(input.isInstanceOf[SimpleElement] && kids.contains(input))
     kids -= input
   }

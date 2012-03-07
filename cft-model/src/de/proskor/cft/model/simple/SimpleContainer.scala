@@ -6,7 +6,7 @@ private abstract class SimpleContainer(initialName: String) extends SimpleElemen
   private var kids = Set[Element]()
   def elements = kids
 
-  def +=(element: Element) {
+  def add(element: Element) {
     require(element.isInstanceOf[SimpleElement])
     element.parent foreach {
       case container => container -= element
@@ -15,7 +15,7 @@ private abstract class SimpleContainer(initialName: String) extends SimpleElemen
     kids += element
   }
 
-  def -=(element: Element) {
+  def remove(element: Element) {
     require(element.isInstanceOf[SimpleElement] && kids.contains(element))
     element.asInstanceOf[SimpleElement].container = None
     kids -= element

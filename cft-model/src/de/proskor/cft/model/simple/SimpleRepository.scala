@@ -3,8 +3,8 @@ import de.proskor.cft.model.{Container,Element,Repository}
 
 private class SimpleRepository(initialName: String) extends SimplePackage(initialName) with Repository {
   override val parent: Option[Container] = None
-  override def +=(element: Element) {
+  override def add(element: Element) {
     require(element.isInstanceOf[SimplePackage])
-    super.+=(element)
+    super.add(element)
   }
 }

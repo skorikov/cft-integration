@@ -11,11 +11,11 @@ private class EAPort(initialPeer: EAPeer) extends EAElement(initialPeer) with Po
     else
       Some(connectedElements.head)
   }
-  def +=(input: Source) {
+  def add(input: Source) {
     require(input.isInstanceOf[EAElement])
     peer.connect(input.asInstanceOf[EAElement].peer)
   }
-  def -=(input: Source) {
+  def remove(input: Source) {
     require(input.isInstanceOf[EAElement])
     peer.disconnect(input.asInstanceOf[EAElement].peer)
   }

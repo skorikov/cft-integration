@@ -11,7 +11,7 @@ private class EARepository(initialPeer: EARepositoryPeer) extends EAElement(init
   def components: Set[Component] = peer.elementsOfType("Component").map(EAFactory.create).asInstanceOf[Set[Component]]
   def elements: Set[Element] =  peer.elements.map(EAFactory.create)
 
-  def +=(element: Element) {
+  def add(element: Element) {
     require(element.isInstanceOf[EAPackage])
     val el = element.asInstanceOf[EAPackage]
     el.parent foreach {
@@ -20,7 +20,7 @@ private class EARepository(initialPeer: EARepositoryPeer) extends EAElement(init
     el.peer = peer.addPackage(element.name)
   }
 
-  def -=(element: Element) {
+  def remove(element: Element) {
     require(element.isInstanceOf[EAPackage])
     val pkg = element.asInstanceOf[EAPackage]
     pkg.peer match {

@@ -7,7 +7,7 @@ private class EAPackage(initialPeer: EAPeer) extends EAElement(initialPeer) with
   def packages: Set[Package] = peer.packages.map(EAFactory.create).asInstanceOf[Set[Package]]
   def elements: Set[Element] = peer.elements.map(EAFactory.create)
 
-  def +=(element: Element) {
+  def add(element: Element) {
     require(element.isInstanceOf[EAPackage] || element.isInstanceOf[EAComponent])
     val el = element.asInstanceOf[EAElement]
     el.parent foreach {
@@ -19,7 +19,7 @@ private class EAPackage(initialPeer: EAPeer) extends EAElement(initialPeer) with
     }
   }
 
-  def -=(element: Element) {
+  def remove(element: Element) {
     require(element.isInstanceOf[EAPackage] || element.isInstanceOf[EAComponent])
     val el = element.asInstanceOf[EAElement]
     el.peer match {

@@ -6,12 +6,12 @@ private class SimplePort(initialName: String) extends SimpleElement(initialName)
   private var kid: Option[Source] = None
   def input = kid
 
-  def +=(input: Source) {
+  def add(input: Source) {
     require(input.isInstanceOf[SimpleElement])
     kid = Some(input)
   }
 
-  def -=(input: Source) {
+  def remove(input: Source) {
     require(input.isInstanceOf[SimpleElement])
     kid = None
   }

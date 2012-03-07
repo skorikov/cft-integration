@@ -5,8 +5,8 @@ private class SimplePackage(initialName: String) extends SimpleContainer(initial
   def packages: Set[Package] = elements.filter(_.isInstanceOf[Package]).asInstanceOf[Set[Package]]
   def components: Set[Component] = elements.filter(_.isInstanceOf[Component]).asInstanceOf[Set[Component]]
 
-  override def +=(element: Element) {
+  override def add(element: Element) {
     require(element.isInstanceOf[SimplePackage] || element.isInstanceOf[SimpleComponent])
-    super.+=(element)
+    super.add(element)
   }
 }

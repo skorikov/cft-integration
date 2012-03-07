@@ -2,8 +2,10 @@ package de.proskor.cft.model
 
 trait Port extends Source {
   def input: Option[Source]
-  def +=(input: Source): Unit
-  def -=(input: Source): Unit
+  def add(input: Source): Unit
+  def remove(input: Source): Unit
+  final def +=(input: Source): Unit = add(input)
+  final def -=(input: Source): Unit = remove(input)
 }
 
 object Port {

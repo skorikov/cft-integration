@@ -12,8 +12,8 @@ private class SimpleComponent(initialName: String) extends SimpleContainer(initi
   def gates: Set[Gate] = elements.filter(_.isInstanceOf[Gate]).asInstanceOf[Set[Gate]]
   def components: Set[Component] = elements.filter(_.isInstanceOf[Component]).asInstanceOf[Set[Component]]
 
-  override def +=(element: Element) {
+  override def add(element: Element) {
     require(element.isInstanceOf[SimpleEvent] || element.isInstanceOf[SimpleGate] || element.isInstanceOf[SimplePort] || element.isInstanceOf[SimpleComponent])
-    super.+=(element)
+    super.add(element)
   }
 }
