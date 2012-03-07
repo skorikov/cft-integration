@@ -4,6 +4,7 @@ import de.proskor.cft.model._
 import org.eclipse.epsilon.eol.models._
 import org.eclipse.epsilon.eol.execute.introspection._
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException
+import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementTypeException
 import org.eclipse.epsilon.commons.util.StringProperties
 import collection.JavaConversions._
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException
@@ -73,7 +74,7 @@ class CftModel(var objects: Set[Element]) extends AbstractModel {
 
   override def createInstance(typ: String, parameters: JavaCollection[AnyRef]): AnyRef = {
     val (name, parent) = processParameters(parameters)
-    typ match {
+    if (concreteTypes.contains(typ)) typ match {
       case "Repository" => if (parent.isDefined) throw new IllegalArgumentException else create(Repository(name))
       case "Package" => if (parent.isDefined) create(Package(parent.get.asInstanceOf[Package], name)) else create(Package(name))
       case "Component" => if (parent.isDefined) create(Component(parent.get, name)) else create(Component(name))
@@ -82,7 +83,10 @@ class CftModel(var objects: Set[Element]) extends AbstractModel {
 	  case "Outport" => if (parent.isDefined) create(Outport(parent.get.asInstanceOf[Component], name)) else create(Outport(name))
 	  case "And" => if (parent.isDefined) create(And(parent.get.asInstanceOf[Component], name)) else create(And(name))
 	  case "Or" => if (parent.isDefined) create(Or(parent.get.asInstanceOf[Component], name)) else create(Or(name))
-      case _ => throw new EolModelElementTypeNotFoundException(getName, typ)
+    } else if (allTypes.contains(typ)) {
+      throw new EolNotInstantiableModelElementTypeException(name, typ)
+    } else {
+      throw new EolModelElementTypeNotFoundException(name, typ)
     }
   }
 
@@ -124,8 +128,8 @@ class CftModel(var objects: Set[Element]) extends AbstractModel {
     case _: Package => Set("name", "parent", "elements", "packages", "components").contains(property)
     case _: Component => Set("name", "parent", "elements", "events", "gates", "inports", "outports", "components").contains(property)
     case _: Event => Set("name", "parent").contains(property)
-    case _: Gate => Set("name", "parent", "input").contains(property)
-    case _: Port => Set("name", "parent", "inputs").contains(property)
+    case _: Gate => Set("name", "parent", "inputs").contains(property)
+    case _: Port => Set("name", "parent", "input").contains(property)
     case _ => false
   }
 

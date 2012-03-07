@@ -1,13 +1,12 @@
 package de.proskor.cft.emc
-
-import de.proskor.cft.model.Component
-import de.proskor.cft.model.Event
+import de.proskor.cft.model._
+import org.eclipse.epsilon.eol.exceptions.EolReadOnlyPropertyException
 
 object CftPropertySetter extends AbstractPropertySetter {
-  override def invoke(value: Any) = getObject match {
-    case component: Component => 
-    case event: Event => getProperty match {
-      case "name" => event.name = value.asInstanceOf[String]
+  override def invoke(value: Any) = target match {
+    case element: Element => property match {
+      case "name" => element.name = value.asInstanceOf[String]
+      case _ => throw new EolReadOnlyPropertyException
     }
   }
 }

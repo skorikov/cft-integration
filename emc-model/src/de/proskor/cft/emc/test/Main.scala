@@ -3,18 +3,17 @@ package de.proskor.cft.emc.test
 import java.io.InputStream
 import java.io.FileInputStream
 import java.util.Scanner
-import de.proskor.cft.model.Repository
-import de.proskor.cft.model.Element
 import org.eclipse.epsilon.eol.models.IModel
 import de.proskor.cft.emc.CftModel
 import org.eclipse.epsilon.eol.EolModule
 import org.eclipse.epsilon.eol.IEolModule
+import de.proskor.cft.model._
 
 object Main {
   def main(args: Array[String]) {
     val repository = Repository("/")
     process(repository)
-    println(repository.elements)
+    println(format(repository))
   }
 
   private def process(repository: Repository) = {
@@ -34,5 +33,23 @@ object Main {
 
   private def convertStreamToString(is: InputStream): String = {
     new Scanner(is).useDelimiter("\\A").next
+  }
+
+  private def formatAll[T <: Element](name: String, elements: Set[T]) =
+    name + " { " + elements.map(format).mkString("; ") + " }"
+
+  private def formatTerm(name: String, elements: Set[Source], operator: String) =
+    name + " = " + elements.map(_.name).mkString(" " + operator + " ")
+
+  private def format(element: Element): String = element match {
+    case Event(name) => name
+    case And(name, inputs) => formatTerm(name, inputs, "*")
+    case Or(name, inputs) => formatTerm(name, inputs, "+")
+    case Component(name, events, inports, outports, gates, components) =>
+      formatAll(name, events ++ inports ++ outports ++ gates ++ components)
+    case Package(name, packages, components) =>
+      formatAll(name, packages ++ components)
+    case Repository(name, packages) =>
+      formatAll(name, packages)
   }
 }

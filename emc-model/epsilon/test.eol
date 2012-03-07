@@ -24,7 +24,14 @@ for (event in events) {
 var repository := Repository.allInstances().first();
 var package := new Package(repository, "P1");
 var component := new Component(package, "C1");
-var event := new Event(component, "E1");
+var x := new Event(component, "X");
+var y := new Event(component, "Y");
+var g := new And(component, "G");
+g.add(x);
+g.add(y);
+for (input in g.inputs) {
+  input.name.println();
+}
 
 operation Component elementsStartingWith(prefix: String): Set {
   return self.elements.select(element | element.name.startsWith(prefix));
