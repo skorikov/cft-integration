@@ -1,4 +1,4 @@
-var component := new Component("C1");
+/*var component := new Component("C1");
 var pkg := new Package("P1");
 var event := new Event(component, "hello");
 new Event(component, "foo");
@@ -19,7 +19,12 @@ for (i in component.elementsStartingWith("f")) {
 var events = Event.allInstances();
 for (event in events) {
   (event.name + " in " + event.parent).println();
-}
+}*/
+
+var repository := Repository.allInstances().first();
+var package := new Package(repository, "P1");
+var component := new Component(package, "C1");
+var event := new Event(component, "E1");
 
 operation Component elementsStartingWith(prefix: String): Set {
   return self.elements.select(element | element.name.startsWith(prefix));

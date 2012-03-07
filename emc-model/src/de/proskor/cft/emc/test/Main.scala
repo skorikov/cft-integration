@@ -13,13 +13,23 @@ import org.eclipse.epsilon.eol.IEolModule
 object Main {
   def main(args: Array[String]) {
     val repository = Repository("/")
+    process(repository)
+    println(repository.elements)
+  }
+
+  private def process(repository: Repository) = {
     val model: IModel = new CftModel(Set[Element](repository))
-    model.setName("MODEL")
+    model.setName("CFT")
+    val module: IEolModule = getModule(model)
+    module.execute
+  }
+
+  private def getModule(model: IModel): IEolModule = {
     val module: IEolModule = new EolModule();
     module.getContext.getModelRepository.addModel(model)
-    val is: InputStream = new FileInputStream("/home/andrey/workspaces/misc/emc-model/epsilon/test.eol")
+    val is: InputStream = new FileInputStream("/home/andrey/git/cft-integration/emc-model/epsilon/test.eol")
     module.parse(convertStreamToString(is))
-    module.execute
+    module
   }
 
   private def convertStreamToString(is: InputStream): String = {
