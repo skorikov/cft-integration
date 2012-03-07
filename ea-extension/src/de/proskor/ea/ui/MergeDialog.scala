@@ -123,7 +123,7 @@ class MergeDialog(repository: Repository) {
     val trace = new MergeTrace
     val mergeThread = new Thread {
       override def run {
-        al.mergeComponents(left, right, target, trace)
+        al.merge(left, right, target, trace)
         finished
       }
       private def finished {

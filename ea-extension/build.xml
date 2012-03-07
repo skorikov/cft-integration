@@ -4,9 +4,6 @@
 	<property name="jar" value="ea-extension.jar" />
 	<property name="dll" value="ea-extension.dll" />
 	<target name="jar">
-		<!--copy todir="bin/icons">
-			<fileset dir="icons" />
-		</copy-->
 		<jar destfile="ea-extension/dist/${jar}">
 			<fileset dir="cft-model/bin" />
 			<fileset dir="cft-test/bin" />

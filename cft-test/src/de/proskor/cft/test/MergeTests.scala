@@ -47,7 +47,7 @@ class MergeTests extends JUnitSuite {
 
     val al = new MergeAlgorithm
     val trace = new MergeTrace
-    val result = al.mergeComponents(left, right, target, trace)
+    val result = al.merge(left, right, target, trace)
   }
 
   @Test
@@ -72,7 +72,7 @@ class MergeTests extends JUnitSuite {
 
     val al = new MergeAlgorithm
     val trace = new MergeTrace
-    val result = al.mergeComponents(left, right, target, trace)
+    val result = al.merge(left, right, target, trace)
 
     assertEquals(3, result.events.size)
     assertEquals(3, result.outports.size)

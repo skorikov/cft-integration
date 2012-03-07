@@ -12,7 +12,8 @@ import de.proskor.cft.model.And
 import de.proskor.cft.model.Or
 
 class MergeAlgorithm {
-  def copyLeft(component: Component, target: Container, trace: MergeTrace): Component = {
+
+  def copy(component: Component, target: Container, trace: MergeTrace, map: (Element, Element) => Unit): Component = {
     val result = Component(target, component.name)
     trace.mapLeft(component, result)
 
@@ -31,7 +32,7 @@ class MergeAlgorithm {
       case Or(name, _) => trace.mapLeft(gate, Or(result, name))
     }
     for (subcomponent <- component.components) {
-      copyLeft(subcomponent, result, trace)
+      copy(subcomponent, result, trace, map)
     }
 
     // connect ports
@@ -51,51 +52,12 @@ class MergeAlgorithm {
     result
   }
 
-  def copyRight(component: Component, target: Container, trace: MergeTrace): Component = {
-    val result = Component(target, component.name)
-    trace.mapRight(component, result)
-
-    // copy elements
-    for (event <- component.events) {
-      trace.mapRight(event, Event(result, event.name))
-    }
-    for (inport <- component.inports) {
-      trace.mapRight(inport, Inport(result, inport.name))
-    }
-    for (outport <- component.outports) {
-      trace.mapRight(outport, Outport(result, outport.name))
-    }
-    for (gate <- component.gates) gate match {
-      case And(name, _) => trace.mapRight(gate, And(result, name))
-      case Or(name, _) => trace.mapRight(gate, Or(result, name))
-    }
-    for (subcomponent <- component.components) {
-      copyRight(subcomponent, result, trace)
-    }
-
-    // connect ports
-    for (port <- component.outports ++ component.components.flatten(_.inports)) {
-      port.input foreach {
-        case input => trace.target(port).asInstanceOf[Port] += trace.target(input).asInstanceOf[Source]
-      }
-
-    // connect gates
-      for (gate <- component.gates) {
-        for (input <- gate.inputs) {
-          trace.target(gate).asInstanceOf[Gate] += trace.target(input).asInstanceOf[Source]
-        }
-      }
-    }
-
-    result
-  }
-
-  def mergeComponents(left: Component, right: Component, target: Container, trace: MergeTrace): Component = {
+  def merge(left: Component, right: Component, target: Container, trace: MergeTrace): Component = {
     val result = Component(target, left.name)
     trace.map(left, right, result)
 
     // merge events
-    val (leftEvents, rightEvents, matchingEvents) = decompose(left.events, right.events)
+    val (leftEvents, matchingEvents, rightEvents) = decompose(left.events, right.events)
     for (event <- leftEvents) {
       trace.mapLeft(event, Event(result, event.name))
     }
@@ -107,7 +69,7 @@ class MergeAlgorithm {
     }
 
     // merge inports
-    val (leftInports, rightInports, matchingInports) = decompose(left.inports, right.inports)
+    val (leftInports, matchingInports, rightInports) = decompose(left.inports, right.inports)
     for (inport <- leftInports) {
       trace.mapLeft(inport, Inport(result, inport.name))
     }
@@ -119,7 +81,7 @@ class MergeAlgorithm {
     }
 
     // merge outports
-    val (leftOutports, rightOutports, matchingOutports) = decompose(left.outports, right.outports)
+    val (leftOutports, matchingOutports, rightOutports) = decompose(left.outports, right.outports)
     for (outport <- leftOutports) {
       trace.mapLeft(outport, Outport(result, outport.name))
     }
@@ -131,7 +93,7 @@ class MergeAlgorithm {
     }
 
     // merge gates
-    val (leftGates, rightGates, matchingGates) = decompose(left.gates, right.gates)
+    val (leftGates, matchingGates, rightGates) = decompose(left.gates, right.gates)
     for (gate <- leftGates) {
       trace.mapLeft(gate, gate match {
         case And(name, _) => And(result, name)
@@ -152,31 +114,15 @@ class MergeAlgorithm {
     }
 
     // merge components
-    val (leftComponents, rightComponents, matchingComponents) = decompose(left.components, right.components)
+    val (leftComponents, matchingComponents, rightComponents) = decompose(left.components, right.components)
     for (component <- leftComponents) {
-      copyLeft(component, result, trace)
+      copy(component, result, trace, trace.mapLeft(_, _))
     }
     for (component <- rightComponents) {
-      copyRight(component, result, trace)
+      copy(component, result, trace, trace.mapRight(_, _))
     }
     for ((leftComponent, rightComponent) <- matchingComponents) {
-      mergeComponents(leftComponent, rightComponent, result, trace)
-    }
-
-    // connect ports
-    for (port <- result.outports ++ result.components.flatten(_.inports)) {
-      trace.sources(port) match {
-        case (Some(leftSource: Port), Some(rightSource: Port)) => leftSource.input foreach {
-          case input => port += trace.target(input).asInstanceOf[Source]
-        }
-        case (Some(leftSource: Port), None) => leftSource.input foreach {
-          case input => port += trace.target(input).asInstanceOf[Source]
-        }
-        case (None, Some(rightSource: Port)) => rightSource.input foreach {
-          case input => port += trace.target(input).asInstanceOf[Source]
-        }
-        case _ => throw new IllegalStateException
-      }
+      merge(leftComponent, rightComponent, result, trace)
     }
 
     // connect gates
@@ -195,39 +141,63 @@ class MergeAlgorithm {
       }
     }
 
+    // connect ports, detect conflicts
+    for (port <- result.outports ++ result.components.flatten(_.inports)) {
+      trace.sources(port) match {
+        case (Some(leftSource: Port), Some(rightSource: Port)) => {
+          leftSource.input match {
+            case None => rightSource.input match {
+              case None =>
+              case Some(input) => port += trace.target(input).asInstanceOf[Source]
+            }
+            case Some(input) => rightSource.input match {
+              case None => port += trace.target(input).asInstanceOf[Source]
+              case Some(other) => if (elementMatching(input, other))
+                port += trace.target(input).asInstanceOf[Source]
+              else
+                trace.conflict(input, other)
+            }
+          }
+        }
+        case (Some(leftSource: Port), None) => leftSource.input foreach {
+          case input => port += trace.target(input).asInstanceOf[Source]
+        }
+        case (None, Some(rightSource: Port)) => rightSource.input foreach {
+          case input => port += trace.target(input).asInstanceOf[Source]
+        }
+        case _ => throw new IllegalStateException
+      }
+    }
+
     result
   }
 
-  private def decompose[T <: Element](left: Set[T], right: Set[T]): (Set[T], Set[T], Iterable[(T, T)]) = {
-    val pairs = matchingPairs(left, right)
-    val (singleLeft, singleRight) = singleElements(left, right, pairs)
-    (singleLeft, singleRight, pairs)
-  }
+  private def decompose[T](left: Set[T], right: Set[T])(implicit matching: (T, T) => Boolean): (Set[T], Set[(T, T)], Set[T]) = {
+    val matchingPairs = for {
+      leftElement <- left
+      rightElement <- right
+      if (matching(leftElement, rightElement))
+    } yield (leftElement, rightElement)
 
-  private def matchingPairs[T <: Element](left: Set[T], right: Set[T]): Iterable[(T, T)] = for {
-    leftElement <- left
-    rightElement <- right
-    if matches(leftElement, rightElement)
-  } yield (leftElement, rightElement)
-
-  private def matches(left: Set[Source], right: Set[Source]): Boolean =
-    left.size == right.size &&
-    left.forall(element => right.exists(matches(element, _))) &&
-    right.forall(element => left.exists(matches(element, _)))
-
-  private def matches(left: Element, right: Element): Boolean = (left.name == right.name) && (left match {
-    case And(_, inputs) => right.isInstanceOf[And] && matches(inputs, right.asInstanceOf[Gate].inputs)
-    case Or(_, inputs) => right.isInstanceOf[Or] && matches(inputs, right.asInstanceOf[Gate].inputs)
-    case _ => true
-  })
-
-  private def singleElements[T <: Element](left: Set[T], right: Set[T], pairs: Iterable[(T, T)]): (Set[T], Set[T]) = {
-    val singleLeft = left.filterNot(element => pairs.exists {
+    val leftSingles = left.filterNot(element => matchingPairs.exists {
       case (left, _) => element == left
     })
-    val singleRight = right.filterNot(element => pairs.exists {
+
+    val rightSingles = right.filterNot(element => matchingPairs.exists {
       case (_, right) => element == right
     })
-    (singleLeft, singleRight)
+
+    (leftSingles, matchingPairs, rightSingles)
   }
+
+  private def setMatching[T](left: Set[T], right: Set[T])(implicit matching: (T, T) => Boolean): Boolean =
+    left.size == right.size &&
+    left.forall(element => right.exists(matching(element, _))) &&
+    right.forall(element => left.exists(matching(element, _)))
+
+  private implicit def elementMatching(left: Element, right: Element): Boolean = (left.name == right.name) && (left match {
+    case And(_, inputs) => right.isInstanceOf[And] && setMatching(inputs, right.asInstanceOf[Gate].inputs)
+    case Or(_, inputs) => right.isInstanceOf[Or] && setMatching(inputs, right.asInstanceOf[Gate].inputs)
+    case _ => true
+  })
 }

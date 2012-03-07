@@ -16,9 +16,9 @@ object DiagramCreator {
   var mainTop = 40
   var mainLeft = 40
   var horizontalMargin = 40
-  var verticalMargin = 80
+  var verticalMargin = 30
   var horizontalSpacing = 40
-  var verticalSpacing = 80
+  var verticalSpacing = 30
   var portSpacing = 50
   var subHeight = 80
   var gateHeight = 40
