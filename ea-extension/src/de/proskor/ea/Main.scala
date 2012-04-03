@@ -17,10 +17,17 @@ class Main extends Extension with Adapter {
   def stop() {}
 
   def test() {
-    val repository = Repository("/")
-    val pkg = Package(repository, "TEST")
-    val subpkg = Package(pkg, "SUB")
+    val repository = de.proskor.automation.Repository
+    repository.peer = de.proskor.cft.model.ea.EAFactory.repositoryPeer
+    for {
+      model <- repository.models
+      pkg <- deepPkg(model)
+      diagram <- pkg.diagrams
+    } write(diagram.name)
   }
+
+  def deepPkg(pkg: de.proskor.automation.Package): Iterable[de.proskor.automation.Package] =
+    pkg.packages ++ pkg.packages.flatMap(deepPkg)
 
   def testRunner(clazz: Class[_]) = new JUnitRunner(clazz.asInstanceOf[Class[Suite]])
 
