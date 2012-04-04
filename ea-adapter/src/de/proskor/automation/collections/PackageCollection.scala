@@ -1,5 +1,6 @@
-package de.proskor.automation
+package de.proskor.automation.collections
 
+import de.proskor.automation.Package
 import cli.EA.ICollection
 import cli.EA.IPackage
 

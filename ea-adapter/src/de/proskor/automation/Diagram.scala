@@ -1,5 +1,6 @@
 package de.proskor.automation
 
+import de.proskor.automation.collections._
 import cli.EA.ICollection
 import cli.EA.IDiagram
 

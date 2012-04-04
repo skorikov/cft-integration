@@ -1,4 +1,4 @@
-package de.proskor.automation
+package de.proskor.automation.collections
 
 import cli.EA.ICollection
 
