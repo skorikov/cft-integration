@@ -22,8 +22,9 @@ class Main extends Extension with Adapter {
     for {
       model <- repository.models
       pkg <- deepPkg(model)
-      diagram <- pkg.diagrams
-    } write(diagram.name)
+      element <- pkg.elements
+      kid <- element.elements
+    } write(element.name + " containts " + kid.name)
   }
 
   def deepPkg(pkg: de.proskor.automation.Package): Iterable[de.proskor.automation.Package] =

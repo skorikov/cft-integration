@@ -18,5 +18,4 @@ class Package(peer: IPackage) {
       Some(new Package(Repository.getPackageById(peer.get_ParentID)))
     else
       None
-      
 }

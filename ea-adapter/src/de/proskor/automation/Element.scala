@@ -1,6 +1,7 @@
 package de.proskor.automation
 
 import cli.EA.IElement
+import cli.EA.ICollection
 
 class Element(peer: IElement) {
   def id: Int = peer.get_ElementID
@@ -10,4 +11,7 @@ class Element(peer: IElement) {
 
   def stereotype: String = peer.get_Stereotype.asInstanceOf[String]
   def stereotype_(stereotype: String): Unit = peer.set_Stereotype(stereotype)
+
+  def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
+  def connectors: Collection[Connector] = new ConnectorCollection(peer.get_Connectors.asInstanceOf[ICollection])
 }
