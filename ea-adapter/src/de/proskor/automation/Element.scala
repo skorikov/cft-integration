@@ -16,6 +16,14 @@ class Element(peer: IElement) {
   def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
   def connectors: Collection[Connector] = new ConnectorCollection(peer.get_Connectors.asInstanceOf[ICollection])
 
+  def parent: Option[Element] =
+    if (peer.get_ParentID > 0)
+      Some(new Element(Repository.getElementById(peer.get_ParentID)))
+    else
+      None
+
+  def pkg: Package = new Package(Repository.getPackageById(peer.get_PackageID))
+
   override def equals(that: Any): Boolean = that match {
     case element: Element => id == element.id
     case _ => false
