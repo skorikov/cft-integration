@@ -8,4 +8,5 @@ class DiagramCollection(peer: ICollection) extends Collection[Diagram](peer) {
   type PeerType = IDiagram
   override def create(peer: IDiagram): Diagram = new Diagram(peer)
   override def update(peer: IDiagram): Unit = peer.Update()
+  override def matches(element: Diagram, peer: IDiagram) = element.id == peer.get_DiagramID
 }

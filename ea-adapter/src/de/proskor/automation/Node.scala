@@ -3,6 +3,8 @@ package de.proskor.automation
 import cli.EA.IDiagramObject
 
 class Node(peer: IDiagramObject) {
+  def id: Int = peer.get_InstanceID
+
   def left = peer.get_left
   def left_=(left: Int) {
     peer.set_right(peer.get_right - peer.get_left + left)
@@ -31,4 +33,11 @@ class Node(peer: IDiagramObject) {
 
   def diagram: Diagram = new Diagram(Repository.getDiagramById(peer.get_DiagramID))
   def element: Element = new Element(Repository.getElementById(peer.get_ElementID))
+
+  override def equals(that: Any): Boolean = that match {
+    case node: Node => id == node.id
+    case _ => false
+  }
+
+  override def hashCode: Int = id
 }

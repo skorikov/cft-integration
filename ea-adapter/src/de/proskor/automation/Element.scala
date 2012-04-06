@@ -11,8 +11,15 @@ class Element(peer: IElement) {
   def name_=(name: String): Unit = peer.set_Name(name)
 
   def stereotype: String = peer.get_Stereotype.asInstanceOf[String]
-  def stereotype_(stereotype: String): Unit = peer.set_Stereotype(stereotype)
+  def stereotype_=(stereotype: String): Unit = peer.set_Stereotype(stereotype)
 
   def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
   def connectors: Collection[Connector] = new ConnectorCollection(peer.get_Connectors.asInstanceOf[ICollection])
+
+  override def equals(that: Any): Boolean = that match {
+    case element: Element => id == element.id
+    case _ => false
+  }
+
+  override def hashCode: Int = id
 }

@@ -14,6 +14,7 @@ import de.proskor.cft.model.Inport
 import de.proskor.cft.model.Or
 
 class MergeTests extends JUnitSuite {
+  @Ignore
   @Test
   def testMerge() {
     val repository = Repository("/")
@@ -50,6 +51,7 @@ class MergeTests extends JUnitSuite {
     val result = al.merge(left, right, target, trace)
   }
 
+  @Ignore
   @Test
   def testOutports() {
     val repository = Repository("/")

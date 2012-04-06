@@ -2,6 +2,7 @@ package de.proskor.ea
 import de.proskor.cft.model.Repository
 import de.proskor.cft.model.Package
 import de.proskor.cft.model.Element
+import de.proskor.cft.test.AITests
 import de.proskor.cft.test.CftTests
 import de.proskor.cft.test.MergeTests
 import de.proskor.ea.ui.MergeDialog
@@ -18,7 +19,7 @@ class Main extends Extension with Adapter {
 
   def test() {
     val repository = de.proskor.automation.Repository
-    repository.peer = de.proskor.cft.model.ea.EAFactory.repositoryPeer
+  //  repository.peer = de.proskor.cft.model.ea.EAFactory.repositoryPeer
     for {
       model <- repository.models
       pkg <- deepPkg(model)
@@ -41,8 +42,9 @@ class Main extends Extension with Adapter {
   }
 
   def runTests() {
+    testRunner(classOf[AITests]).run(testNotifier)
     testRunner(classOf[CftTests]).run(testNotifier)
-    testRunner(classOf[MergeTests]).run(testNotifier)
+  //  testRunner(classOf[MergeTests]).run(testNotifier)
     write("---- ALL TESTS DONE ----")
   }
 

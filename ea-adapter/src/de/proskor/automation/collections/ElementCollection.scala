@@ -8,4 +8,5 @@ class ElementCollection(peer: ICollection) extends Collection[Element](peer) {
   type PeerType = IElement
   override def create(peer: IElement): Element = new Element(peer)
   override def update(peer: IElement): Unit = peer.Update()
+  override def matches(element: Element, peer: IElement) = element.id == peer.get_ElementID
 }

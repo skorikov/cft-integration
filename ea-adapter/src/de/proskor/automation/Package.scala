@@ -19,4 +19,11 @@ class Package(peer: IPackage) {
       Some(new Package(Repository.getPackageById(peer.get_ParentID)))
     else
       None
+
+  override def equals(that: Any): Boolean = that match {
+    case pkg: Package => id == pkg.id
+    case _ => false
+  }
+
+  override def hashCode: Int = id
 }

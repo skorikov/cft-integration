@@ -2,44 +2,44 @@ package de.proskor.cft.model.ea.peers
 import de.proskor.cft.model.ea._
 
 class EAProxyPeer(var name: String, var stereotype: String) extends EAPeer {
-  def this(peer: EAPeer) = this(peer.name, peer.stereotype)
+  def this(peer: Peer) = this(peer.name, peer.stereotype)
 
-  def id: Int =
+  override def id: Int =
     throw new IllegalStateException
 
-  def elements: Set[EAPeer] =
+  override def elements: Set[Peer] =
     throw new IllegalStateException
 
-  def elementsOfType(stereotypes: String*): Set[EAPeer] =
+  override def elementsOfType(stereotypes: String*): Set[Peer] =
     throw new IllegalStateException
 
-  def packages: Set[EAPeer] =
+  override def packages: Set[PackagedPeer] =
     throw new IllegalStateException
 
   def createPeer(name: String, stereotype: String): EAPeer =
     throw new IllegalStateException
 
-  def parent: EAPeer =
+  override def parent: EAPeer =
     throw new IllegalStateException
 
-  def deletePackage(pkg: EAPeer) =
+  override def deletePackage(pkg: PackagedPeer) =
     throw new IllegalStateException
 
-  def deleteElement(el: EAPeer) =
+  override def deleteElement(el: Peer) =
     throw new IllegalStateException
 
-  def addPackage(name: String): EAPeer =
+  override def addPackage(name: String): EAPeer =
     throw new IllegalStateException
 
-  def addElement(name: String, stereotype: String): EAPeer =
+  override def addElement(name: String, stereotype: String): EAPeer =
     throw new IllegalStateException
 
-  def connectedElements: Set[EAPeer] =
+  override def connectedElements: Set[Peer] =
     throw new IllegalStateException
 
-  def connect(element: EAPeer) =
+  override def connect(element: Peer) =
     throw new IllegalStateException
 
-  def disconnect(element: EAPeer) =
+  override def disconnect(element: Peer) =
     throw new IllegalStateException
 }

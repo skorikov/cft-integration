@@ -8,4 +8,5 @@ class ConnectorCollection(peer: ICollection) extends Collection[Connector](peer)
   type PeerType = IConnector
   override def create(peer: IConnector): Connector = new Connector(peer)
   override def update(peer: IConnector): Unit = peer.Update()
+  override def matches(element: Connector, peer: IConnector) = element.id == peer.get_ConnectorID
 }

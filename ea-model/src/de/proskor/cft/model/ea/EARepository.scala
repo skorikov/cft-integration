@@ -2,7 +2,7 @@ package de.proskor.cft.model.ea
 import de.proskor.cft.model._
 import de.proskor.cft.model.ea.peers._
 
-private class EARepository(initialPeer: EARepositoryPeer) extends EAElement(initialPeer) with Repository {
+private class EARepository(var peer: PackagedPeer with ContainerPeer) extends EAElementTrait[PackagedPeer with ContainerPeer] with Repository {
   override def name = "/"
   override def name_=(name: String) {}
   override def parent: Option[Container] = None
@@ -25,7 +25,7 @@ private class EARepository(initialPeer: EARepositoryPeer) extends EAElement(init
     val pkg = element.asInstanceOf[EAPackage]
     pkg.peer match {
       case peer: EAProxyPeer =>
-      case pkgPeer: EAPackagePeer => peer.deletePackage(pkgPeer); pkg.peer = new EAProxyPeer(pkgPeer)
+      case pkgPeer: PackagePeer => peer.deletePackage(pkgPeer); pkg.peer = new EAProxyPeer(pkgPeer)
     }
   }
 }

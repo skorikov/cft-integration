@@ -15,7 +15,8 @@ trait Adapter extends Extension {
   def EA_OnPostInitialized(repository: IRepository) {
     Factory.default = EAFactory
     repositoryPeer = repository
-    EAFactory.repositoryPeer = repository
+    de.proskor.automation.Repository.peer = repository
+  //  EAFactory.repositoryPeer = repository
     start()
   }
 

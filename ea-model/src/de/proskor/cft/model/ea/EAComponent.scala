@@ -2,7 +2,7 @@ package de.proskor.cft.model.ea
 import de.proskor.cft.model._
 import de.proskor.cft.model.ea.peers._
 
-private class EAComponent(initialPeer: EAPeer) extends EAElement(initialPeer) with Component {
+private class EAComponent(peer: ContainerPeer) extends EAElement(peer) with Component {
   def elements: Set[Element] = peer.elements.map(EAFactory.create)
   def components: Set[Component] = peer.elementsOfType("Component").map(EAFactory.create).asInstanceOf[Set[Component]]
   def gates: Set[Gate] = peer.elementsOfType("AND", "OR").map(EAFactory.create).asInstanceOf[Set[Gate]]
@@ -24,7 +24,7 @@ private class EAComponent(initialPeer: EAPeer) extends EAElement(initialPeer) wi
     val el = element.asInstanceOf[EAElement]
     el.peer match {
       case peer: EAProxyPeer =>
-      case elPeer: EAElementPeer => peer.deleteElement(elPeer); el.peer = new EAProxyPeer(elPeer)
+      case elPeer: ElementPeer => peer.deleteElement(elPeer); el.peer = new EAProxyPeer(elPeer)
     }
   }
 }

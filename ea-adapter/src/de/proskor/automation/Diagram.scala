@@ -14,4 +14,11 @@ class Diagram(peer: IDiagram) {
   def stereotype_(stereotype: String): Unit = peer.set_Stereotype(stereotype)
 
   def nodes: Collection[Node] = new NodeCollection(peer.get_DiagramObjects.asInstanceOf[ICollection])
+
+  override def equals(that: Any): Boolean = that match {
+    case diagram: Diagram => id == diagram.id
+    case _ => false
+  }
+
+  override def hashCode: Int = id
 }

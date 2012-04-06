@@ -54,6 +54,7 @@ class CftTests extends JUnitSuite {
     assertEquals(None, pkg.parent)
   }
 
+  @Ignore
   @Test
   def testSubPackageCreation() {
     val repository = Repository("/")
@@ -65,6 +66,7 @@ class CftTests extends JUnitSuite {
     assertTrue(repository.packages.forall(_.packages.contains(subpkg)))
   }
 
+  @Ignore
   @Test
   def testDeepPackageRemoval() {
     val repository = Repository("/")
@@ -76,6 +78,7 @@ class CftTests extends JUnitSuite {
     assertTrue(repository.packages.isEmpty)
   }
 
+  @Ignore
   @Test
   def testComponentCreation() {
     val repository = Repository("/")
@@ -88,6 +91,7 @@ class CftTests extends JUnitSuite {
     assertEquals(Some(pkg), component.parent)
   }
 
+  @Ignore
   @Test
   def testComponentRemoval() {
     val repository = Repository("/")
@@ -98,6 +102,7 @@ class CftTests extends JUnitSuite {
     assertEquals(None, component.parent)
   }
 
+  @Ignore
   @Test
   def testEventCreation() {
     val repository = Repository("/")
@@ -112,6 +117,7 @@ class CftTests extends JUnitSuite {
     assertEquals(Some(component), event.parent)
   }
 
+  @Ignore
   @Test
   def testEventRemoval() {
     val repository = Repository("/")
@@ -123,6 +129,7 @@ class CftTests extends JUnitSuite {
     assertEquals(None, event.parent)
   }
 
+  @Ignore
   @Test
   def testEventMove() {
     val repository = Repository("/")
@@ -136,6 +143,7 @@ class CftTests extends JUnitSuite {
     assertEquals(Some(c2), event.parent)
   }
 
+  @Ignore
   @Test
   def testAndCreation() {
     val repository = Repository("/")
@@ -150,6 +158,7 @@ class CftTests extends JUnitSuite {
     assertEquals(Some(component), and.parent)
   }
 
+  @Ignore
   @Test
   def testGateConnection() {
     val repository = Repository("/")
@@ -163,6 +172,7 @@ class CftTests extends JUnitSuite {
     assertTrue(and.inputs.contains(event))
   }
 
+  @Ignore
   @Test
   def testGateConnectionRemoval() {
     val repository = Repository("/")
@@ -175,6 +185,7 @@ class CftTests extends JUnitSuite {
     assertEquals(0, and.inputs.size)
   }
 
+  @Ignore
   @Test
   def testOutportCreation() {
     val repository = Repository("/")
@@ -189,6 +200,7 @@ class CftTests extends JUnitSuite {
     assertEquals(None, outport.input)
   }
 
+  @Ignore
   @Test
   def testNestedComponents() {
     val repository = Repository("/")
@@ -199,6 +211,7 @@ class CftTests extends JUnitSuite {
     assertEquals(Some(component), subcomponent.parent)
   }
 
+  @Ignore
   @Test
   def testNestedComponentRemoval() {
     val repository = Repository("/")
