@@ -12,19 +12,21 @@ class AITests extends JUnitSuite {
   @Test
   def testRepository() {
     val name: String = "P1"
-    assertTrue(Repository.models.isEmpty)
-    val pkg = Repository.models.add(name, "Package")
+    val repository = Repository.instance
+    assertTrue(repository.models.isEmpty)
+    val pkg = repository.models.add(name, "Package")
     assertNotNull(pkg)
     assertEquals(pkg.name, name)
     assertEquals(None, pkg.parent)
-    assertEquals(1, Repository.models.size)
-    Repository.models.delete(pkg)
-    assertTrue(Repository.models.isEmpty)
+    assertEquals(1, repository.models.size)
+    repository.models.delete(pkg)
+    assertTrue(repository.models.isEmpty)
   }
 
   @Test
   def testSubpackages() {
-    val pkg = Repository.models.add("P1", "Package")
+    val repository = Repository.instance
+    val pkg = repository.models.add("P1", "Package")
     val kid = pkg.packages.add("P2", "Package")
     assertNotNull(kid)
     assertEquals(kid.name, "P2")
@@ -38,6 +40,6 @@ class AITests extends JUnitSuite {
 object AITests {
   @AfterClass
   def clearRepository() {
-    Repository.models.clear;
+    Repository.instance.models.clear;
   }
 }
