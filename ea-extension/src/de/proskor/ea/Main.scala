@@ -18,8 +18,7 @@ class Main extends Extension with Adapter {
   def stop() {}
 
   def test() {
-    val repository = de.proskor.automation.Repository
-  //  repository.peer = de.proskor.cft.model.ea.EAFactory.repositoryPeer
+    val repository = de.proskor.automation.Repository.instance
     for {
       model <- repository.models
       pkg <- deepPkg(model)

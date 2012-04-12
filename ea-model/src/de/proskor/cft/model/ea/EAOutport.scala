@@ -1,5 +1,6 @@
 package de.proskor.cft.model.ea
-import de.proskor.cft.model.ea.peers.ConnectedPeer
-import de.proskor.cft.model.Outport
 
-private class EAOutport(initialPeer: ConnectedPeer) extends EAPort(initialPeer) with Outport
+import de.proskor.cft.model.Outport
+import de.proskor.cft.model.ea.peers.ElementPeer
+
+class EAOutport(var peer: ElementPeer) extends EAPort with Outport

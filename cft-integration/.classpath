@@ -6,6 +6,5 @@
 	<classpathentry kind="lib" path="lib/Interop.EA.jar"/>
 	<classpathentry kind="lib" path="lib/mscorlib.jar"/>
 	<classpathentry kind="lib" path="lib/swt.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.eol.engine"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

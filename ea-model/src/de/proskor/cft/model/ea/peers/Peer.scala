@@ -4,5 +4,7 @@ trait Peer {
   def id: Int
   var name: String
   var stereotype: String
-  def parent: ContainerPeer
+  val isProxy: Boolean
+//  def add[T <: Peer](peer: T): T
+//  def remove[T <: Peer](peer: T): T
 }

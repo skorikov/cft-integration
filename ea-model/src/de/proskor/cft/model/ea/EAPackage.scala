@@ -1,31 +1,19 @@
 package de.proskor.cft.model.ea
-import de.proskor.cft.model._
-import de.proskor.cft.model.ea.peers._
 
-private class EAPackage(var peer: PackagedPeer with ContainerPeer) extends EAElementTrait[PackagedPeer with ContainerPeer] with Package {
-  def components: Set[Component] = peer.elementsOfType("Component").map(EAFactory.create).asInstanceOf[Set[Component]]
-  def packages: Set[Package] = peer.packages.map(EAFactory.create).asInstanceOf[Set[Package]]
-  def elements: Set[Element] = peer.elements.map(EAFactory.create)
+import de.proskor.cft.model.Container
+import de.proskor.cft.model.Package
+import de.proskor.cft.model.Component
+import de.proskor.cft.model.Element
+import de.proskor.cft.model.ea.peers.PackagePeer
+import de.proskor.cft.model.ea.peers.RepositoryPeer
 
-  def add(element: Element) {
-    require(element.isInstanceOf[EAPackage] || element.isInstanceOf[EAComponent])
-    val el = element.asInstanceOf[EAElement]
-    el.parent foreach {
-      case container => container -= el
-    }
-    el.peer = element match {
-      case pkg: EAPackage => peer.addPackage(pkg.name)
-      case component: EAComponent => peer.addElement(component.name, "Component")
-    }
-  }
-
-  def remove(element: Element) {
-    require(element.isInstanceOf[EAPackage] || element.isInstanceOf[EAComponent])
-    val el = element.asInstanceOf[EAElement]
-    el.peer match {
-      case peer: EAProxyPeer =>
-      case pkgPeer: PackagePeer => peer.deletePackage(pkgPeer); el.peer = new EAProxyPeer(pkgPeer)
-      case elPeer: ElementPeer => peer.deleteElement(elPeer); el.peer = new EAProxyPeer(elPeer)
-    }
-  }
+class EAPackage(var peer: PackagePeer) extends PackagePeered with Package {
+  override def parent: Option[Container] =
+    if (peer.isProxy) None
+    else Some(peer.container.map(new EAPackage(_)).getOrElse(new EARepository(RepositoryPeer.instance)))
+  override def elements: Set[Element] = components ++ packages
+  override def components: Set[Component] = peer.elements.withFilter(_.stereotype == "Component").map(new EAComponent(_))
+  override def packages: Set[Package] = peer.packages.map(new EAPackage(_))
+  override def add(element: Element) {}
+  override def remove(element: Element) {}
 }

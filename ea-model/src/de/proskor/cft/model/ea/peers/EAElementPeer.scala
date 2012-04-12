@@ -1,101 +1,40 @@
 package de.proskor.cft.model.ea.peers
-import de.proskor.cft.model.ea._
 
-class EAElementPeer(val instance: cli.EA.IElement) extends EAPeer {
-  val id: Int = instance.get_ElementID
+import de.proskor.automation.Element
 
-  def name = instance.get_Name.asInstanceOf[String]
-  def name_=(name: String) = instance.set_Name(name)
+class EAElementPeer(val peer: Element) extends ElementPeer {
+  override def id: Int = peer.id
 
-  def stereotype: String = instance.get_Stereotype.asInstanceOf[String]
-  def stereotype_=(stereotype: String) = instance.set_Stereotype(stereotype)
+  override def name: String = peer.name
+  override def name_=(name: String) { peer.name = name }
 
-  private def kids: Set[cli.EA.IElement] = {
-    val collection = instance.get_Elements.asInstanceOf[cli.EA.ICollection]
-    val instances = for (i <- 0 until collection.get_Count) yield collection.GetAt(i.toShort).asInstanceOf[cli.EA.IElement]
-    instances.toSet
-  }
+  override def stereotype: String = peer.stereotype
+  override def stereotype_=(stereotype: String) { peer.stereotype = stereotype }
 
-  def packages: Set[EAPeer] = Set()
+  override val isProxy: Boolean = false
 
-  def elements: Set[EAPeer] =
-    for (kid <- kids) yield new EAElementPeer(kid)
+  override def parent: Option[ElementPeer] = peer.parent.map(new EAElementPeer(_))
+  override def pkg: PackagePeer = null // TODO
 
-  def elementsOfType(stereotypes: String*): Set[EAPeer] =
-    for (kid <- kids if stereotypes.contains(kid.get_Stereotype)) yield new EAElementPeer(kid)
+  override def elements: Set[ElementPeer] = peer.elements.map(new EAElementPeer(_)).toSet
+  override def inputs: Set[ElementPeer] = Set()
+  override def connect(element: ElementPeer) {}
+  override def disconnect(element: ElementPeer) {}
 
-  def addElement(name: String, stereotype: String): EAPeer = {
-    val collection = instance.get_Elements.asInstanceOf[cli.EA.ICollection]
-    val element = collection.AddNew(name, if (Set("Input", "Output").contains(stereotype)) "Port" else "Object").asInstanceOf[cli.EA.IElement]
-    element.set_Stereotype(stereotype)
-    element.Update()
-    collection.Refresh()
-    EAFactory.cache += element.get_ElementID -> element
-    new EAElementPeer(element)
-  }
+  override def add(element: ElementPeer): ElementPeer = if (element.isProxy) {
+    val result = peer.elements.add(element.name, "Object")
+    result.stereotype = element.stereotype
+    new EAElementPeer(result)
+  } else if (!elements.contains(element)) {
+    element.parent.get.remove(element)
+    val result = peer.elements.add(element.name, "Object")
+    result.stereotype = element.stereotype
+    new EAElementPeer(result)
+  } else element
 
-  def parent: EAPeer = {
-    if (instance.get_ParentID > 0)
-      new EAElementPeer(EAFactory.element(instance.get_ParentID))
-    else
-      new EAPackagePeer(EAFactory.pkg(instance.get_PackageID))
-  }
-
-  def deleteElement(element: EAPeer) {
-    val collection = instance.get_Elements.asInstanceOf[cli.EA.ICollection]
-    var i = 0
-    var found = false
-    while (i < collection.get_Count && !found) {
-      if (collection.GetAt(i.toShort).asInstanceOf[cli.EA.IElement].get_ElementID == element.asInstanceOf[EAElementPeer].instance.get_ElementID)
-        found = true
-      else
-        i += 1
-    }
-    if (found) {
-      collection.Delete(i.toShort)
-      collection.Refresh()
-      EAFactory.cache -= element.id
-    }
-  }
-
-  def deletePackage(pkg: EAPeer) {}
-  def addPackage(name: String): EAPeer = null
-
-  def connectedElements: Set[EAPeer] = {
-    val collection = instance.get_Connectors.asInstanceOf[cli.EA.Collection]
-    val instances = for {
-      i <- 0 until collection.get_Count
-      connector = collection.GetAt(i.toShort).asInstanceOf[cli.EA.IConnector]
-      if connector.get_SupplierID == instance.get_ElementID && connector.get_Stereotype == "Connection"
-    } yield new EAElementPeer(EAFactory.element(connector.get_ClientID))
-    instances.toSet
-  }
-
-  def connect(element: EAPeer) {
-    val collection = instance.get_Connectors.asInstanceOf[cli.EA.Collection]
-    val connector = collection.AddNew("", "Connector").asInstanceOf[cli.EA.IConnector]
-    connector.set_Stereotype("Connection")
-    connector.set_SupplierID(id)
-    connector.set_ClientID(element.id)
-    connector.set_Direction("Source -> Destination")
-    connector.Update()
-    collection.Refresh()
-  }
-
-  def disconnect(element: EAPeer) {
-    val collection = instance.get_Connectors.asInstanceOf[cli.EA.Collection]
-    var i = 0
-    var found = false
-    while (i < collection.get_Count && !found) {
-      val connector = collection.GetAt(i.toShort).asInstanceOf[cli.EA.IConnector]
-      if (connector.get_SupplierID == id && connector.get_ClientID == element.id && connector.get_Stereotype == "Connection")
-        found = true
-      else
-        i += 1
-    }
-    if (found) {
-      collection.Delete(i.toShort)
-      collection.Refresh()
-    }
+  override def remove(element: ElementPeer): ElementPeer = if (element.isProxy) {
+    element
+  } else {
+    element
   }
 }

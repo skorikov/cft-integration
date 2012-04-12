@@ -1,22 +1,18 @@
 package de.proskor.cft.model.ea
-import de.proskor.cft.model.ea.peers._
-import de.proskor.cft.model.Port
-import de.proskor.cft.model.Source
 
-private class EAPort(peer: ConnectedPeer) extends EAElement(peer) with Port {
-  def input: Option[Source] = {
-    val connectedElements = peer.connectedElements.map(EAFactory.create).asInstanceOf[Set[Source]]
-    if (connectedElements.isEmpty)
-      None
-    else
-      Some(connectedElements.head)
+import de.proskor.cft.model.Port
+import de.proskor.cft.model.Container
+import de.proskor.cft.model.Source
+import de.proskor.cft.model.ea.peers.ElementPeer
+
+abstract class EAPort extends ElementPeered with Port {
+  override def peer: ElementPeer
+  override def parent: Option[Container] = if (peer.isProxy) None else peer.parent.map(new EAComponent(_))
+  override def input: Option[Source] = None
+  override def add(input: Source) {
+    peer.connect(input.asInstanceOf[ElementPeered].peer)
   }
-  def add(input: Source) {
-    require(input.isInstanceOf[EAElement])
-    peer.connect(input.asInstanceOf[EAElement].peer)
-  }
-  def remove(input: Source) {
-    require(input.isInstanceOf[EAElement])
-    peer.disconnect(input.asInstanceOf[EAElement].peer)
+  override def remove(input: Source) {
+    peer.disconnect(input.asInstanceOf[ElementPeered].peer)
   }
 }

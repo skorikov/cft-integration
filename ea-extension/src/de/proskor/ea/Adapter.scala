@@ -1,5 +1,6 @@
 package de.proskor.ea
 import cli.EA.IRepository
+import de.proskor.automation.impl.RepositoryImpl
 import de.proskor.cft.model.ea.EAFactory
 import de.proskor.cft.model.Factory
 
@@ -13,10 +14,9 @@ trait Adapter extends Extension {
   val MergeMenuItem = "Merge..."
 
   def EA_OnPostInitialized(repository: IRepository) {
-    Factory.default = EAFactory
     repositoryPeer = repository
-    de.proskor.automation.Repository.peer = repository
-  //  EAFactory.repositoryPeer = repository
+    RepositoryImpl.peer = repository
+    Factory.default = EAFactory
     start()
   }
 
