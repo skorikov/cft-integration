@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<UMLProfile profiletype="uml2">
+	<Documentation id="59DDFB76-9" name="CFT" version="1.0" notes="CFT"/>
+	<Content>
+		<Stereotypes>
+			<Stereotype name="AND" notes="" generalizes="Gate" baseStereotypes="Gate">
+				<Image type="EAShapeScript 1.0" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="bin.base64">UEsDBBQAAAAIADqDV0DRBQYKoAAAAEYBAAAHABEAc3RyLmRhdFVUDQAHeWhGT3loRk95aEZP
+lY8xCsJAEEV/q+AdJDYKFgp2YhHQUpscQEKiiWDWkKwKBu/u2yQaCxuLnfkz8/4MWypVqFwH
+DZWhTjKoSgP11dNNe3pnukndX/E8RdBGllhQLVs2/YM1uqisL8eoe0tbmCvkm4rRRwVsfKDG
+WmimKZzLkw9VMIvwhmxNuO/IhmvinPytOmeO1/3X4jK4PPnaaU3+xbj5iLmvrTaojnrqBVBL
+AQIXCxQAAAAIADqDV0DRBQYKoAAAAEYBAAAHAAkAAAAAAAAAAAAAgAAAAABzdHIuZGF0VVQF
+AAd5aEZPUEsFBgAAAAABAAEAPgAAANYAAAAAAA==</Image>
+			</Stereotype>
+			<Stereotype name="Component" notes="">
+				<Image type="EAShapeScript 1.0" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="bin.base64">UEsDBBQAAAAIALaBV0AWCiO/bQAAAKYAAAAHABEAc3RyLmRhdFVUDQAHp2VGT6dlRk+nZUZP
+K2bIYEhkKGBIZVBgyAWyMhnygKxqBl4GLgZOIDufoRisIgXIKgfK2AJxCUMRQylQhzVUVRGQ
+nQwUTQSqT2fIAfI0GAwYdIAqIaQhkEZmacJ1FgD1gmwsAepQYlBm8GNwZPBlcAWylOCqaoEY
+AFBLAQIXCxQAAAAIALaBV0AWCiO/bQAAAKYAAAAHAAkAAAAAAAAAAAAAgAAAAABzdHIuZGF0
+VVQFAAenZUZPUEsFBgAAAAABAAEAPgAAAKMAAAAAAA==</Image>
+				<AppliesTo>
+					<Apply type="Object"/>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="Connection" notes="">
+				<AppliesTo>
+					<Apply type="Connector">
+						<Property name="direction" value="Source -&gt; Destination"/>
+						<Property name="kind" value=""/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="Event" notes="" generalizes="FailureMode" baseStereotypes="FailureMode">
+				<Image type="EAShapeScript 1.0" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="bin.base64">UEsDBBQAAAAIAG6CV0CZce1bsgAAAH4BAAAHABEAc3RyLmRhdFVUDQAHK2dGTytnRk8rZ0ZP
+lZCxCsIwFEXvquA/SFwUHBTcxMHBURc/QIJtrai1tFFB8d89r0jr0MUhLzd5595HUiqVV65Y
+fV1QR2Wol3rqqoO+qqyICPWgs2AFFbrhmH+pu3YQZ7yHym2M0x4ig42hXc2mf7AR50Rb2Cdq
+qJkmGsPbPqqpEp/HF3iFp6aQTTdmlk3L4SzDEmxNqc3+y2fMbUtKSLEsXxE2teBPTjja6Jyu
+/WXg1mmgjZZaa4VyNfXWB1BLAQIXCxQAAAAIAG6CV0CZce1bsgAAAH4BAAAHAAkAAAAAAAAA
+AAAAgAAAAABzdHIuZGF0VVQFAAcrZ0ZPUEsFBgAAAAABAAEAPgAAAOgAAAAAAA==</Image>
+				<AppliesTo>
+					<Apply type="Object"/>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="FailureMode" notes="" isAbstract="true"/>
+			<Stereotype name="Gate" notes="" isAbstract="true" generalizes="FailureMode" baseStereotypes="FailureMode">
+				<AppliesTo>
+					<Apply type="Object"/>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="Input" notes="" generalizes="Port" baseStereotypes="Port">
+				<Image type="EAShapeScript 1.0" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="bin.base64">UEsDBBQAAAAIALaCV0AQQGzshgAAADoBAAAHABEAc3RyLmRhdFVUDQAHl2dGT5dnRk+XZ0ZP
+jY9BCsIwFETfVsE7uKzgoi5ciYcJtFKxVWmjLsS7+0xVBCtISDL8efN/0lEROFIypVFt2auu
+TBgzUh/oElGoLjprd6TlZGL1pDorwVq0T/CsyJi93cbkWTp6ZyzJmdsj/yDqNPVFLPR6ple/
+uH+YoWmlfjH40o3Z2hUS8fhVa5ediW/6xh1QSwECFwsUAAAACAC2gldAEEBs7IYAAAA6AQAA
+BwAJAAAAAAAAAAAAAIAAAAAAc3RyLmRhdFVUBQAHl2dGT1BLBQYAAAAAAQABAD4AAAC8AAAA
+AAA=</Image>
+			</Stereotype>
+			<Stereotype name="OR" notes="" generalizes="Gate" baseStereotypes="Gate">
+				<Image type="EAShapeScript 1.0" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="bin.base64">UEsDBBQAAAAIACCDV0Btf8ZUnwAAAEQBAAAHABEAc3RyLmRhdFVUDQAHjGhGT4xoRk+MaEZP
+lY8xCsJAEEVfq+AdJDYKKRTsxMLCUoV4AAmJJkJcQ7IqKN7dv0k0FjYWO/Nn5v0ZtiQlJGdP
+n5PUESP1oEeXDld26mXqJlV/rucRiTZYxULVrGHTP1jDmbK6HEvdGtqKuYh8U7H0ga023qWG
+TBnji3N59KEKzSJ5Q21NdN+RNVfHifK3ap25vO6/Vi4jl8eGQPEX4aYD1ixYsZRqqScvUEsB
+AhcLFAAAAAgAIINXQG1/xlSfAAAARAEAAAcACQAAAAAAAAAAAACAAAAAAHN0ci5kYXRVVAUA
+B4xoRk9QSwUGAAAAAAEAAQA+AAAA1QAAAAAA</Image>
+			</Stereotype>
+			<Stereotype name="Output" notes="" generalizes="Port" baseStereotypes="Port">
+				<Image type="EAShapeScript 1.0" xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="bin.base64">UEsDBBQAAAAIANCCV0CfFUwQmAAAAHgBAAAHABEAc3RyLmRhdFVUDQAHwGdGT8BnRk/AZ0ZP
+jY/BCsIwEETnquA/eKzgoT14EPFjiq0oprYkUQ/iv/vcWghaQcImQ/bNbBJ0UKlOteZqUEed
+UXfNNNUE3SoYUaFudLZUlNcFx+ZNBXTUHq9j7SAd5ZWp0Jpa4vlUi8QdyffsHWdkWpZ0G5Ku
+lt9yv1JuGXlCOHvzQBT0eqZXv7h/mLFpNf1q9KXD/0sjXr/ypJxwfNMPPQFQSwECFwsUAAAA
+CADQgldAnxVMEJgAAAB4AQAABwAJAAAAAAAAAAAAAIAAAAAAc3RyLmRhdFVUBQAHwGdGT1BL
+BQYAAAAAAQABAD4AAADOAAAAAAA=</Image>
+			</Stereotype>
+			<Stereotype name="Port" notes="" isAbstract="true" generalizes="FailureMode" baseStereotypes="FailureMode">
+				<AppliesTo>
+					<Apply type="Port">
+						<Property name="isBehavior" value="false"/>
+						<Property name="isConjugated" value="false"/>
+						<Property name="isService" value="true"/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+		</Stereotypes>
+		<TaggedValueTypes/>
+	</Content>
+</UMLProfile>
