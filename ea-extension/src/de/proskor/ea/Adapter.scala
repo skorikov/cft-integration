@@ -1,4 +1,5 @@
 package de.proskor.ea
+
 import cli.EA.IRepository
 import de.proskor.automation.impl.RepositoryImpl
 import de.proskor.cft.model.ea.EAFactory
@@ -12,11 +13,12 @@ trait Adapter extends Extension {
   val TestMenuItem = "Test"
   val RunTestsMenuItem = "Run Tests"
   val MergeMenuItem = "Merge..."
+  val OutputTitle = "CFT Extension"
 
   def EA_OnPostInitialized(repository: IRepository) {
     repositoryPeer = repository
     RepositoryImpl.peer = repository
-    Factory.default = EAFactory
+    Factory.use(EAFactory)
     start()
   }
 
@@ -36,12 +38,16 @@ trait Adapter extends Extension {
     case _ =>
   }
 
-  def write(text: String) {
+  def write(text: String) = withVisibleOutput {
+    repositoryPeer.WriteOutput(OutputTitle, text, 1)
+  }
+
+  private def withVisibleOutput(f: => Unit) {
     if (!outputReady) {
-      repositoryPeer.CreateOutputTab("CFT Extension")
-      repositoryPeer.EnsureOutputVisible("CFT Extension")
+      repositoryPeer.CreateOutputTab(OutputTitle)
       outputReady = true
-    }
-    repositoryPeer.WriteOutput("CFT Extension", text, 1)
+    } 
+    repositoryPeer.EnsureOutputVisible(OutputTitle)
+    f
   }
 }

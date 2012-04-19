@@ -12,7 +12,18 @@ trait Factory {
 }
 
 object Factory extends Factory {
-  var default: Factory = simple.SimpleFactory
+  private var default: Factory = simple.SimpleFactory
+
+  def use(factory: Factory) {
+    default = factory
+  }
+
+  def using[T](factory: Factory)(f: => T) = {
+    val backup = default
+    val result = f
+    default = backup
+    result
+  }
 
   override def createRepository(name: String): Repository = default.createRepository(name)
   override def createPackage(name: String): Package = default.createPackage(name)
