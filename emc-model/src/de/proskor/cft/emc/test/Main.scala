@@ -45,6 +45,7 @@ object Main {
     case Event(name) => name
     case And(name, inputs) => formatTerm(name, inputs, "*")
     case Or(name, inputs) => formatTerm(name, inputs, "+")
+    case Port(name, inputs) => formatTerm(name, inputs, "|")
     case Component(name, events, inports, outports, gates, components) =>
       formatAll(name, events ++ inports ++ outports ++ gates ++ components)
     case Package(name, packages, components) =>

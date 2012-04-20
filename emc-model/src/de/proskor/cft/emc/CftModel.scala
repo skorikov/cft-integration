@@ -11,7 +11,7 @@ import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundExce
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException
 
 class CftModel(var objects: Set[Element]) extends AbstractModel {
-  private val allTypes = Set[String]("Element", "Container", "Repository", "Package", "Component", "Source", "Port", "Gate", "Event", "Inport", "Outport", "And", "Or")
+  private val allTypes = Set[String]("Element", "Container", "Repository", "Package", "Component", "Source", "Target", "Port", "Gate", "Event", "Inport", "Outport", "And", "Or")
   private val concreteTypes = Set[String]("Package", "Component", "Event", "Inport", "Outport", "And", "Or")
 
   override def getEnumerationValue(enumeration: String, label: String): AnyRef =
@@ -42,6 +42,7 @@ class CftModel(var objects: Set[Element]) extends AbstractModel {
     case "Port" => objects.filter(_.isInstanceOf[Port])
     case "Gate" => objects.filter(_.isInstanceOf[Gate])
     case "Source" => objects.filter(_.isInstanceOf[Source])
+    case "Target" => objects.filter(_.isInstanceOf[Target])
     case "Repository" => objects.filter(_.isInstanceOf[Repository])
     case "Package" => objects.filter(element => element.isInstanceOf[Package])
     case "Component" => objects.filter(_.isInstanceOf[Component])
@@ -128,8 +129,7 @@ class CftModel(var objects: Set[Element]) extends AbstractModel {
     case _: Package => Set("name", "parent", "elements", "packages", "components").contains(property)
     case _: Component => Set("name", "parent", "elements", "events", "gates", "inports", "outports", "components").contains(property)
     case _: Event => Set("name", "parent").contains(property)
-    case _: Gate => Set("name", "parent", "inputs").contains(property)
-    case _: Port => Set("name", "parent", "input").contains(property)
+    case _: Target => Set("name", "parent", "inputs").contains(property)
     case _ => false
   }
 
@@ -160,10 +160,10 @@ class CftModel(var objects: Set[Element]) extends AbstractModel {
     case _: Package => Set("Package", "Container", "Element").contains(typ)
     case _: Component => Set("Component", "Container", "Element").contains(typ)
     case _: Event => Set("Event", "Source", "Element").contains(typ)
-    case _: Inport => Set("Inport", "Source", "Port", "Element").contains(typ)
-    case _: Outport => Set("Outport", "Source", "Port", "Element").contains(typ)
-    case _: And => Set("And", "Source", "Gate", "Element").contains(typ)
-    case _: Or => Set("Or", "Source", "Gate", "Element").contains(typ)
+    case _: Inport => Set("Inport", "Source", "Target", "Port", "Element").contains(typ)
+    case _: Outport => Set("Outport", "Source", "Target", "Port", "Element").contains(typ)
+    case _: And => Set("And", "Source", "Target", "Gate", "Element").contains(typ)
+    case _: Or => Set("Or", "Source", "Target", "Gate", "Element").contains(typ)
   } else {
     throw new EolModelElementTypeNotFoundException(name, typ)
   }

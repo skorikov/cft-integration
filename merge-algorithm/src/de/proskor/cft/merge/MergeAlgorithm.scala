@@ -37,7 +37,7 @@ class MergeAlgorithm {
 
     // connect ports
     for (port <- component.outports ++ component.components.flatten(_.inports)) {
-      port.input foreach {
+      port.inputs foreach {
         case input => trace.target(port).asInstanceOf[Port] += trace.target(input).asInstanceOf[Source]
       }
 
@@ -145,7 +145,10 @@ class MergeAlgorithm {
     for (port <- result.outports ++ result.components.flatten(_.inports)) {
       trace.sources(port) match {
         case (Some(leftSource: Port), Some(rightSource: Port)) => {
-          leftSource.input match {
+          leftSource.inputs ++ rightSource.inputs foreach {
+            case input => port += trace.target(input).asInstanceOf[Source]
+          }
+        /*  leftSource.input match {
             case None => rightSource.input match {
               case None =>
               case Some(input) => port += trace.target(input).asInstanceOf[Source]
@@ -157,12 +160,12 @@ class MergeAlgorithm {
               else
                 trace.conflict(input, other)
             }
-          }
+          }*/
         }
-        case (Some(leftSource: Port), None) => leftSource.input foreach {
+        case (Some(leftSource: Port), None) => leftSource.inputs foreach {
           case input => port += trace.target(input).asInstanceOf[Source]
         }
-        case (None, Some(rightSource: Port)) => rightSource.input foreach {
+        case (None, Some(rightSource: Port)) => rightSource.inputs foreach {
           case input => port += trace.target(input).asInstanceOf[Source]
         }
         case _ => throw new IllegalStateException

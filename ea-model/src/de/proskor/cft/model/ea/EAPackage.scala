@@ -8,7 +8,7 @@ import de.proskor.cft.model.ea.peers.PackagePeer
 import de.proskor.cft.model.ea.peers.RepositoryPeer
 
 class EAPackage(var peer: PackagePeer) extends PackagePeered with Package {
-  override def parent: Option[Container] =
+  override def parent: Option[Package] =
     if (peer.isProxy) None
     else Some(peer.container.map(new EAPackage(_)).getOrElse(new EARepository(RepositoryPeer.instance)))
   override def elements: Set[Element] = components ++ packages

@@ -25,8 +25,7 @@ class EAComponent(var peer: ElementPeer) extends ElementPeered with Component {
   }
 
   override def parent: Option[Container] =
-    if (peer.isProxy) None
-    else Some(peer.parent.map(new EAComponent(_)).getOrElse(new EAPackage(peer.pkg)))
+    peer.parent.map(new EAComponent(_)).orElse(peer.pkg.map(new EAPackage(_)))
 
   override def events: Set[Event] = elementsWithStereotype("Event").map(new EAEvent(_))
   override def gates: Set[Gate] = elements.filter(_.isInstanceOf[Gate]).asInstanceOf[Set[Gate]]

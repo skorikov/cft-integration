@@ -25,15 +25,10 @@ object CftPropertyGetter extends AbstractPropertyGetter {
       case "gates" => toJavaSet(component.gates)
       case "components" => toJavaSet(component.components)
     }
-    case gate: Gate => property match {
-      case "name" => gate.name
-      case "parent" => gate.parent.getOrElse(null)
-      case "inputs" => toJavaSet(gate.inputs)
-    }
-    case port: Port => property match {
-      case "name" => port.name
-      case "parent" => port.parent.getOrElse(null)
-      case "input" => port.input.getOrElse(null)
+    case target: Target => property match {
+      case "name" => target.name
+      case "parent" => target.parent.getOrElse(null)
+      case "inputs" => toJavaSet(target.inputs)
     }
     case event: Event => property match {
       case "name" => event.name

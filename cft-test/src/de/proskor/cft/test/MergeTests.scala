@@ -86,9 +86,9 @@ class MergeTests extends JUnitSuite {
     val oo2 = result.outports.find(_.name == "O2").get
     val oo3 = result.outports.find(_.name == "O3").get
 
-    assertEquals(Some(ob1), oo1.input)
-    assertEquals(Some(ob2), oo2.input)
-    assertEquals(Some(ob3), oo3.input)
+    assertTrue(oo1.inputs.contains(ob1))
+    assertTrue(oo2.inputs.contains(ob2))
+    assertTrue(oo3.inputs.contains(ob3))
   }
 
   @Before

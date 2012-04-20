@@ -14,7 +14,7 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
   override val isProxy: Boolean = false
 
   override def parent: Option[ElementPeer] = peer.parent.map(new EAElementPeer(_))
-  override def pkg: PackagePeer = null // TODO
+  override def pkg: Option[PackagePeer] = Some(new EAPackagePeer(peer.pkg)) // TODO
 
   override def elements: Set[ElementPeer] = peer.elements.map(new EAElementPeer(_)).toSet
   override def inputs: Set[ElementPeer] = Set()

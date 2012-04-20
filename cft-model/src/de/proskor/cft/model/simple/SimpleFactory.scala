@@ -1,4 +1,5 @@
 package de.proskor.cft.model.simple
+
 import de.proskor.cft.model._
 
 object SimpleFactory extends Factory {

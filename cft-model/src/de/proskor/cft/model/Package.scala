@@ -1,6 +1,7 @@
 package de.proskor.cft.model
 
 trait Package extends Container {
+  override def parent: Option[Package]
   def packages: Set[Package]
   def components: Set[Component]
 }

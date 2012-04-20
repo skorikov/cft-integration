@@ -27,8 +27,10 @@ var component := new Component(package, "C1");
 var x := new Event(component, "X");
 var y := new Event(component, "Y");
 var g := new And(component, "G");
+var p := new Outport(component, "O");
 g.add(x);
 g.add(y);
+p.add(g);
 for (input in g.inputs) {
   input.name.println();
 }
