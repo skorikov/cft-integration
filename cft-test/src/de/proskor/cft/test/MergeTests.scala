@@ -1,19 +1,11 @@
 package de.proskor.cft.test
-import org.junit.Assert._
-import org.junit._
-import org.scalatest.junit.JUnitSuite
-import de.proskor.cft.model.Component
-import de.proskor.cft.model.Event
-import de.proskor.cft.model.Package
-import de.proskor.cft.model.Repository
-import de.proskor.cft.model.And
-import de.proskor.cft.model.Outport
-import de.proskor.cft.merge.MergeAlgorithm
-import de.proskor.cft.merge.MergeTrace
-import de.proskor.cft.model.Inport
-import de.proskor.cft.model.Or
 
-class MergeTests extends JUnitSuite {
+import de.proskor.cft.model._
+import de.proskor.cft.merge.{MergeAlgorithm, MergeTrace}
+import org.junit.Assert.{assertTrue, assertEquals}
+import org.junit.{Ignore, Test, AfterClass, Before}
+
+class MergeTests {
   @Ignore
   @Test
   def testMerge() {

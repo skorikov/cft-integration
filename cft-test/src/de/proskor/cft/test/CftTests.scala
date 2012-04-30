@@ -1,15 +1,10 @@
 package de.proskor.cft.test
-import org.junit.Assert._
-import org.junit._
-import org.scalatest.junit.JUnitSuite
-import de.proskor.cft.model.Component
-import de.proskor.cft.model.Event
-import de.proskor.cft.model.Package
-import de.proskor.cft.model.Repository
-import de.proskor.cft.model.And
-import de.proskor.cft.model.Outport
 
-class CftTests extends JUnitSuite {
+import de.proskor.cft.model._
+import org.junit.Assert.{assertTrue, assertEquals, assertNotNull}
+import org.junit.{AfterClass, Before, Test}
+
+class CftTests {
   @Test
   def testRepository() {
     val repository = Repository("/")
