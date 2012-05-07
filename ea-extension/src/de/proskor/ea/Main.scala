@@ -1,17 +1,17 @@
 package de.proskor.ea
+
 import de.proskor.cft.model.Repository
 import de.proskor.cft.model.Package
 import de.proskor.cft.model.Element
-import de.proskor.cft.test.AITests
+import de.proskor.cft.test.AdapterTests
 import de.proskor.cft.test.CftTests
 import de.proskor.cft.test.MergeTests
 import de.proskor.ea.ui.MergeDialog
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.Suite
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
+import org.junit.runners.JUnit4
+import org.junit.runner.Runner
 
 class Main extends Extension with Adapter {
   def start() {}
@@ -30,7 +30,7 @@ class Main extends Extension with Adapter {
   def deepPkg(pkg: de.proskor.automation.Package): Iterable[de.proskor.automation.Package] =
     pkg.packages ++ pkg.packages.flatMap(deepPkg)
 
-  def testRunner(clazz: Class[_]) = new JUnitRunner(clazz.asInstanceOf[Class[Suite]])
+  def testRunner(clazz: Class[_]): Runner = new JUnit4(clazz) //new JUnitRunner(clazz.asInstanceOf[Class[Suite]])
 
   def testNotifier = new RunNotifier() {
     override def fireTestFailure(failure: Failure) {
@@ -41,7 +41,7 @@ class Main extends Extension with Adapter {
   }
 
   def runTests() {
-    testRunner(classOf[AITests]).run(testNotifier)
+    testRunner(classOf[AdapterTests]).run(testNotifier)
     testRunner(classOf[CftTests]).run(testNotifier)
   //  testRunner(classOf[MergeTests]).run(testNotifier)
     write("---- ALL TESTS DONE ----")

@@ -5,5 +5,5 @@ trait Repository {
 }
 
 object Repository {
-  val instance: Repository = de.proskor.automation.impl.RepositoryImpl
+  var instance: Repository = de.proskor.automation.impl.RepositoryImpl
 }
