@@ -19,6 +19,30 @@ class RedundancyTests {
     assertTrue(RedundancyRemoval.equivalent(a, a))
     assertFalse(RedundancyRemoval.equivalent(a, b))
   }
+
+  @Test
+  def testEqualGates() {
+    val repository = Repository("/")
+    val pkg = Package(repository, "PKG")
+    val component = Component(pkg, "C1")
+    val a = Event(component, "A")
+    val b = Event(component, "B")
+    val f = And(component, "F"); f += a; f += b;
+    val g = And(component, "G"); g += a; g += b;
+    assertTrue(RedundancyRemoval.equivalent(f, g))
+  }
+
+  @Test
+  def testNotEqualGates() {
+    val repository = Repository("/")
+    val pkg = Package(repository, "PKG")
+    val component = Component(pkg, "C1")
+    val a = Event(component, "A")
+    val b = Event(component, "B")
+    val f = And(component, "F"); f += a;
+    val g = And(component, "G"); g += b;
+    assertFalse(RedundancyRemoval.equivalent(f, g))
+  }
 }
 
 object RedundancyTests {
