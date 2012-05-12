@@ -28,7 +28,7 @@ class RedundancyTests {
     val a = Event(component, "A")
     val b = Event(component, "B")
     val f = And(component, "F"); f += a; f += b;
-    val g = And(component, "G"); g += a; g += b;
+    val g = And(component, "G"); g += b; g += a;
     assertTrue(RedundancyRemoval.equivalent(f, g))
   }
 
