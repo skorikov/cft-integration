@@ -11,10 +11,10 @@ object RedundancyRemoval {
     case _ => false
   }
 
-  def equivalent(first: Set[Source], second: Set[Source]): Boolean =
-    first.size == second.size && (first.isEmpty || {
-    val left = first.head
-    val right = second.find(equivalent(left, _))
-    right.isDefined && equivalent(first - left, second - right.get) 
-  })
+  def equivalent(first: Set[Source], second: Set[Source]): Boolean = equivalent(first.toList, second.toList)
+
+  def equivalent(first: List[Source], second: List[Source]): Boolean = first match {
+    case Nil => second.isEmpty
+    case x :: xs => second.find(equivalent(x, _)).exists(m => equivalent(xs, second.filterNot(_ == m)))
+  }
 }
