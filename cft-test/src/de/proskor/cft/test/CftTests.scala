@@ -2,7 +2,7 @@ package de.proskor.cft.test
 
 import de.proskor.cft.model._
 import org.junit.Assert.{assertTrue, assertEquals, assertNotNull}
-import org.junit.{AfterClass, Before, Test}
+import org.junit.{AfterClass, Before, BeforeClass, Test}
 
 class CftTests {
   @Test
@@ -207,6 +207,12 @@ class CftTests {
 }
 
 object CftTests {
+  @BeforeClass
+  def initFactories() {
+    de.proskor.automation.Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
+    de.proskor.cft.model.Factory.use(de.proskor.cft.model.ea.EAFactory)
+  }
+
   @AfterClass
   def clearRepository() {
     val repository = Repository("/")

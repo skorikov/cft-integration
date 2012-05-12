@@ -43,6 +43,25 @@ class AdapterTests {
     assertEquals(Some(model), pkg.parent)
     assertEquals(name, pkg.name)
   }
+
+  @Test
+  def testElements() {
+    val name = "FOOBAR"
+    val models = Repository.instance.models
+    val model = models.add("PKG", "Package")
+    val pkg = model.packages.add("SUBPKG", "Package")
+    val elements = pkg.elements
+    assertNotNull(elements)
+    assertTrue(elements.isEmpty)
+    val element = elements.add(name, "Object")
+    assertNotNull(element)
+    assertEquals(name, element.name)
+    assertTrue(elements.contains(element))
+    assertEquals(None, element.parent)
+    assertEquals(pkg, element.pkg)
+    elements.delete(element)
+    assertTrue(elements.isEmpty)
+  }
 }
 
 object AdapterTests {

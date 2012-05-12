@@ -3,34 +3,27 @@ package de.proskor.automation.impl.dummy
 import de.proskor.automation.{Collection, Package}
 
 class DummyPackageCollection(parent: Package) extends Collection[Package] {
-  private var packages: Map[Int, Package] = Map()
+  private var packages: Set[Package] = Set()
 
   override def add(name: String, typ: String): Package = {
-    val id = if (packages.isEmpty) 1 else packages.keys.max + 1
+    val id = PackageCache.nextId
     val pkg = new DummyPackage(Option(parent), id, name)
-    packages += (id -> pkg)
+    packages += pkg
+    PackageCache.put(pkg)
     pkg
   }
 
   override def delete(element: Package) = element match {
-    case pkg: DummyPackage => packages -= pkg.id
+    case pkg: DummyPackage => packages -= pkg
   }
 
   override def contains(element: Package): Boolean = element match {
-    case pkg: DummyPackage => packages.keySet.contains(pkg.id)
+    case pkg: DummyPackage => packages.contains(pkg)
   }
 
   override def clear() {
-    packages = Map()
+    packages = Set()
   }
 
-  override def iterator: Iterator[Package] = new Iterator[Package] {
-    val keys: Seq[Int] = packages.keys.toSeq
-    var current: Int = -1
-    override def next: Package = {
-      current += 1
-      packages(keys(current))
-    }
-    override def hasNext: Boolean = current + 1 < packages.size
-  }
+  override def iterator: Iterator[Package] = packages.iterator
 }

@@ -1,6 +1,7 @@
-package de.proskor.cft.model.ea.peers
+package de.proskor.cft.model.ea.peers.impl
 
 import de.proskor.automation.Package
+import de.proskor.cft.model.ea.peers._
 
 class EAPackagePeer(val peer: Package) extends PackagePeer {
   override def id: Int = peer.id

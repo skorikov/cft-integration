@@ -2,6 +2,7 @@ package de.proskor.cft.model.ea
 
 import de.proskor.cft.model._
 import de.proskor.cft.model.ea.peers._
+import de.proskor.cft.model.ea.peers.impl._
 
 object EAFactory extends Factory {
   override def createRepository(name: String): Repository = new EARepository(RepositoryPeer.instance)
