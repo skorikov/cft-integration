@@ -17,11 +17,15 @@ import cli.EA.AppClass
 import org.eclipse.swt.widgets.MessageBox
 import org.eclipse.swt.SWT
 import de.proskor.ea.model.EARepository
+import de.proskor.model.Model
+import de.proskor.model.Diagram
+import de.proskor.model.Identity
+import de.proskor.model.Container
 
 class Main extends Extension with EAAdapter {
   def start() {}
   def stop() {}
-
+  
   def merge() {
     val repository = Repository.getCurrent
     new MergeDialog(repository)
@@ -59,5 +63,22 @@ class Main extends Extension with EAAdapter {
 
   def test() {
     Repository.getCurrent.write("hello")
+  }
+}
+
+object Main {
+  def main(args: Array[String]) {
+    new MergeDialog(new Repository() {
+      var name: String = ""
+      val id: Int = 0
+      def parent: Option[Container] = None
+      def kids: List[Entity] = List()
+      def selected: Option[Identity] = None
+  def write(text: String) {}
+  def query(sql: String): String = ""
+  def models: List[Model] = List()
+  def show(diagram: Diagram) {}
+  def get(id: Int): Element = null
+    })
   }
 }

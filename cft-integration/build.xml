@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="cft" default="ikvm">
-	<property name="host" value="192.168.122.39" />
+<project name="cft" default="deploy">
 	<property name="jar" value="ea.test.jar" />
 	<property name="dll" value="ea.test.dll" />
 	<target name="clean">
@@ -21,12 +20,20 @@
 			<arg value="-out:dist/${dll}" />
 			<arg value="-r:dll/Interop.EA.dll" />
 			<arg value="-r:dll/scala-library.dll" />
+			<arg value="-r:C:\Windows\Microsoft.NET\Framework64\v2.0.50727\mscorlib.dll" />
 			<arg value="-r:dll/swt.dll" />
-			<arg value="-r:/usr/lib/mono/4.0/mscorlib.dll" />
 			<arg value="dist/${jar}" />
 		</exec>
 	</target>
 	<target name="deploy" depends="ikvm">
-		<scp sftp="true" keyfile="/home/andrey/.ssh/id_rsa" file="dist/${dll}" todir="andrey:@${host}:/" />
+		<copy todir="E:\Fraunhofer\Spes2020\Versions\Current" flatten="true">
+			<fileset dir=".">
+				<include name="dist/*.dll" />
+				<include name="dist/*.exe" />
+				<include name="dll/*.dll" />
+				<exclude name="dll/Interop.EA.dll" />
+				<exclude name="dll/mscorlib.dll" />
+			</fileset>
+		</copy>
 	</target>
 </project>
