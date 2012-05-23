@@ -1,6 +1,6 @@
 package de.proskor.cft.model.ea.peers.impl
 
-import de.proskor.cft.model.ea.peers._
+import de.proskor.cft.model.ea.peers.{ElementPeer, PackagePeer, ProxyPeer}
 
 class EAProxyPeer(var name: String, var stereotype: String) extends ProxyPeer {
   def id: Int = throw new IllegalStateException

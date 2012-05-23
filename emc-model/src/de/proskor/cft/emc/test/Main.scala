@@ -11,9 +11,15 @@ import de.proskor.cft.model._
 
 object Main {
   def main(args: Array[String]) {
+    configure()
     val repository = Repository("/")
     process(repository)
     println(format(repository))
+  }
+
+  private def configure() {
+    de.proskor.automation.Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
+    Factory.use(de.proskor.cft.model.ea.EAFactory)
   }
 
   private def process(repository: Repository) = {

@@ -7,5 +7,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/cft-model"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.commons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.eol.engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ea-adapter"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ea-model"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -16,8 +16,8 @@ abstract class EAPort extends ElementPeered with Port {
     case "Event" => new EAEvent(peer)
     case "AND" => new EAAnd(peer)
     case "OR" => new EAOr(peer)
-    case "Inport" => new EAInport(peer)
-    case "Outport" => new EAOutport(peer)
+    case "Input" => new EAInport(peer)
+    case "Output" => new EAOutport(peer)
   }
   override def add(input: Source) {
     peer.connect(input.asInstanceOf[ElementPeered].peer)
