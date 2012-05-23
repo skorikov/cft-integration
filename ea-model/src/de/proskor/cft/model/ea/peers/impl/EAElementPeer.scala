@@ -18,9 +18,19 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
   override def pkg: Option[PackagePeer] = Some(new EAPackagePeer(peer.pkg)) // TODO
 
   override def elements: Set[ElementPeer] = peer.elements.map(new EAElementPeer(_)).toSet
-  override def inputs: Set[ElementPeer] = Set()
-  override def connect(element: ElementPeer) {}
-  override def disconnect(element: ElementPeer) {}
+  override def inputs: Set[ElementPeer] = (for {
+    connector <- peer.connectors if connector.target == peer
+    source = connector.source
+  } yield new EAElementPeer(source)).toSet
+
+  override def connect(element: ElementPeer) {
+    val connector = peer.connectors.add("", "Connector")
+    connector.source = element.asInstanceOf[EAElementPeer].peer
+    connector.target = this.peer
+  }
+  override def disconnect(element: ElementPeer) {
+    peer.connectors.find(_.target == this.peer).foreach(peer.connectors.delete)
+  }
 
   override def add(element: ElementPeer): ElementPeer = if (element.isProxy) {
     val result = peer.elements.add(element.name, "Object")
@@ -33,9 +43,10 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
     new EAElementPeer(result)
   } else element
 
-  override def remove(element: ElementPeer): ElementPeer = if (element.isProxy) {
+  override def remove(element: ElementPeer): ElementPeer = if (element.isProxy) {    
     element
   } else {
-    element
+    peer.elements.delete(element.asInstanceOf[EAElementPeer].peer)
+    new EAProxyPeer(element.name, element.stereotype)
   }
 }

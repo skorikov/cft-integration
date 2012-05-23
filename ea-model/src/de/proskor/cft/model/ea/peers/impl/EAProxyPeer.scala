@@ -12,4 +12,6 @@ class EAProxyPeer(var name: String, var stereotype: String) extends ProxyPeer {
   def remove(element: ElementPeer): ElementPeer = throw new IllegalStateException
   def packages: Set[PackagePeer] = throw new IllegalStateException
   def container: Option[PackagePeer] = throw new IllegalStateException
+  def add(element: PackagePeer): PackagePeer = throw new IllegalStateException
+  def remove(element: PackagePeer): PackagePeer = throw new IllegalStateException
 }

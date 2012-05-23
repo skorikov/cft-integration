@@ -9,9 +9,18 @@ import de.proskor.cft.model.Outport
 import de.proskor.cft.model.Inport
 import de.proskor.cft.model.ea.peers.Peer
 import de.proskor.cft.model.ea.peers.ElementPeer
+import de.proskor.cft.model.ea.peers.ElementPeered
 import de.proskor.cft.model.ea.peers.ProxyPeer
 
 class EAComponent(var peer: ElementPeer) extends ElementPeered with Component {
+  override def equals(that: Any): Boolean = that match {
+    case component: EAComponent => component.peer.id == peer.id
+    case _ => false
+  }
+
+  def name: String = peer.name
+  def name_=(name: String) { peer.name = name }
+
   override def elements: Set[Element] = for {
     peer <- peer.elements
     stereotype = peer.stereotype
@@ -23,6 +32,9 @@ class EAComponent(var peer: ElementPeer) extends ElementPeered with Component {
     case "Outport" => new EAOutport(peer)
     case "Component" => new EAComponent(peer)
   }
+
+  def elementsWithStereotype(stereotypes: String*): Set[ElementPeer] =
+    peer.elements.filter(kid => stereotypes.contains(kid.stereotype))
 
   override def parent: Option[Container] =
     peer.parent.map(new EAComponent(_)).orElse(peer.pkg.map(new EAPackage(_)))

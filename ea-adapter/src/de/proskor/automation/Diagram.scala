@@ -1,8 +1,5 @@
 package de.proskor.automation
 
-trait Diagram {
-  def id: Int
-  var name: String
-  var stereotype: String
+trait Diagram extends Identity with Named with Stereotyped {
   def nodes: Collection[Node]
 }

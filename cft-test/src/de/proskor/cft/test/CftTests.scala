@@ -102,6 +102,7 @@ class CftTests {
     assertNotNull(event)
     assertEquals("BE1", event.name)
     assertEquals(1, component.events.size)
+    val elements = component.elements
     assertTrue(component.elements.contains(event))
     assertTrue(component.events.contains(event))
     assertEquals(Some(component), event.parent)
@@ -140,7 +141,6 @@ class CftTests {
     assertNotNull(and)
     assertEquals("G1", and.name)
     assertEquals(1, component.gates.size)
-    assertTrue(component.gates.contains(and))
     assertTrue(component.gates.contains(and))
     assertEquals(Some(component), and.parent)
   }

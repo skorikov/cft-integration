@@ -1,11 +1,7 @@
 package de.proskor.automation
 
-trait Element {
-  def id: Int
-  var name: String
-  var stereotype: String
+trait Element extends Identity with Named with Stereotyped with Container {
   def parent: Option[Element]
   def pkg: Package
-  def elements: Collection[Element]
   def connectors: Collection[Connector]
 }

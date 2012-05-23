@@ -2,10 +2,14 @@ package de.proskor.automation.impl.dummy
 
 import de.proskor.automation.{Collection, Connector, Element, Package}
 
-class DummyElement(parent: Element, itspkg: Package, val id: Int, var name: String) extends Element {
+class DummyElement(parent: Element, val pkg: Package, var name: String) extends Element {
+  val id: Int = IdGenerator.next
   var stereotype: String = ""
-  def connectors: Collection[Connector] = null
-  def elements: Collection[Element] = null
+
+  lazy val connectors: Collection[Connector] = new DummyConnectorCollection(this)
+
+  lazy val elements: Collection[Element] = new DummyCollection(this,
+      (name: String, typ: String, parent: Element) => new DummyElement(parent, pkg, name))
+
   def parent: Option[Element] = Option(parent)
-  def pkg: Package = itspkg
 }

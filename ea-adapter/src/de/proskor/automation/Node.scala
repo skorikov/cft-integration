@@ -1,11 +1,6 @@
 package de.proskor.automation
 
-trait Node {
-  def id: Int
-  var left: Int
-  var top: Int
-  var width: Int
-  var height: Int
+trait Node extends Identity with Rectangular {
   def diagram: Diagram
   def element: Element
 }

@@ -1,9 +1,6 @@
 package de.proskor.automation
 
-trait Connector {
-  def id: Int
-  var name: String
-  var stereotype: String
-  def source: Element
-  def target: Element
+trait Connector extends Identity with Named with Stereotyped {
+  var source: Element
+  var target: Element
 }

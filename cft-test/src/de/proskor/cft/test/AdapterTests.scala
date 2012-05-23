@@ -10,9 +10,7 @@ class AdapterTests {
 
   @Test
   def testRepository() {
-    val repository: Repository = Repository.instance
     assertNotNull(repository)
-    val models: Collection[Package] = repository.models
     assertNotNull(models)
     assertTrue(models.isEmpty)
   }
@@ -36,21 +34,19 @@ class AdapterTests {
   @Test
   def testPackages() {
     val name = "SUBPKG"
-    val models = Repository.instance.models
-    val model = models.add("PKG", "Package")
-    val pkg = model.packages.add(name, "Package")
-    assertNotNull(pkg)
-    assertEquals(Some(model), pkg.parent)
-    assertEquals(name, pkg.name)
+    val mod = model("PKG")
+    val pk = pkg(mod, name)
+    assertNotNull(pk)
+    assertEquals(Some(mod), pk.parent)
+    assertEquals(name, pk.name)
   }
 
   @Test
   def testElements() {
     val name = "FOOBAR"
-    val models = Repository.instance.models
-    val model = models.add("PKG", "Package")
-    val pkg = model.packages.add("SUBPKG", "Package")
-    val elements = pkg.elements
+    val mod = model("PKG")
+    val sub = pkg(mod, "SUBPKG")
+    val elements = sub.elements
     assertNotNull(elements)
     assertTrue(elements.isEmpty)
     val element = elements.add(name, "Object")
@@ -58,10 +54,28 @@ class AdapterTests {
     assertEquals(name, element.name)
     assertTrue(elements.contains(element))
     assertEquals(None, element.parent)
-    assertEquals(pkg, element.pkg)
+    assertEquals(sub, element.pkg)
     elements.delete(element)
     assertTrue(elements.isEmpty)
   }
+
+  @Test
+  def testKids() {
+    val mod = model("test")
+    val element = obj(mod, "foo")
+    val kid = obj(element, "bar")
+    assertNotNull(kid)
+    assertEquals(1, element.elements.size)
+    assertEquals(Some(element), kid.parent)
+    element.elements.delete(kid)
+    assertTrue(element.elements.isEmpty)
+  }
+
+  private def repository: Repository = Repository.instance
+  private def models: Collection[Package] = Repository.instance.models
+  private def model(name: String): Package = models.add(name, "Package")
+  private def pkg(parent: Package, name: String): Package = parent.packages.add(name, "Package")
+  private def obj(parent: Container, name: String): Element = parent.elements.add(name, "Object")
 }
 
 object AdapterTests {

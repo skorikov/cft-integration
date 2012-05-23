@@ -5,8 +5,8 @@ import de.proskor.cft.merge.{MergeAlgorithm, MergeTrace}
 import org.junit.Assert.{assertTrue, assertEquals}
 import org.junit.{Ignore, Test, AfterClass, Before}
 
+@Ignore
 class MergeTests {
-  @Ignore
   @Test
   def testMerge() {
     val repository = Repository("/")
@@ -43,7 +43,6 @@ class MergeTests {
     val result = al.merge(left, right, target, trace)
   }
 
-  @Ignore
   @Test
   def testOutports() {
     val repository = Repository("/")
