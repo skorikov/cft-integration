@@ -17,9 +17,8 @@ class PeerTests {
   def testProxy() {
     val name = "name"
     val stereotype = "stereotype"
-    val peer: Peer = new EAProxyPeer(name, stereotype)
+    val peer: ElementPeer = new EAProxyPeer(name, stereotype)
 
-    assertTrue(peer.isProxy)
     assertEquals(peer.name, name)
     assertEquals(peer.stereotype, stereotype)
   }

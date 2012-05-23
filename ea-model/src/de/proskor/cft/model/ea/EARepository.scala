@@ -10,7 +10,7 @@ import de.proskor.cft.model.ea.peers.impl.EAProxyPeer
 
 class EARepository(var peer: RepositoryPeer) extends RepositoryPeered with Repository {
   override def equals(that: Any): Boolean = that match {
-    case repository: EARepository => repository.peer.id == peer.id
+    case repository: EARepository => true
     case _ => false
   }
 

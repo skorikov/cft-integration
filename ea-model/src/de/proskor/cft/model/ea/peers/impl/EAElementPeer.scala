@@ -12,8 +12,6 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
   override def stereotype: String = peer.stereotype
   override def stereotype_=(stereotype: String) { peer.stereotype = stereotype }
 
-  override val isProxy: Boolean = false
-
   override def parent: Option[ElementPeer] = peer.parent.map(new EAElementPeer(_))
   override def pkg: Option[PackagePeer] = Some(new EAPackagePeer(peer.pkg)) // TODO
 
@@ -32,7 +30,7 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
     peer.connectors.find(_.target == this.peer).foreach(peer.connectors.delete)
   }
 
-  override def add(element: ElementPeer): ElementPeer = if (element.isProxy) {
+  override def add(element: ElementPeer): ElementPeer = if (element.isInstanceOf[ProxyPeer]) {
     val result = peer.elements.add(element.name, "Object")
     result.stereotype = element.stereotype
     new EAElementPeer(result)
@@ -43,7 +41,7 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
     new EAElementPeer(result)
   } else element
 
-  override def remove(element: ElementPeer): ElementPeer = if (element.isProxy) {    
+  override def remove(element: ElementPeer): ElementPeer = if (element.isInstanceOf[ProxyPeer]) {    
     element
   } else {
     peer.elements.delete(element.asInstanceOf[EAElementPeer].peer)

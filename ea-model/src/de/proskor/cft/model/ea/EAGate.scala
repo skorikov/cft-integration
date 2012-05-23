@@ -1,7 +1,7 @@
 package de.proskor.cft.model.ea
 
 import de.proskor.cft.model.{Component, Gate, Source}
-import de.proskor.cft.model.ea.peers.{ElementPeer, ElementPeered}
+import de.proskor.cft.model.ea.peers.{ElementPeer, ElementPeered, ProxyPeer}
 
 abstract class EAGate extends ElementPeered with Gate {
   override def hashCode: Int = peer.id
@@ -10,7 +10,7 @@ abstract class EAGate extends ElementPeered with Gate {
   def name_=(name: String) { peer.name = name }
 
   override def peer: ElementPeer
-  override def parent: Option[Component] = if (peer.isProxy) None else peer.parent.map(new EAComponent(_))
+  override def parent: Option[Component] = if (peer.isInstanceOf[ProxyPeer]) None else peer.parent.map(new EAComponent(_))
   override def inputs: Set[Source] = for {
     peer <- peer.inputs
     stereotype = peer.stereotype

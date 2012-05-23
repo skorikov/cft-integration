@@ -4,7 +4,7 @@ import de.proskor.cft.model.Container
 import de.proskor.cft.model.Package
 import de.proskor.cft.model.Component
 import de.proskor.cft.model.Element
-import de.proskor.cft.model.ea.peers.{ElementPeered, PackagePeer, PackagePeered, RepositoryPeer}
+import de.proskor.cft.model.ea.peers.{ElementPeered, PackagePeer, PackagePeered, ProxyPeer, RepositoryPeer}
 
 class EAPackage(var peer: PackagePeer) extends PackagePeered with Package {
   override def equals(that: Any): Boolean = that match {
@@ -16,7 +16,7 @@ class EAPackage(var peer: PackagePeer) extends PackagePeered with Package {
   def name_=(name: String) { peer.name = name }
 
   override def parent: Option[Package] =
-    if (peer.isProxy) None
+    if (peer.isInstanceOf[ProxyPeer]) None
     else Some(peer.container.map(new EAPackage(_)).getOrElse(new EARepository(RepositoryPeer.instance)))
   override def elements: Set[Element] = components ++ packages
   override def components: Set[Component] = peer.elements.withFilter(_.stereotype == "Component").map(new EAComponent(_))
