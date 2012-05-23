@@ -27,7 +27,7 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
     connector.target = this.peer
   }
   override def disconnect(element: ElementPeer) {
-    peer.connectors.find(_.target == this.peer).foreach(peer.connectors.delete)
+    peer.connectors.find(_.target == this.peer).foreach(peer.connectors.remove)
   }
 
   override def add(element: ElementPeer): ElementPeer = if (element.isInstanceOf[ProxyPeer]) {
@@ -44,7 +44,7 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
   override def remove(element: ElementPeer): ElementPeer = if (element.isInstanceOf[ProxyPeer]) {    
     element
   } else {
-    peer.elements.delete(element.asInstanceOf[EAElementPeer].peer)
+    peer.elements.remove(element.asInstanceOf[EAElementPeer].peer)
     new EAProxyPeer(element.name, element.stereotype)
   }
 }

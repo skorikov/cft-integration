@@ -26,7 +26,7 @@ class AdapterTests {
     assertEquals(name, pkg.name)
     assertEquals(1, models.size)
     assertTrue(models.contains(pkg))
-    models.delete(pkg)
+    models.remove(pkg)
     assertTrue(models.isEmpty)
     assertFalse(models.contains(pkg))
   }
@@ -55,7 +55,7 @@ class AdapterTests {
     assertTrue(elements.contains(element))
     assertEquals(None, element.parent)
     assertEquals(sub, element.pkg)
-    elements.delete(element)
+    elements.remove(element)
     assertTrue(elements.isEmpty)
   }
 
@@ -67,7 +67,7 @@ class AdapterTests {
     assertNotNull(kid)
     assertEquals(1, element.elements.size)
     assertEquals(Some(element), kid.parent)
-    element.elements.delete(kid)
+    element.elements.remove(kid)
     assertTrue(element.elements.isEmpty)
   }
 

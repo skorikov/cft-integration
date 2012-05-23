@@ -74,6 +74,7 @@ class AutomationModel(var objects: Set[AnyRef]) extends AbstractModel {
     case _: Package => Set("name", "parent", "elements", "packages").contains(property)
     case _: Element => Set("name", "parent", "elements").contains(property)
     case _: Repository => Set("models").contains(property)
+    case _: Collection[_] => Set("add").contains(property)
     case _ => false
   }
 

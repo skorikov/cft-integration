@@ -14,7 +14,7 @@ class EARepositoryPeer(val peer: Repository) extends RepositoryPeer {
   override def remove(element: PackagePeer): PackagePeer = if (element.isInstanceOf[ProxyPeer]) {    
     element
   } else {
-    peer.models.delete(element.asInstanceOf[EAPackagePeer].peer)
+    peer.models.remove(element.asInstanceOf[EAPackagePeer].peer)
     new EAProxyPeer(element.name, "")
   }
 }

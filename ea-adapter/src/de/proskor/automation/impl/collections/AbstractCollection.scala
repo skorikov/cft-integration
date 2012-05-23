@@ -18,12 +18,12 @@ private[automation] abstract class AbstractCollection[T](peer: ICollection) exte
     create(result)
   }
 
-  override def delete(element: T) {
+  override def remove(element: T) {
     val index: Int = indexOf(element)
-    if (index >= 0) deleteAt(index)
+    if (index >= 0) removeAt(index)
   }
 
-  def deleteAt(index: Int) {
+  def removeAt(index: Int) {
     peer.Delete(index.toShort)
     peer.Refresh()
     RepositoryImpl.peer.RefreshModelView(0)

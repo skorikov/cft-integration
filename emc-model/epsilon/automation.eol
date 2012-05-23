@@ -1,2 +1,5 @@
 var repository := Repository.allInstances().first();
-repository.models.println();
+var pkg := repository.models.add("test", "");
+repository.models.size.println();
+repository.models.remove(pkg);
+repository.models.size.println();

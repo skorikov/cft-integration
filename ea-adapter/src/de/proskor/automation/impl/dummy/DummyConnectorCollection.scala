@@ -7,7 +7,4 @@ class DummyConnectorCollection(parent: Element) extends DummyCollection(parent, 
   def add(connector: Connector) {
     contents += connector
   }
-  def remove(connector: Connector) {
-    contents -= connector
-  }
 }

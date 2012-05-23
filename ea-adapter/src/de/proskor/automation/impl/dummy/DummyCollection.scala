@@ -11,7 +11,7 @@ class DummyCollection[T, P](parent: P, create: (String, String, P) => T) extends
     element
   }
 
-  override def delete(element: T) {
+  override def remove(element: T) {
     contents -= element
   }
 

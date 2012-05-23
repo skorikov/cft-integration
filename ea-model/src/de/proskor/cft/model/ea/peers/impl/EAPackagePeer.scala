@@ -25,7 +25,7 @@ class EAPackagePeer(val peer: Package) extends PackagePeer {
   override def remove(element: ElementPeer): ElementPeer = if (element.isInstanceOf[ProxyPeer]) {    
     element
   } else {
-    peer.elements.delete(element.asInstanceOf[EAElementPeer].peer)
+    peer.elements.remove(element.asInstanceOf[EAElementPeer].peer)
     new EAProxyPeer(element.name, element.stereotype)
   }
 
@@ -37,7 +37,7 @@ class EAPackagePeer(val peer: Package) extends PackagePeer {
   override def remove(element: PackagePeer): PackagePeer = if (element.isInstanceOf[ProxyPeer]) {    
     element
   } else {
-    peer.packages.delete(element.asInstanceOf[EAPackagePeer].peer)
+    peer.packages.remove(element.asInstanceOf[EAPackagePeer].peer)
     new EAProxyPeer(element.name, "")
   }
 }
