@@ -1,0 +1,2 @@
+var repository := Repository.allInstances().first();
+repository.models.println();
