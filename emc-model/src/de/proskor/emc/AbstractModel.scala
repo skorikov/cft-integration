@@ -1,4 +1,4 @@
-package de.proskor.cft.emc
+package de.proskor.emc
 
 import org.eclipse.epsilon.eol.models.IModel
 import java.util.{List => JavaList}

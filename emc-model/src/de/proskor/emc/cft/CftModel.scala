@@ -1,6 +1,9 @@
-package de.proskor.cft.emc
+package de.proskor.emc.cft
+
 import java.util.{List => JavaList, Collection => JavaCollection}
 import de.proskor.cft.model._
+import de.proskor.emc._
+
 import org.eclipse.epsilon.eol.models._
 import org.eclipse.epsilon.eol.execute.introspection._
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException

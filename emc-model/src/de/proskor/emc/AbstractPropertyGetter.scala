@@ -1,4 +1,4 @@
-package de.proskor.cft.emc
+package de.proskor.emc
 
 import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter
 import org.eclipse.epsilon.eol.execute.context.IEolContext;

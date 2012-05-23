@@ -1,12 +1,13 @@
-package de.proskor.cft.emc
+package de.proskor.emc.automation
 
 import java.util.{Set => JavaSet}
 import de.proskor.cft.model._
+import de.proskor.emc._
 import collection.JavaConversions._
 import org.eclipse.epsilon.eol.types.CollectionAnnotator
 import org.eclipse.epsilon.eol.types.CollectionAnnotator.AnnotatedCollectionType
 
-object CftPropertyGetter extends AbstractPropertyGetter {
+object AutomationPropertyGetter extends AbstractPropertyGetter {
   override def invoke(instance: AnyRef, property: String): AnyRef = instance match {
     case pkg: Package => property match {
       case "name" => pkg.name

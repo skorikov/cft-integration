@@ -1,10 +1,10 @@
-package de.proskor.cft.emc.test
+package de.proskor.emc.test
 
 import java.io.InputStream
 import java.io.FileInputStream
 import java.util.Scanner
 import org.eclipse.epsilon.eol.models.IModel
-import de.proskor.cft.emc.CftModel
+import de.proskor.emc.cft.CftModel
 import org.eclipse.epsilon.eol.EolModule
 import org.eclipse.epsilon.eol.IEolModule
 import de.proskor.cft.model._
