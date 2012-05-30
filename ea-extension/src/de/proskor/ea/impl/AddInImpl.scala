@@ -1,16 +1,17 @@
-package de.proskor.ea
+package de.proskor.ea.impl
 
-import cli.EA.IRepository
 import de.proskor.automation.impl.RepositoryImpl
 import de.proskor.cft.model.ea.EAFactory
 import de.proskor.cft.model.Factory
+import de.proskor.ea.AddIn
+import de.proskor.ea.Extension
+import cli.EA.IRepository
 
-trait Adapter extends Extension {
+trait AddInImpl extends AddIn with Extension {
   var outputReady = false
   var repositoryPeer: cli.EA.IRepository = null
 
   val MainMenu = "-CFT Extension"
-  val TestMenuItem = "Test"
   val RunTestsMenuItem = "Run Tests"
   val MergeMenuItem = "Merge..."
   val OutputTitle = "CFT Extension"
@@ -26,14 +27,13 @@ trait Adapter extends Extension {
     stop()
   }
 
-  def EA_GetMenuItems(repository: IRepository, location: String, menuName: String): Any = menuName match {
+  def EA_GetMenuItems(repository: IRepository, location: String, menuName: String): AnyRef = menuName match {
     case "" => MainMenu
-    case MainMenu => Array(TestMenuItem, RunTestsMenuItem, MergeMenuItem)
+    case MainMenu => Array(RunTestsMenuItem, MergeMenuItem)
   }
 
   def EA_MenuClick(repository: IRepository, menuName: String, itemName: String): Unit = itemName match {
-    case TestMenuItem => test()
-    case RunTestsMenuItem => runTests()
+    case RunTestsMenuItem => tests()
     case MergeMenuItem => merge()
     case _ =>
   }

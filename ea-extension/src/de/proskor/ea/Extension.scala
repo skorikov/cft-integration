@@ -1,10 +1,8 @@
 package de.proskor.ea
 
-trait Extension {
+trait Extension extends Writable {
   def start(): Unit
   def stop(): Unit
-  def test(): Unit
   def merge(): Unit
-  def runTests(): Unit
-  def write(text: String): Unit
+  def tests(): Unit
 }

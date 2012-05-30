@@ -71,6 +71,16 @@ class AdapterTests {
     assertTrue(element.elements.isEmpty)
   }
 
+  @Test
+  def testDiagram() {
+    val mod = model("PKG")
+    val diagram = mod.diagrams.add("DIAGRAM", "")
+    assertNotNull(diagram)
+    assertEquals("DIAGRAM", diagram.name)
+    val node = diagram.nodes.add("Node", "")
+    assertNotNull(node)
+  }
+
   private def repository: Repository = Repository.instance
   private def models: Collection[Package] = Repository.instance.models
   private def model(name: String): Package = models.add(name, "Package")

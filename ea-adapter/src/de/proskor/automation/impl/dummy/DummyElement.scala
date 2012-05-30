@@ -9,7 +9,7 @@ class DummyElement(parent: Element, val pkg: Package, var name: String) extends 
   lazy val connectors: Collection[Connector] = new DummyConnectorCollection(this)
 
   lazy val elements: Collection[Element] = new DummyCollection(this,
-      (name: String, typ: String, parent: Element) => new DummyElement(parent, pkg, name))
+    (name: String, typ: String, parent: Element) => new DummyElement(parent, pkg, name))
 
   def parent: Option[Element] = Option(parent)
 }

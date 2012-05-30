@@ -13,7 +13,7 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
   override def stereotype_=(stereotype: String) { peer.stereotype = stereotype }
 
   override def parent: Option[ElementPeer] = peer.parent.map(new EAElementPeer(_))
-  override def pkg: Option[PackagePeer] = Some(new EAPackagePeer(peer.pkg)) // TODO
+  override def pkg: Option[PackagePeer] = Some(new EAPackagePeer(peer.pkg))
 
   override def elements: Set[ElementPeer] = peer.elements.map(new EAElementPeer(_)).toSet
   override def inputs: Set[ElementPeer] = (for {
