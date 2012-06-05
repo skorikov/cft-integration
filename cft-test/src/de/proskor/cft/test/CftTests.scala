@@ -78,7 +78,7 @@ class CftTests {
     val component = Component(pkg, "C1")
     assertNotNull(component)
     assertEquals("C1", component.name)
-    assertEquals(1, pkg.components.size)
+    assertEquals(1, pkg.components.size) // FIXME
     assertTrue(pkg.components.contains(component))
     assertEquals(Some(pkg), component.parent)
   }
@@ -101,7 +101,7 @@ class CftTests {
     val event = Event(component, "BE1")
     assertNotNull(event)
     assertEquals("BE1", event.name)
-    assertEquals(1, component.events.size)
+    assertEquals(1, component.events.size) // FIXME
     val elements = component.elements
     assertTrue(component.elements.contains(event))
     assertTrue(component.events.contains(event))
@@ -127,7 +127,7 @@ class CftTests {
     val c2 = Component(pkg, "C2")
     val event = Event(c1, "BE1")
     c2 += event
-    assertTrue(c1.events.isEmpty)
+    assertTrue(c1.events.isEmpty) // FIXME
     assertTrue(c2.events.contains(event))
     assertEquals(Some(c2), event.parent)
   }
@@ -140,7 +140,7 @@ class CftTests {
     val and = And(component, "G1")
     assertNotNull(and)
     assertEquals("G1", and.name)
-    assertEquals(1, component.gates.size)
+    assertEquals(1, component.gates.size) // FIXME
     assertTrue(component.gates.contains(and))
     assertEquals(Some(component), and.parent)
   }
@@ -153,7 +153,7 @@ class CftTests {
     val and = And(component, "G1")
     assertTrue(and.inputs.isEmpty)
     val event = Event(component, "BE1")
-    and += event
+    and += event // FIXME
     assertEquals(1, and.inputs.size)
     assertTrue(and.inputs.contains(event))
   }
@@ -165,7 +165,7 @@ class CftTests {
     val component = Component(pkg, "C1")
     val and = And(component, "G1")
     val event = Event(component, "BE1")
-    and += event
+    and += event // FIXME
     and -= event
     assertEquals(0, and.inputs.size)
   }
@@ -178,7 +178,7 @@ class CftTests {
     val event = Event(component, "BE1")
     val outport = Outport(component, "O1")
     assertTrue(outport.inputs.isEmpty)
-    outport += event
+    outport += event // FIXME
     assertEquals(Set(event), outport.inputs)
     outport -= event
     assertTrue(outport.inputs.isEmpty)
@@ -190,7 +190,7 @@ class CftTests {
     val pkg = Package(repository, "P1")
     val component = Component(pkg, "C1")
     val subcomponent = Component(component, "C2")
-    assertTrue(component.components.contains(subcomponent))
+    assertTrue(component.components.contains(subcomponent)) // FIXME
     assertEquals(Some(component), subcomponent.parent)
   }
 
@@ -208,8 +208,8 @@ class CftTests {
 
 object CftTests {
   @BeforeClass
-  def initFactories() {
-    de.proskor.automation.Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
+  def configure() {
+  //  de.proskor.automation.Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
     de.proskor.cft.model.Factory.use(de.proskor.cft.model.ea.EAFactory)
   }
 

@@ -32,7 +32,7 @@ class PeerTests {
 object PeerTests {
   @BeforeClass
   def configure() {
-    Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
+  //  Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
   }
 
   @AfterClass
