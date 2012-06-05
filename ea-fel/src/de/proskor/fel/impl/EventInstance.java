@@ -1,4 +1,4 @@
-package de.proskor.ui.failureEventList;
+package de.proskor.fel.impl;
 
 
 public class EventInstance {

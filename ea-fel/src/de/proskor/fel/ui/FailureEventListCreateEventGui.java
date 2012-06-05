@@ -1,4 +1,4 @@
-package de.proskor.ui.failureEventList.gui;
+package de.proskor.fel.ui;
 
 import java.util.ArrayList;
 
@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.proskor.ui.failureEventList.Event;
-import de.proskor.ui.failureEventList.EventCFT;
-import de.proskor.ui.failureEventList.EventInstance;
+import de.proskor.fel.impl.Event;
+import de.proskor.fel.impl.EventCFT;
+import de.proskor.fel.impl.EventInstance;
 
 
 public class FailureEventListCreateEventGui extends Shell {

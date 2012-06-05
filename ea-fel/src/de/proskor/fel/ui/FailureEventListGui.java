@@ -1,4 +1,4 @@
-package de.proskor.ui.failureEventList.gui;
+package de.proskor.fel.ui;
 
 import java.util.ArrayList;
 
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.ui.failureEventList.Event;
-import de.proskor.ui.failureEventList.EventInstance;
+import de.proskor.fel.impl.Event;
+import de.proskor.fel.impl.EventInstance;
 
 
 public class FailureEventListGui extends Shell {

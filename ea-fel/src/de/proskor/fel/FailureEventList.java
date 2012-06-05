@@ -1,8 +1,11 @@
-package de.proskor.ui.failureEventList;
+package de.proskor.fel;
 
 
-import de.proskor.ui.failureEventList.gui.FailureEventListGui.CreationResult;
-import de.proskor.ui.failureEventList.gui.FailureEventListGuiHandler;
+import de.proskor.fel.impl.Event;
+import de.proskor.fel.impl.EventCFT;
+import de.proskor.fel.impl.EventInstance;
+import de.proskor.fel.ui.FailureEventListGuiHandler;
+import de.proskor.fel.ui.FailureEventListGui.CreationResult;
 
 public class FailureEventList {
 	private FailureEventListGuiHandler felGuiHandler;

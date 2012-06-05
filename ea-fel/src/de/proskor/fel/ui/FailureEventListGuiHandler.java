@@ -1,4 +1,4 @@
-package de.proskor.ui.failureEventList.gui;
+package de.proskor.fel.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,11 +8,11 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.ui.failureEventList.Event;
-import de.proskor.ui.failureEventList.EventCFT;
-import de.proskor.ui.failureEventList.EventInstance;
-import de.proskor.ui.failureEventList.gui.FailureEventListGui.CreationResult;
-import de.proskor.ui.failureEventList.gui.FailureEventListGui.GuiHandler;
+import de.proskor.fel.impl.Event;
+import de.proskor.fel.impl.EventCFT;
+import de.proskor.fel.impl.EventInstance;
+import de.proskor.fel.ui.FailureEventListGui.CreationResult;
+import de.proskor.fel.ui.FailureEventListGui.GuiHandler;
 
 public class FailureEventListGuiHandler implements GuiHandler {
 	private static class EventFilter {
