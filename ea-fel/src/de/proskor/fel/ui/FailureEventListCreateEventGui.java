@@ -17,10 +17,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.proskor.fel.impl.Event;
-import de.proskor.fel.impl.EventCFT;
-import de.proskor.fel.impl.EventInstance;
-
+import de.proskor.fel.Event;
+import de.proskor.fel.EventCFT;
+import de.proskor.fel.EventInstance;
+import de.proskor.fel.impl.EventImpl;
+import de.proskor.fel.impl.EventInstanceImpl;
 
 public class FailureEventListCreateEventGui extends Shell {
 	private class UserInputData {
@@ -58,7 +59,7 @@ public class FailureEventListCreateEventGui extends Shell {
 		String guid = "";
 		int id = -1;
 		
-		return new Event(eventName, author, description, guid, id);
+		return new EventImpl(eventName, author, description, guid, id);
 	}
 
 	public EventInstance createEventInstance(Event event, ArrayList<EventCFT> possibleParentCFTs, EventCFT defaultSelectedCFT) {
@@ -74,7 +75,7 @@ public class FailureEventListCreateEventGui extends Shell {
 		String guid = "";
 		int id = -1;
 		
-		return new EventInstance(event, cft, author, description, guid, id);
+		return new EventInstanceImpl(event, cft, author, description, guid, id);
 	}
 
 	public FailureEventListCreateEventGui() {

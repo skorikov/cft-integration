@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.fel.impl.Event;
-import de.proskor.fel.impl.EventInstance;
+import de.proskor.fel.Event;
+import de.proskor.fel.EventInstance;
 
 
 public class FailureEventListGui extends Shell {

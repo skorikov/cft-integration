@@ -1,9 +1,8 @@
 package de.proskor.fel;
 
-
-import de.proskor.fel.impl.Event;
-import de.proskor.fel.impl.EventCFT;
-import de.proskor.fel.impl.EventInstance;
+import de.proskor.fel.impl.EventImpl;
+import de.proskor.fel.impl.EventCFTImpl;
+import de.proskor.fel.impl.EventInstanceImpl;
 import de.proskor.fel.ui.FailureEventListGuiHandler;
 import de.proskor.fel.ui.FailureEventListGui.CreationResult;
 
@@ -21,7 +20,7 @@ public class FailureEventList {
 	}
 	
 	/**
-	 * Create {@link EventCFT EventCFTs} containing the {@link EventInstance EventInstances}
+	 * Create {@link EventCFTImpl EventCFTs} containing the {@link EventInstanceImpl EventInstances}
 	 * and add them here. Call {@link #showEventList()} to open the GUI and get the <i>Events</i>
 	 * and <i>EventInstances</i> created by the User (if any). 
 	 * @param eventCft
@@ -36,15 +35,15 @@ public class FailureEventList {
 		FailureEventListGuiHandler fel = new FailureEventListGuiHandler(false);
 		
 		// Dummy-Eintr�ge erzeugen:
-		Event eventCommon = new Event("Event " + "common", "Yoda", "The force is strong.",  "{common"+0+"}", 0);
+		Event eventCommon = new EventImpl("Event " + "common", "Yoda", "The force is strong.",  "{common"+0+"}", 0);
 		int id=1;
-		EventCFT[] cft = new EventCFT[4];
+		EventCFT[] cft = new EventCFTImpl[4];
 		for(int i=0; i<cft.length; i++) {
-			cft[i] = new EventCFT("CFT " + i);
+			cft[i] = new EventCFTImpl("CFT " + i);
 			
 			for(int k=0; k<2; k++) { 
-				Event event = new Event("Event " + i+"."+k, "Yoda", "-",  "{Event"+id+"}", id);
-				EventInstance evInst = new EventInstance(event, cft[i], "Darth Vader",  "Anything", "{EventInstance"+id+"}", 0);
+				Event event = new EventImpl("Event " + i+"."+k, "Yoda", "-",  "{Event"+id+"}", id);
+				EventInstance evInst = new EventInstanceImpl(event, cft[i], "Darth Vader",  "Anything", "{EventInstance"+id+"}", 0);
 				System.out.println("- " + evInst);
 			}
 			
@@ -53,7 +52,7 @@ public class FailureEventList {
 		}
 		
 		for(int i=0; i<cft.length; i++) { 
-			EventInstance evInst = new EventInstance(eventCommon, cft[i], "Darth Vader",  "Anything", "{common"+0+"}", 0);
+			EventInstance evInst = new EventInstanceImpl(eventCommon, cft[i], "Darth Vader",  "Anything", "{common"+0+"}", 0);
 			System.out.println("- " + evInst);
 			id++;
 		}

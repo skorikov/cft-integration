@@ -1,7 +1,11 @@
 package de.proskor.fel.impl;
 
+import de.proskor.fel.Event;
+import de.proskor.fel.EventCFT;
+import de.proskor.fel.EventInstance;
 
-public class EventInstance {
+
+public class EventInstanceImpl implements EventInstance {
 	private Event event;
 	private EventCFT cft;
 	private String guid;
@@ -9,26 +13,32 @@ public class EventInstance {
 	private String author;
 	private String description;
 	
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public String getAuthor() {
 		return author;
 	}
 
+	@Override
 	public Event getEvent() {
 		return event;
 	}
 
+	@Override
 	public EventCFT getCft() {
 		return cft;
 	}
 
+	@Override
 	public String getGuid() {
 		return guid;
 	}
 
+	@Override
 	public int getId() {
 		return id;
 	}
@@ -38,7 +48,7 @@ public class EventInstance {
 		return "EventInstance of: "+event.getName()+";  CFT: "+cft.getName()+";  ID: "+id+";  guid: "+guid + "; author: " + author + "; description: " + description;
 	}
 
-	public EventInstance(Event event, EventCFT cft, String author, String description, String guid, int id) {
+	public EventInstanceImpl(Event event, EventCFT cft, String author, String description, String guid, int id) {
 		this.event = event;
 		this.cft = cft;
 		this.author = author;

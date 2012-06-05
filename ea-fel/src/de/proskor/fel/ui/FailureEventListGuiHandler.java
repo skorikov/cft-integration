@@ -8,9 +8,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.fel.impl.Event;
-import de.proskor.fel.impl.EventCFT;
-import de.proskor.fel.impl.EventInstance;
+import de.proskor.fel.Event;
+import de.proskor.fel.EventCFT;
+import de.proskor.fel.EventInstance;
 import de.proskor.fel.ui.FailureEventListGui.CreationResult;
 import de.proskor.fel.ui.FailureEventListGui.GuiHandler;
 

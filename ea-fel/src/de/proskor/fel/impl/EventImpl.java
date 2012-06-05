@@ -1,42 +1,53 @@
 package de.proskor.fel.impl;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import de.proskor.fel.Event;
+import de.proskor.fel.EventInstance;
 
 
-public class Event {
+public class EventImpl implements Event {
 	private String name;
 	private String guid;
 	private int id;
 	private String author;
 	private String description;
 
-	private ArrayList<EventInstance> instances;
+	private List<EventInstance> instances;
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getGuid() {
 		return guid;
 	}
 	
+	@Override
 	public int getId() {
 		return id;
 	}
 
+	@Override
 	public String getAuthor() {
 		return author;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	public ArrayList<EventInstance> getInstances() {
+	@Override
+	public List<EventInstance> getInstances() {
 		return instances;
 	}
-	
-	protected void addInstance(EventInstance eventInstance) {
+
+	@Override
+	public void addInstance(EventInstance eventInstance) {
 		instances.add(eventInstance);
 	}
 
@@ -45,13 +56,12 @@ public class Event {
 		return "Event: "+name+";  ID: "+id+";  guid: "+guid + "; author: " + author + "; description: " + description;
 	}
 	
-	public Event(String name, String author, String description, String guid, int id) {
+	public EventImpl(String name, String author, String description, String guid, int id) {
 		this.name = name;
 		this.author = author;
 		this.description = description;
 		this.guid = guid;
 		this.id = id;
-
 		instances = new ArrayList<EventInstance>();
 	}
 }
