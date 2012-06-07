@@ -2,7 +2,7 @@ package de.proskor.fel;
 
 import java.util.List;
 
-public interface EventCFT {
+public interface EventInstanceContainer {
 	public String getName();
 	public List<EventInstance> getEventInstances();
 	public void addEvent(EventInstance instance);

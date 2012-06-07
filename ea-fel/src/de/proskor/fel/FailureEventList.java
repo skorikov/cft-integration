@@ -1,7 +1,7 @@
 package de.proskor.fel;
 
-import de.proskor.fel.impl.EventImpl;
-import de.proskor.fel.impl.EventCFTImpl;
+import de.proskor.fel.impl.EventTypeImpl;
+import de.proskor.fel.impl.EventContainerImpl;
 import de.proskor.fel.impl.EventInstanceImpl;
 import de.proskor.fel.ui.FailureEventListGuiHandler;
 import de.proskor.fel.ui.FailureEventListGui.CreationResult;
@@ -20,12 +20,12 @@ public class FailureEventList {
 	}
 	
 	/**
-	 * Create {@link EventCFTImpl EventCFTs} containing the {@link EventInstanceImpl EventInstances}
+	 * Create {@link EventContainerImpl EventCFTs} containing the {@link EventInstanceImpl EventInstances}
 	 * and add them here. Call {@link #showEventList()} to open the GUI and get the <i>Events</i>
 	 * and <i>EventInstances</i> created by the User (if any). 
 	 * @param eventCft
 	 */
-	public void addEventCFT(EventCFT eventCft) {
+	public void addEventCFT(EventInstanceContainer eventCft) {
 		felGuiHandler.addEventCFT(eventCft);
 	}
 	
@@ -35,14 +35,14 @@ public class FailureEventList {
 		FailureEventListGuiHandler fel = new FailureEventListGuiHandler(false);
 		
 		// Dummy-Eintr�ge erzeugen:
-		Event eventCommon = new EventImpl("Event " + "common", "Yoda", "The force is strong.",  "{common"+0+"}", 0);
+		EventType eventCommon = new EventTypeImpl("Event " + "common", "Yoda", "The force is strong.",  "{common"+0+"}", 0);
 		int id=1;
-		EventCFT[] cft = new EventCFTImpl[4];
+		EventInstanceContainer[] cft = new EventContainerImpl[4];
 		for(int i=0; i<cft.length; i++) {
-			cft[i] = new EventCFTImpl("CFT " + i);
+			cft[i] = new EventContainerImpl("CFT " + i);
 			
 			for(int k=0; k<2; k++) { 
-				Event event = new EventImpl("Event " + i+"."+k, "Yoda", "-",  "{Event"+id+"}", id);
+				EventType event = new EventTypeImpl("Event " + i+"."+k, "Yoda", "-",  "{Event"+id+"}", id);
 				EventInstance evInst = new EventInstanceImpl(event, cft[i], "Darth Vader",  "Anything", "{EventInstance"+id+"}", 0);
 				System.out.println("- " + evInst);
 			}
@@ -63,7 +63,7 @@ public class FailureEventList {
 		
 		System.out.println();
 		System.out.println("New Events: ");
-		for(Event event : result.createdEvents)
+		for(EventType event : result.createdEvents)
 			System.out.println("- " + event);
 		
 		System.out.println("New Instances: ");

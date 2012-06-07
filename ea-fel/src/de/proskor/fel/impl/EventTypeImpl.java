@@ -3,11 +3,11 @@ package de.proskor.fel.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.proskor.fel.Event;
+import de.proskor.fel.EventType;
 import de.proskor.fel.EventInstance;
 
 
-public class EventImpl implements Event {
+public class EventTypeImpl implements EventType {
 	private String name;
 	private String guid;
 	private int id;
@@ -56,7 +56,7 @@ public class EventImpl implements Event {
 		return "Event: "+name+";  ID: "+id+";  guid: "+guid + "; author: " + author + "; description: " + description;
 	}
 	
-	public EventImpl(String name, String author, String description, String guid, int id) {
+	public EventTypeImpl(String name, String author, String description, String guid, int id) {
 		this.name = name;
 		this.author = author;
 		this.description = description;

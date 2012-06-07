@@ -2,7 +2,7 @@ package de.proskor.fel;
 
 import java.util.List;
 
-public interface Event {
+public interface EventType {
 	public int getId();
 	public String getGuid();
 	public String getName();

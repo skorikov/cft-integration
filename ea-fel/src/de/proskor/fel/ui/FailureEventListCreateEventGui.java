@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.proskor.fel.Event;
-import de.proskor.fel.EventCFT;
+import de.proskor.fel.EventType;
+import de.proskor.fel.EventInstanceContainer;
 import de.proskor.fel.EventInstance;
-import de.proskor.fel.impl.EventImpl;
+import de.proskor.fel.impl.EventTypeImpl;
 import de.proskor.fel.impl.EventInstanceImpl;
 
 public class FailureEventListCreateEventGui extends Shell {
@@ -45,7 +45,7 @@ public class FailureEventListCreateEventGui extends Shell {
 		return (author != "") && (description != "");
 	}
 	
-	public Event createEvent(final String eventName) {
+	public EventType createEvent(final String eventName) {
 		configContentsForEvent(eventName);
 		prepareAndShow();
 
@@ -59,17 +59,17 @@ public class FailureEventListCreateEventGui extends Shell {
 		String guid = "";
 		int id = -1;
 		
-		return new EventImpl(eventName, author, description, guid, id);
+		return new EventTypeImpl(eventName, author, description, guid, id);
 	}
 
-	public EventInstance createEventInstance(Event event, ArrayList<EventCFT> possibleParentCFTs, EventCFT defaultSelectedCFT) {
+	public EventInstance createEventInstance(EventType event, ArrayList<EventInstanceContainer> possibleParentCFTs, EventInstanceContainer defaultSelectedCFT) {
 		configContentsForEventInstance(event, possibleParentCFTs, defaultSelectedCFT);
 		prepareAndShow();
 
 		if (!userAccepted)
 			return null;
 		
-		EventCFT cft = possibleParentCFTs.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
+		EventInstanceContainer cft = possibleParentCFTs.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
 		String author = userInputData.author;
 		String description = userInputData.description;
 		String guid = "";
@@ -105,14 +105,14 @@ public class FailureEventListCreateEventGui extends Shell {
 		comboCFTs.setEnabled(false);
 	}
 	
-	private void configContentsForEventInstance(Event event, ArrayList<EventCFT> possibleParentCFTs, EventCFT defaultSelectedCFT) {
+	private void configContentsForEventInstance(EventType event, ArrayList<EventInstanceContainer> possibleParentCFTs, EventInstanceContainer defaultSelectedCFT) {
 		textEventName.setText(event.getName());
 		comboCFTs.setEnabled(true);
 		
 		String[] items = new String[possibleParentCFTs.size()];
 		
 		int i=0;
-		for(EventCFT cft : possibleParentCFTs) {
+		for(EventInstanceContainer cft : possibleParentCFTs) {
 			items[i] = cft.getName();
 			i++;
 		}

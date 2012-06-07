@@ -6,6 +6,6 @@ public interface EventInstance {
 	public String getGuid();
 	public String getDescription();
 	public String getAuthor();
-	public Event getEvent();
-	public EventCFT getCft();
+	public EventType getEvent();
+	public EventInstanceContainer getContainer();
 }

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.fel.Event;
+import de.proskor.fel.EventType;
 import de.proskor.fel.EventInstance;
 
 
@@ -35,14 +35,14 @@ public class FailureEventListGui extends Shell {
 		public void onTreeItemSelected(TreeItem item);
 		public void onTextNewEventsNameChanged(String name);
 		public void onTextFilterEventByNameChanged(String text);
-		public Event getEventByName(String name);
-		public Event createNewEvent(String newEventsName);
+		public EventType getEventByName(String name);
+		public EventType createNewEvent(String newEventsName);
 		public boolean eventExists(String newEventsName);
 		public EventInstance createNewEventInstance(String eventName);
 	}
 	
 	public static class CreationResult {
-		public ArrayList<Event> createdEvents = new ArrayList<Event>();
+		public ArrayList<EventType> createdEvents = new ArrayList<EventType>();
 		public ArrayList<EventInstance> createdEventInstances = new ArrayList<EventInstance>();
 	}
 	
@@ -394,7 +394,7 @@ public class FailureEventListGui extends Shell {
 	protected void actionCreateEvent() {
 		String newEventsName = textNewEventsName.getText();
 
-		Event newEvent;
+		EventType newEvent;
 		if (!guiHandler.eventExists(newEventsName)) 
 			newEvent = guiHandler.createNewEvent(newEventsName); // kann ebenfalls NULL liefern.
 		else

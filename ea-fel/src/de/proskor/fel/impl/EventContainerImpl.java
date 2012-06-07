@@ -3,10 +3,10 @@ package de.proskor.fel.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.proskor.fel.EventCFT;
+import de.proskor.fel.EventInstanceContainer;
 import de.proskor.fel.EventInstance;
 
-public class EventCFTImpl implements EventCFT {
+public class EventContainerImpl implements EventInstanceContainer {
 	private String name;
 	private List<EventInstance> eventInstances;
 	
@@ -25,7 +25,7 @@ public class EventCFTImpl implements EventCFT {
 		eventInstances.add(instance);
 	}
 
-	public EventCFTImpl(String name) {
+	public EventContainerImpl(String name) {
 		this.name = name;
 		eventInstances = new ArrayList<EventInstance>();
 	}

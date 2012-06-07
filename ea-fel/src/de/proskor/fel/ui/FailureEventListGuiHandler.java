@@ -8,8 +8,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.fel.Event;
-import de.proskor.fel.EventCFT;
+import de.proskor.fel.EventType;
+import de.proskor.fel.EventInstanceContainer;
 import de.proskor.fel.EventInstance;
 import de.proskor.fel.ui.FailureEventListGui.CreationResult;
 import de.proskor.fel.ui.FailureEventListGui.GuiHandler;
@@ -25,7 +25,7 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		public EventFilter() {
 		}
 		
-		public boolean eventConformsToFilter(Event event) {
+		public boolean eventConformsToFilter(EventType event) {
 			boolean nameOk = event.getName().contains(eventNameFilter);
 			
 			return nameOk;
@@ -42,29 +42,29 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	private boolean autoJumpToEventBySpecifiedName;
 	private EventFilter eventFilter;
 	
-	private ArrayList<EventCFT> cfts;
+	private ArrayList<EventInstanceContainer> cfts;
 	private HashMap<String, TreeItem> currentEventsInGui;
-	private HashMap<String, Event> eventsNameMap;
+	private HashMap<String, EventType> eventsNameMap;
 	
 	public FailureEventListGuiHandler(boolean onlyShowEvents) {
 	//	this.onlyShowEvents = onlyShowEvents;
 		
 		eventFilter = new EventFilter();
 		currentEventsInGui = new HashMap<String, TreeItem>();
-		cfts = new ArrayList<EventCFT>();
+		cfts = new ArrayList<EventInstanceContainer>();
 		gui = new FailureEventListGui(this, onlyShowEvents);
 
 		autoJumpToEventBySpecifiedName = true;
 	}
 	
 	public CreationResult showEventList() {
-		eventsNameMap = updateEventMap(new HashMap<String, Event>());
+		eventsNameMap = updateEventMap(new HashMap<String, EventType>());
 		gui.show();
 		
 		return gui.getCreationResult();
 	}
 	
-	public void addEventCFT(EventCFT cft) {
+	public void addEventCFT(EventInstanceContainer cft) {
 		cfts.add(cft);
 	}
 	
@@ -72,23 +72,23 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		Tree tree = gui.getEventTree();
 		tree.removeAll();
 		
-		EventCFT selectedCFT = getSelectedCftFromComboEventList();
+		EventInstanceContainer selectedCFT = getSelectedCftFromComboEventList();
 		if (selectedCFT == null) {
-			for(EventCFT cft : cfts)
+			for(EventInstanceContainer cft : cfts)
 				updateGuiTree_addCft(cft);
 		} else {
 			updateGuiTree_addCft(selectedCFT);
 		}
 	}
 	
-	private String[] getTreeItemEventName(Event event) {
+	private String[] getTreeItemEventName(EventType event) {
 		String namesOfCftsContainingInstances = "";
 		
 		for (EventInstance inst : event.getInstances()) {
 			if (!namesOfCftsContainingInstances.equals(""))
-				namesOfCftsContainingInstances = namesOfCftsContainingInstances + ", " + inst.getCft().getName(); 
+				namesOfCftsContainingInstances = namesOfCftsContainingInstances + ", " + inst.getContainer().getName(); 
 			else
-				namesOfCftsContainingInstances = inst.getCft().getName();
+				namesOfCftsContainingInstances = inst.getContainer().getName();
 		}
 		
 		return new String[] {
@@ -102,13 +102,13 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	private String[] getTreeItemEventInstanceName(EventInstance eventInstance) {
 		return new String[] {
 				"<Instance>", 
-				eventInstance.getCft().getName(), 
+				eventInstance.getContainer().getName(), 
 				"", 
 				eventInstance.getId() +" / "+ eventInstance.getGuid()
 		};
 	}
 	
-	private void updateGuiTree_addCft(EventCFT cft) {
+	private void updateGuiTree_addCft(EventInstanceContainer cft) {
 		Tree tree = gui.getEventTree();
 
 		for(EventInstance eventInstance: cft.getEventInstances()) {
@@ -163,14 +163,14 @@ public class FailureEventListGuiHandler implements GuiHandler {
 			gui.getComboEventListView().select(0);
 	}
 	
-	private void setSelectedCftFromComboEventList(EventCFT cft) {
+	private void setSelectedCftFromComboEventList(EventInstanceContainer cft) {
 		if (cft == null)
 			gui.getComboEventListView().select(comboListViewIndex_allCFTs);
 		else
 			gui.getComboEventListView().select(cfts.indexOf(cft) + comboListViewIndex_firstCFTOffset);
 	}
 	
-	private EventCFT getSelectedCftFromComboEventList() {
+	private EventInstanceContainer getSelectedCftFromComboEventList() {
 		int selectedCftIndex = gui.getComboEventListView().getSelectionIndex();
 		
 		if (selectedCftIndex == comboListViewIndex_allCFTs)
@@ -179,7 +179,7 @@ public class FailureEventListGuiHandler implements GuiHandler {
 			return cfts.get(selectedCftIndex-comboListViewIndex_firstCFTOffset);
 	}
 	
-	private void guiSelectEvent(Event event) {
+	private void guiSelectEvent(EventType event) {
 		// Auswahl wird �ber Text durchgef�hrt, da die Listen-Indizes durch die Sortierung nicht stimmen m�ssen.
 		for(TreeItem eventItem : gui.getTreeEventList().getItems()) {
 			if (eventItem.getText().equals(event.getName()))
@@ -207,7 +207,7 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	}
 	
 	private void guiJumpToEventBySpecifiedName(String name) {
-		Event event = getEventFromGuiByName(name); // Momentan sichtbare durchsuchen
+		EventType event = getEventFromGuiByName(name); // Momentan sichtbare durchsuchen
 		if (event != null) {
 			guiSelectEvent(event);
 		}  else {
@@ -225,7 +225,7 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		guiSelectEvent(event);
 	}
 	
-	private Event getEventFromGuiByName(String name) {
+	private EventType getEventFromGuiByName(String name) {
 		if (currentEventsInGui.get(name) != null) // Falls das Event im GUI eingetragen ist (Eintrag ist vom Typ TreeItem)...
 			return eventsNameMap.get(name); // Wird das Event-Objekt aus der vollst�ndigen Liste geholt.
 		else
@@ -251,8 +251,8 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		updateGui();
 	}
 	
-	private HashMap<String, Event> updateEventMap(HashMap<String, Event> map) {
-		for(EventCFT cft : cfts)
+	private HashMap<String, EventType> updateEventMap(HashMap<String, EventType> map) {
+		for(EventInstanceContainer cft : cfts)
 			for (EventInstance instance : cft.getEventInstances())
 				if (!map.containsKey(instance.getEvent().getName()))
 					map.put(instance.getEvent().getName(), instance.getEvent());
@@ -261,19 +261,19 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	}
 
 	@Override
-	public Event getEventByName(String name) {
+	public EventType getEventByName(String name) {
 		return eventsNameMap.get(name);
 	}
 
 	@Override
-	public Event createNewEvent(String newEventsName) {
+	public EventType createNewEvent(String newEventsName) {
 		FailureEventListCreateEventGui creator = new FailureEventListCreateEventGui();
 		return creator.createEvent(newEventsName);
 	}	
 	
 	@Override
 	public EventInstance createNewEventInstance(String eventName) {
-		Event event = eventsNameMap.get(eventName);
+		EventType event = eventsNameMap.get(eventName);
 		if (event == null)
 			return null;
 		
