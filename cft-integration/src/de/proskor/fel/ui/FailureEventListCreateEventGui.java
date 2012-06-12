@@ -1,6 +1,7 @@
 package de.proskor.fel.ui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
@@ -17,15 +18,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-
 import de.proskor.fel.container.EventContainer;
 import de.proskor.fel.container.EventInstanceContainer;
 import de.proskor.fel.container.EventTypeContainer;
-import de.proskor.fel.event.Event;
 import de.proskor.fel.event.EventInstance;
 import de.proskor.fel.event.EventType;
-import de.proskor.fel.impl.EventTypeImpl;
-import de.proskor.fel.impl.EventInstanceImpl;
 
 public class FailureEventListCreateEventGui extends Shell {
 	private class UserInputData {
@@ -60,11 +57,11 @@ public class FailureEventListCreateEventGui extends Shell {
 		String description = userInputData.description;
 		EventTypeContainer container = possibleContainers.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
 		
-		// ID & GUID werden von EA zugewie�en und beim Erstellen eines Events hier nicht gesetzt.
-		String guid = "";
-		int id = -1;
+		EventType event = container.createEvent(eventName);
+		event.setAuthor(author);
+		event.setDescription(description);
 		
-		return new EventTypeImpl(eventName, container, author, description, guid, id);
+		return event;
 	}
 
 	public EventInstance createEventInstance(EventType event, ArrayList<EventInstanceContainer> possibleContainers, EventInstanceContainer defaultSelectedContainer) {
@@ -77,10 +74,14 @@ public class FailureEventListCreateEventGui extends Shell {
 		EventInstanceContainer cft = possibleContainers.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
 		String author = userInputData.author;
 		String description = userInputData.description;
-		String guid = "";
-		int id = -1;
+
 		
-		return new EventInstanceImpl(event, cft, author, description, guid, id);
+		EventInstance eventInstance = cft.createEvent(event.getName());
+		eventInstance.setAuthor(author);
+		eventInstance.setDescription(description);
+		// ACHTUNG: Nur debugging. EventType fehlt!
+		
+		return eventInstance;
 	}
 
 	public FailureEventListCreateEventGui() {

@@ -1,18 +1,19 @@
 package de.proskor.fel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.EventType;
 
 public interface EventRepository {
-	public ArrayList<EventType> getEventTypes();
+	public List<EventType> getEventTypes();
 	
-	public boolean writeEventType(EventType e); 
-	public boolean writeEventInstance(EventType e);
+//	public boolean writeEventType(EventType e); 
+//	public boolean writeEventInstance(EventType e);
 	
 	public List<EventTypeContainer> getEventTypeContainers();
+
+//	public EventInstanceContainer getEventInstanceContainer(Element element);
 	
-	public void reloadFromEA();
+//	public void reloadFromEA();
 }

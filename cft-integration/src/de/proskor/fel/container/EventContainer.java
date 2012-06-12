@@ -7,4 +7,5 @@ import de.proskor.fel.event.Event;
 public interface EventContainer {
 	public List<? extends Event> getEvents();
 	public String getName();
+	public Event createEvent(String name);
 }

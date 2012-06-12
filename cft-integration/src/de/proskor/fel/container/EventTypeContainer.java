@@ -12,6 +12,8 @@ public interface EventTypeContainer extends EventContainer, Type {
 	@Override
 	public List<EventInstanceContainer> getInstances();
 	
-	public void addEvent(EventType et);	
+	@Override
+	public EventType createEvent(String name);
+	
 	public void addInstance(EventInstanceContainer instance);
 }

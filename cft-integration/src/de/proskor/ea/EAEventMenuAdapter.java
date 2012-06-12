@@ -3,10 +3,10 @@ package de.proskor.ea;
 import cli.EA.IElement;
 import cli.EA.IRepository;
 import de.proskor.ea.model.EAElement;
-import de.proskor.fel.FailureEventList;
+import de.proskor.fel.ui.FailureEventListImpl;
 
 public class EAEventMenuAdapter {
-	private final FailureEventList fel;
+	private final FailureEventListImpl fel;
 	
 	public EAEventMenuAdapter() {
 		// fel = new FailureEventList(); // TODO: Ausführen, sobald EventRepository läuft.

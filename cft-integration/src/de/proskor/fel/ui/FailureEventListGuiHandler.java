@@ -12,7 +12,6 @@ import de.proskor.fel.container.EventInstanceContainer;
 import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.EventInstance;
 import de.proskor.fel.event.EventType;
-import de.proskor.fel.ui.FailureEventListGui.CreationResult;
 import de.proskor.fel.ui.FailureEventListGui.GuiHandler;
 
 public class FailureEventListGuiHandler implements GuiHandler {
@@ -59,11 +58,9 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		autoJumpToEventBySpecifiedName = true;
 	}
 	
-	public CreationResult showEventList() {
+	public void showEventList() {
 		eventsNameMap = updateEventMap(new HashMap<String, EventType>());
 		gui.show();
-		
-		return gui.getCreationResult();
 	}
 	
 	/**

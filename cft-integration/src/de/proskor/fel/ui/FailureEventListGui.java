@@ -41,17 +41,16 @@ public class FailureEventListGui extends Shell {
 		public EventInstance createNewEventInstance(String eventName);
 	}
 	
-	public static class CreationResult {
-		public ArrayList<EventType> createdEvents = new ArrayList<EventType>();
-		public ArrayList<EventInstance> createdEventInstances = new ArrayList<EventInstance>();
-	}
+//	public static class CreationResult {
+//		public ArrayList<EventType> createdEvents = new ArrayList<EventType>();
+//		public ArrayList<EventInstance> createdEventInstances = new ArrayList<EventInstance>();
+//	}
 	
 	public static enum GuiCloseMethod { userOK, userCancel, shellClose };
 	
 	private GuiCloseMethod guiCloseMethod;
 	private final GuiHandler guiHandler;
 	private boolean shellIsClosing;
-	private CreationResult creationResult;
 	private boolean readonly;
 
 	
@@ -93,10 +92,6 @@ public class FailureEventListGui extends Shell {
 
 	public Button getBtnCreateInstance() {
 		return btnCreateEventInstance;
-	}
-
-	public CreationResult getCreationResult() {
-		return creationResult;
 	}
 
 	public Text getTextFilterEventName() {
@@ -203,8 +198,6 @@ public class FailureEventListGui extends Shell {
 	private void prepareToShow() {
 		setGuiReadonlyMode(readonly);
 		
-		creationResult = new CreationResult();
-
 		// Wichtige Aktion! Nur so werden die OnChange-Events ausgel�st, welche das GUI anpassen.
 		if (!readonly) {
 			textNewEventsName.setText("New Event");
@@ -394,36 +387,24 @@ public class FailureEventListGui extends Shell {
 	protected void actionCreateEvent() {
 		String newEventsName = textNewEventsName.getText();
 
-		EventType newEvent;
 		if (!guiHandler.eventExists(newEventsName)) 
-			newEvent = guiHandler.createNewEvent(newEventsName); // kann ebenfalls NULL liefern.
-		else
-			newEvent = null;
-
-		if (newEvent != null)
-			creationResult.createdEvents.add(newEvent);
-		}	
+			guiHandler.createNewEvent(newEventsName); // kann ebenfalls NULL liefern.
+	}	
 	
 	protected void actionCreateEventInstance() {
 		String eventName = textNewEventsName.getText();
 		
-		EventInstance eventInstance = guiHandler.createNewEventInstance(eventName);
-		
-		if (eventInstance != null) 
-			creationResult.createdEventInstances.add(eventInstance);
-		}
+		guiHandler.createNewEventInstance(eventName);
+	}
 
 	private boolean keyEventIsReturn(KeyEvent e) {
 		// 13 == RETURN; 16777296 == NUM_RETURN
-		return e.keyCode == 13 || e.keyCode == 16777296;
+		return e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR;
 	}
 
 	protected void finishAndCloseGui(GuiCloseMethod closeMethod) {
 		guiCloseMethod = closeMethod;
 		
-		if (closeMethod != GuiCloseMethod.userOK)
-			creationResult = new CreationResult(); // Es wird ein 'leeres' Ergebnis geliefert. Jedoch NICHT NULL!
-			
 		close();
 	}
 	
