@@ -21,6 +21,7 @@ import de.proskor.model.Model
 import de.proskor.model.Diagram
 import de.proskor.model.Identity
 import de.proskor.model.Container
+import de.proskor.ea.model.EAElement
 
 class Main extends Extension with EAAdapter {
   def start() {}
@@ -64,11 +65,13 @@ class Main extends Extension with EAAdapter {
   def test() {
     Repository.getCurrent.write("hello")
   }
+  
 }
 
 object Main {
   def main(args: Array[String]) {
-    new MergeDialog(new Repository() {
+    println(cli.System.Environment.get_Version().ToString())
+    /*new MergeDialog(new Repository() {
       var name: String = ""
       val id: Int = 0
       def parent: Option[Container] = None
@@ -79,6 +82,6 @@ object Main {
   def models: List[Model] = List()
   def show(diagram: Diagram) {}
   def get(id: Int): Element = null
-    })
+    })*/
   }
 }

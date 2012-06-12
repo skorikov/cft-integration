@@ -16,11 +16,13 @@
 	</target>
 	<target name="ikvm" depends="jar">
 		<exec executable="ikvmc">
+			<arg value="-nostdlib" />
+			<arg value="-lib:C:\Windows\Microsoft.NET\Framework64\v4.0.30319" />
 			<arg value="-target:library" />
 			<arg value="-out:dist/${dll}" />
 			<arg value="-r:dll/Interop.EA.dll" />
 			<arg value="-r:dll/scala-library.dll" />
-			<arg value="-r:C:\Windows\Microsoft.NET\Framework64\v2.0.50727\mscorlib.dll" />
+			<arg value="-r:mscorlib.dll" />
 			<arg value="-r:dll/swt.dll" />
 			<arg value="dist/${jar}" />
 		</exec>
