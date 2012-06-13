@@ -45,7 +45,7 @@ trait EAAdapter {
   }
   
   
-  /*  "isEnabled & isChecked" verwenden Call-By-Reference um die Werte zu verändern. Da dies in Java/Scala jedoch nicht möglich ist,
+  /*  "isEnabled & isChecked" verwenden Call-By-Reference um die Werte zu verÃ¤ndern. Da dies in Java/Scala jedoch nicht mï¿½glich ist,
    *  verteile ich beide Variablen auf zwei unterschiedliche Methoden, die die Werte als Return-Value liefern.
    *  
    *  Hier die original-Methode in C#: 
