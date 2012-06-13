@@ -11,6 +11,7 @@
 			<fileset dir="merge-algorithm/bin" />
 			<fileset dir="ea-extension/bin" />
 			<fileset dir="ea-adapter/bin" />
+			<fileset dir="redundancy-removal/bin" />
 		</jar>
 	</target>
 	<target name="ikvm" depends="jar">
