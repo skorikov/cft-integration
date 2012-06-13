@@ -1,10 +1,11 @@
 package de.proskor.cft.model.simple
-import de.proskor.cft.model.Container
-import de.proskor.cft.model.Element
+
+import de.proskor.cft.model.{Container, Element}
 
 private abstract class SimpleContainer(initialName: String) extends SimpleElement(initialName) with Container {
-  private var kids = Set[Element]()
-  def elements = kids
+  private var kids: Set[Element] = Set()
+
+  def elements: Set[Element] = kids
 
   def add(element: Element) {
     require(element.isInstanceOf[SimpleElement])

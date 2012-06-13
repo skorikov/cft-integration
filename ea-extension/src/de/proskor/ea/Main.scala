@@ -1,51 +1,69 @@
 package de.proskor.ea
-import de.proskor.cft.model.Repository
-import de.proskor.cft.model.Package
-import de.proskor.cft.model.Element
-import de.proskor.cft.test.CftTests
-import de.proskor.cft.test.MergeTests
-import de.proskor.ea.ui.MergeDialog
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.Suite
-import org.junit.runner.Description
-import org.junit.runner.notification.Failure
-import org.junit.runner.notification.RunNotifier
 
-class Main extends Extension with Adapter {
-  def start() {}
-  def stop() {}
+import de.proskor.ea.impl._
+import de.proskor.ea.impl.menu.MenuProviderImpl
+import de.proskor.ea.impl.menu.SubmenuImpl
+import de.proskor.ea.impl.menu.MenuCommandImpl
 
-  def test() {
-    val repository = Repository("/")
-    val pkg = Package(repository, "TEST")
-    val subpkg = Package(pkg, "SUB")
+class Main extends ExtensionImpl with AddInImpl with TestRunnerImpl {
+  override val getMenuProvider = new MenuProviderImpl
+  val cftMenu = new SubmenuImpl("-CFT Integration")
+  val testItem = new MenuCommandImpl("Test") {
+    override def invoke {}
+  }
+  cftMenu.items :+= testItem
+  getMenuProvider.mainMenu.items :+= cftMenu
+}
+
+object Main {
+
+  private trait WriteRedirect extends Writable {
+    override def write(text: String) = println(text)
   }
 
-  def testRunner(clazz: Class[_]) = new JUnitRunner(clazz.asInstanceOf[Class[Suite]])
+  private val addin: AddIn = new Main with WriteRedirect
 
-  def testNotifier = new RunNotifier() {
-    override def fireTestFailure(failure: Failure) {
-      write("---- TEST FAILED! " + failure.getDescription() + " ----")
-      failure.getTrace.split("\n").map(_.trim).map(write)
-      write("-" * 60)
+  private sealed abstract class MenuItem
+  private case class RootItem(kids: Array[MenuItem]) extends MenuItem
+  private case class SingleItem(name: String) extends MenuItem
+  private case class CompositeItem(name: String, kids: Array[MenuItem]) extends MenuItem
+
+  private def menu: MenuItem = {
+    def clean(name: String): String = if (name.startsWith("-")) name.drop(1) else name
+
+    def root(name: String): Boolean = name.isEmpty
+
+    def expandable(name: String): Boolean = name.startsWith("-") || root(name)
+
+    def item(name: String): MenuItem = if (expandable(name)) {
+
+      def constructor(name: String, kids: Array[MenuItem]): MenuItem =
+        if (root(name)) RootItem(kids) else CompositeItem(clean(name), kids)
+
+      addin.EA_GetMenuItems(null, "MainMenu", name) match {
+        case single: String => constructor(name, Array(item(single)))
+        case array: Array[String] => constructor(name, array.map(item))
+      }
+
+    } else {
+      SingleItem(name)
     }
+
+    item("")
   }
 
-  def runTests() {
-    testRunner(classOf[CftTests]).run(testNotifier)
-    testRunner(classOf[MergeTests]).run(testNotifier)
-    write("---- ALL TESTS DONE ----")
+
+  private def print(item: MenuItem, indent: Int = 0): Unit = item match {
+    case RootItem(kids) => kids.map(print(_, indent))
+    case SingleItem(name) => println(" `- " * indent + name)
+    case CompositeItem(name, kids) => println(" `- " * indent + name); kids.map(print(_, indent + 1))
   }
 
-  def merge() {
-    new MergeDialog(Repository("/"))
-  }
-
-  def allPackages(pkg: Package): Set[Package] = pkg.packages ++ pkg.packages.flatMap(allPackages)
-
-  def fullName(element: Element): String = element.parent match {
-    case None => element.name
-    case Some(parent) => fullName(parent) + "/" + element.name
+  def main(args: Array[String]) {
+    de.proskor.automation.Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
+    addin.EA_OnPostInitialized(null)
+    print(menu)
+    addin.EA_MenuClick(null, null, "Run Tests")
+    addin.EA_Disconnect()
   }
 }

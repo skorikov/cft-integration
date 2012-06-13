@@ -1,0 +1,5 @@
+package de.proskor.automation
+
+trait Identity {
+  def id: Int
+}

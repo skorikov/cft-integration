@@ -1,31 +1,32 @@
 package de.proskor.cft.model.ea
-import de.proskor.cft.model._
-import de.proskor.cft.model.ea.peers._
 
-private class EAPackage(initialPeer: EAPeer) extends EAElement(initialPeer) with Package {
-  def components: Set[Component] = peer.elementsOfType("Component").map(EAFactory.create).asInstanceOf[Set[Component]]
-  def packages: Set[Package] = peer.packages.map(EAFactory.create).asInstanceOf[Set[Package]]
-  def elements: Set[Element] = peer.elements.map(EAFactory.create)
+import de.proskor.cft.model.Container
+import de.proskor.cft.model.Package
+import de.proskor.cft.model.Component
+import de.proskor.cft.model.Element
+import de.proskor.cft.model.ea.peers.{ElementPeered, PackagePeer, PackagePeered, ProxyPeer, RepositoryPeer}
 
-  def add(element: Element) {
-    require(element.isInstanceOf[EAPackage] || element.isInstanceOf[EAComponent])
-    val el = element.asInstanceOf[EAElement]
-    el.parent foreach {
-      case container => container -= el
-    }
-    el.peer = el match {
-      case pkg: EAPackage => peer.addPackage(pkg.name)
-      case component: EAComponent => peer.addElement(component.name, "Component")
-    }
+class EAPackage(var peer: PackagePeer) extends PackagePeered with Package {
+  override def equals(that: Any): Boolean = that match {
+    case pkg: EAPackage => pkg.peer.id == peer.id
+    case _ => false
   }
 
-  def remove(element: Element) {
-    require(element.isInstanceOf[EAPackage] || element.isInstanceOf[EAComponent])
-    val el = element.asInstanceOf[EAElement]
-    el.peer match {
-      case peer: EAProxyPeer =>
-      case pkgPeer: EAPackagePeer => peer.deletePackage(pkgPeer); el.peer = new EAProxyPeer(pkgPeer)
-      case elPeer: EAElementPeer => peer.deleteElement(elPeer); el.peer = new EAProxyPeer(elPeer)
-    }
+  def name: String = peer.name
+  def name_=(name: String) { peer.name = name }
+
+  override def parent: Option[Package] =
+    if (peer.isInstanceOf[ProxyPeer]) None
+    else Some(peer.container.map(new EAPackage(_)).getOrElse(new EARepository(RepositoryPeer.instance)))
+  override def elements: Set[Element] = components ++ packages
+  override def components: Set[Component] = peer.elements.withFilter(_.stereotype == "Component").map(new EAComponent(_))
+  override def packages: Set[Package] = peer.packages.map(new EAPackage(_))
+  override def add(element: Element) = element match {
+    case ea: PackagePeered => ea.peer = peer.add(ea.peer)
+    case ea: ElementPeered => ea.peer = peer.add(ea.peer)
+  }
+  override def remove(element: Element) = element match {
+    case ea: PackagePeered => ea.peer = peer.remove(ea.peer)
+    case ea: ElementPeered => ea.peer = peer.remove(ea.peer)
   }
 }

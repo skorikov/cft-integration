@@ -1,9 +1,6 @@
 package de.proskor.cft.model.simple
-import scala.collection.mutable
-import de.proskor.cft.model.{Component,Event,Element}
-import de.proskor.cft.model.Gate
-import de.proskor.cft.model.Inport
-import de.proskor.cft.model.Outport
+
+import de.proskor.cft.model._
 
 private class SimpleComponent(initialName: String) extends SimpleContainer(initialName) with Component {
   def events: Set[Event] = elements.filter(_.isInstanceOf[Event]).asInstanceOf[Set[Event]]
