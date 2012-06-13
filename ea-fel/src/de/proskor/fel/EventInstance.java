@@ -1,6 +1,5 @@
 package de.proskor.fel;
 
-
 public interface EventInstance {
 	public int getId();
 	public String getGuid();

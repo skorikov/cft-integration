@@ -1,8 +1,19 @@
 package de.proskor.ea
 
 import de.proskor.ea.impl._
+import de.proskor.ea.impl.menu.MenuProviderImpl
+import de.proskor.ea.impl.menu.SubmenuImpl
+import de.proskor.ea.impl.menu.MenuCommandImpl
 
-class Main extends ExtensionImpl with AddInImpl with TestRunnerImpl
+class Main extends ExtensionImpl with AddInImpl with TestRunnerImpl {
+  override val getMenuProvider = new MenuProviderImpl
+  val cftMenu = new SubmenuImpl("-CFT Integration")
+  val testItem = new MenuCommandImpl("Test") {
+    override def invoke {}
+  }
+  cftMenu.items :+= testItem
+  getMenuProvider.mainMenu.items :+= cftMenu
+}
 
 object Main {
 
@@ -29,7 +40,7 @@ object Main {
       def constructor(name: String, kids: Array[MenuItem]): MenuItem =
         if (root(name)) RootItem(kids) else CompositeItem(clean(name), kids)
 
-      addin.EA_GetMenuItems(null, null, name) match {
+      addin.EA_GetMenuItems(null, "MainMenu", name) match {
         case single: String => constructor(name, Array(item(single)))
         case array: Array[String] => constructor(name, array.map(item))
       }
