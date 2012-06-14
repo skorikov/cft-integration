@@ -25,5 +25,5 @@ public abstract class AddInAdapter implements AddIn {
 	}
 
 	@Override
-	public void menuItemClicked(IRepository repository, String menu, String item) {}
+	public void menuItemClicked(IRepository repository, String location, String menu, String item) {}
 }

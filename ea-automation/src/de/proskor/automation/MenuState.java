@@ -4,7 +4,7 @@ public final class MenuState {
 	private final boolean enabled;
 	private final boolean checked;
 
-	public MenuState(final boolean enabled, final boolean checked) {
+	public MenuState(boolean enabled, boolean checked) {
 		this.enabled = enabled;
 		this.checked = checked;
 	}

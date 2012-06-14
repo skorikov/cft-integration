@@ -54,8 +54,9 @@ public interface AddIn {
 	 * AI Event: EA_MenuClick.
 	 * Invoke the corresponding action here.
 	 * @param repository passed by EA.
+	 * @param location passed by EA.
 	 * @param menu passed by EA.
 	 * @param item passed by EA.
 	 */
-	public void menuItemClicked(IRepository repository, String menu, String item);
+	public void menuItemClicked(IRepository repository, String location, String menu, String item);
 }
