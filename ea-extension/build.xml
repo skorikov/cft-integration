@@ -5,6 +5,10 @@
 	<property name="dll" value="ea-extension.dll" />
 	<target name="jar">
 		<jar destfile="ea-extension/dist/${jar}">
+			<fileset dir="ea-automation/bin">
+				<exclude name="**/MenuState.class" />
+				<exclude name="**/AddIn.class" />
+			</fileset>
 			<fileset dir="cft-model/bin" />
 			<fileset dir="cft-test/bin" />
 			<fileset dir="ea-model/bin" />
@@ -17,7 +21,9 @@
 	<target name="ikvm" depends="jar">
 		<exec executable="ikvmc">
 			<arg value="-target:library" />
+			<arg value="-version:1.0.0.0" />
 			<arg value="-out:ea-extension/dist/${dll}" />
+			<arg value="-r:ea-extension/dll/automation.dll" />
 			<arg value="-r:ea-extension/dll/Interop.EA.dll" />
 			<arg value="-r:ea-extension/dll/scala-library.dll" />
 			<arg value="-r:ea-extension/dll/scalatest-1.6.1.dll" />

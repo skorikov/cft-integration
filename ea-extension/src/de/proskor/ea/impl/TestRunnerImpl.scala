@@ -7,8 +7,11 @@ import org.junit.runners.Suite
 import org.junit.runner.notification.Failure
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder
 import org.junit.runners.JUnit4
+import de.proskor.ea.Writable
 
 trait TestRunnerImpl extends TestRunner {
+  this: Writable =>
+
   def test(clazz: Class[_]): Unit = try {
     testRunner(clazz).run(testNotifier)
   } catch {

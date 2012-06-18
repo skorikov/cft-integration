@@ -3,7 +3,6 @@ package de.proskor.ea.impl
 import de.proskor.automation.impl.RepositoryImpl
 import de.proskor.cft.model.ea.EAFactory
 import de.proskor.cft.model.Factory
-import de.proskor.ea.AddIn
 import de.proskor.ea.Extension
 import cli.EA.IRepository
 import de.proskor.ea.menu.MenuProvider
@@ -11,8 +10,10 @@ import de.proskor.ea.menu.Submenu
 import de.proskor.ea.menu.MenuItem
 import de.proskor.ea.menu.Menu
 import de.proskor.ea.menu.MenuCommand
+import de.proskor.automation.AddInAdapter
+import de.proskor.ea.Writable
 
-trait AddInImpl extends AddIn with Extension {
+class AddInImpl(val extension: Extension) extends AddInAdapter with Writable {
   var outputReady = false
   var repositoryPeer: cli.EA.IRepository = null
 
@@ -21,37 +22,28 @@ trait AddInImpl extends AddIn with Extension {
   val MergeMenuItem = "Merge..."
   val OutputTitle = "CFT Extension"
 
-  def EA_OnPostInitialized(repository: IRepository) {
+  override def initialize(repository: IRepository) {
     repositoryPeer = repository
     RepositoryImpl.peer = repository
     Factory.use(EAFactory)
-    start()
+    extension.start()
   }
 
-  def EA_Disconnect {
-    stop()
-  }
-
-/*  def EA_GetMenuItems(repository: IRepository, location: String, menuName: String): AnyRef = menuName match {
-    case "" => MainMenu
-    case MainMenu => Array(RunTestsMenuItem, MergeMenuItem)
-  }*/
-  def EA_GetMenuItems(repository: IRepository, location: String, menuName: String): AnyRef = {
-    val menu = getMenu(location)
+  override def getMenuItems(repository: IRepository, location: String, menuName: String): Array[String] = {
+    val menu = this.getMenu(location)
     menuName match {
-    //  case null => menu.items.map(_.name).toArray
       case "" => menu.items.map(_.name).toArray
       case item: String => (findMenuItem(menu, menuName) map {
         case sm: Submenu => sm.items.map(_.name).toArray
-        case _ => null
+        case _ => Array[String]()
       }).get
     }
   }
 
   private def getMenu(location: String): Menu = location match {
-    case "MainMenu" => getMenuProvider.mainMenu
-    case "TreeView" => getMenuProvider.treeMenu
-    case "Diagram" => getMenuProvider.diagramMenu
+    case "MainMenu" => extension.getMenuProvider.mainMenu
+    case "TreeView" => extension.getMenuProvider.treeMenu
+    case "Diagram" => extension.getMenuProvider.diagramMenu
   }
 
   private def findMenuItem(menu: Menu, name: String): Option[MenuItem] =
@@ -68,15 +60,12 @@ trait AddInImpl extends AddIn with Extension {
     }
       
 
-  private def findMenuItem(name: String): Option[MenuItem] =
-    findMenuItem(getMenuProvider.mainMenu, name).orElse(findMenuItem(getMenuProvider.treeMenu, name)).orElse(findMenuItem(getMenuProvider.diagramMenu, name))
+  private def findMenuItem(name: String): Option[MenuItem] = {
+    val mp = extension.getMenuProvider
+    findMenuItem(mp.mainMenu, name).orElse(findMenuItem(mp.treeMenu, name)).orElse(findMenuItem(mp.diagramMenu, name))
+  }
 
-/*  def EA_MenuClick(repository: IRepository, menuName: String, itemName: String): Unit = itemName match {
-    case RunTestsMenuItem => tests()
-    case MergeMenuItem => merge()
-    case _ =>
-  }*/
-  def EA_MenuClick(repository: IRepository, menuName: String, itemName: String): Unit = findMenuItem(itemName).foreach {
+  override def menuItemClicked(repository: IRepository, location: String, menuName: String, itemName: String): Unit = findMenuItem(itemName).foreach {
     case mc: MenuCommand => mc.invoke
   }
 

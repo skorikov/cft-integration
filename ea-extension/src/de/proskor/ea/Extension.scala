@@ -2,7 +2,7 @@ package de.proskor.ea
 
 import de.proskor.ea.menu.MenuProvider
 
-trait Extension extends Writable {
+trait Extension {
   def getMenuProvider(): MenuProvider
   def start(): Unit
   def stop(): Unit

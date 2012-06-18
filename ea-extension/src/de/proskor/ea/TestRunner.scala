@@ -1,5 +1,5 @@
 package de.proskor.ea
 
-trait TestRunner extends Writable {
+trait TestRunner {
   def test(clazz: Class[_]): Unit
 }

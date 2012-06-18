@@ -1,18 +1,14 @@
 package de.proskor.ea
 
-import de.proskor.ea.impl._
+import de.proskor.ea.impl.menu.MenuCommandImpl
 import de.proskor.ea.impl.menu.MenuProviderImpl
 import de.proskor.ea.impl.menu.SubmenuImpl
-import de.proskor.ea.impl.menu.MenuCommandImpl
+import de.proskor.ea.impl._
+import de.proskor.automation.AddIn
 
-class Main extends ExtensionImpl with AddInImpl with TestRunnerImpl {
-  override val getMenuProvider = new MenuProviderImpl
-  val cftMenu = new SubmenuImpl("-CFT Integration")
-  val testItem = new MenuCommandImpl("Test") {
-    override def invoke {}
-  }
-  cftMenu.items :+= testItem
-  getMenuProvider.mainMenu.items :+= cftMenu
+class Main extends AddInImpl(new ExtensionImpl) with AddInBridge {
+  this.extension.asInstanceOf[ExtensionImpl].wr = this.write
+  
 }
 
 object Main {
@@ -40,8 +36,8 @@ object Main {
       def constructor(name: String, kids: Array[MenuItem]): MenuItem =
         if (root(name)) RootItem(kids) else CompositeItem(clean(name), kids)
 
-      addin.EA_GetMenuItems(null, "MainMenu", name) match {
-        case single: String => constructor(name, Array(item(single)))
+      addin.getMenuItems(null, "MainMenu", name) match {
+      //  case single: String => constructor(name, Array(item(single)))
         case array: Array[String] => constructor(name, array.map(item))
       }
 
@@ -61,9 +57,9 @@ object Main {
 
   def main(args: Array[String]) {
     de.proskor.automation.Repository.instance = de.proskor.automation.impl.dummy.DummyRepository
-    addin.EA_OnPostInitialized(null)
+    addin.initialize(null)
     print(menu)
-    addin.EA_MenuClick(null, null, "Run Tests")
-    addin.EA_Disconnect()
+    addin.menuItemClicked(null, "MainMenu", null, "Run Tests")
+    addin.stop()
   }
 }
