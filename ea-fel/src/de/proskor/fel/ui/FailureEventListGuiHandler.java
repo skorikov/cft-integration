@@ -8,10 +8,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.fel.EventType;
-import de.proskor.fel.EventInstanceContainer;
-import de.proskor.fel.EventInstance;
-import de.proskor.fel.ui.FailureEventListGui.CreationResult;
+import de.proskor.fel.container.EventInstanceContainer;
+import de.proskor.fel.container.EventTypeContainer;
+import de.proskor.fel.event.EventInstance;
+import de.proskor.fel.event.EventType;
 import de.proskor.fel.ui.FailureEventListGui.GuiHandler;
 
 public class FailureEventListGuiHandler implements GuiHandler {
@@ -19,14 +19,15 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		private String eventNameFilter = "";
 		
 		public void setEventNameFilter(String eventNameFilter) {
-			this.eventNameFilter = eventNameFilter;
+			this.eventNameFilter = eventNameFilter.toLowerCase();
 		}
 		
 		public EventFilter() {
 		}
 		
 		public boolean eventConformsToFilter(EventType event) {
-			boolean nameOk = event.getName().contains(eventNameFilter);
+			String eventNameLower = event.getName().toLowerCase();
+			boolean nameOk = eventNameLower.contains(eventNameFilter);
 			
 			return nameOk;
 		}
@@ -57,15 +58,22 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		autoJumpToEventBySpecifiedName = true;
 	}
 	
-	public CreationResult showEventList() {
+	public void showEventList() {
 		eventsNameMap = updateEventMap(new HashMap<String, EventType>());
 		gui.show();
-		
-		return gui.getCreationResult();
 	}
 	
-	public void addEventCFT(EventInstanceContainer cft) {
-		cfts.add(cft);
+	/**
+	 * Performs {@link #addEventInstanceContainer(EventInstanceContainer)} on all {@link EventInstanceContainer}
+	 * objects contained in the {@link EventTypeContainer}.   
+	 */
+	public void addEventTypeContainer(EventTypeContainer container) {
+		for(EventInstanceContainer instContainer : container.getInstances())
+			addEventInstanceContainer(instContainer);
+	}
+	
+	public void addEventInstanceContainer(EventInstanceContainer instanceContainer) {
+		cfts.add(instanceContainer);
 	}
 	
 	private void updateGuiTree() {
@@ -82,18 +90,11 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	}
 	
 	private String[] getTreeItemEventName(EventType event) {
-		String namesOfCftsContainingInstances = "";
-		
-		for (EventInstance inst : event.getInstances()) {
-			if (!namesOfCftsContainingInstances.equals(""))
-				namesOfCftsContainingInstances = namesOfCftsContainingInstances + ", " + inst.getContainer().getName(); 
-			else
-				namesOfCftsContainingInstances = inst.getContainer().getName();
-		}
+//		String namesOfCftsContainingInstances = "";
 		
 		return new String[] {
 				event.getName(), 
-				namesOfCftsContainingInstances, 
+				event.getContainer().getName(), 
 				event.getInstances().size()+"", 
 				event.getId() +" / "+ event.getGuid()
 		};
@@ -111,18 +112,18 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	private void updateGuiTree_addCft(EventInstanceContainer cft) {
 		Tree tree = gui.getEventTree();
 
-		for(EventInstance eventInstance: cft.getEventInstances()) {
-			if (eventFilter.eventConformsToFilter(eventInstance.getEvent())) {
+		for(EventInstance eventInstance: cft.getEvents()) {
+			if (eventFilter.eventConformsToFilter(eventInstance.getType())) {
 				/* Wenn alle Events aller CFTs eingetagen werden, w�rden 'Common Events' mehrfach eingetragen werden.
 				 */
 
-				TreeItem item = currentEventsInGui.get(eventInstance.getEvent().getName());
+				TreeItem item = currentEventsInGui.get(eventInstance.getType().getName());
 
 				if (item == null) { 
 					item = new TreeItem(tree, SWT.NONE);
-					item.setText(getTreeItemEventName(eventInstance.getEvent()));
+					item.setText(getTreeItemEventName(eventInstance.getType()));
 
-					currentEventsInGui.put(eventInstance.getEvent().getName(), item);
+					currentEventsInGui.put(eventInstance.getType().getName(), item);
 				}
 
 				TreeItem subItem = new TreeItem(item, SWT.NONE);
@@ -152,6 +153,10 @@ public class FailureEventListGuiHandler implements GuiHandler {
 		cftNames[comboListViewIndex_allCFTs] = "== All parent and child CFTs ==";
 		for(int i=comboListViewIndex_firstCFTOffset; i<cfts.size() + comboListViewIndex_firstCFTOffset; i++)
 			cftNames[i] = cfts.get(i-comboListViewIndex_firstCFTOffset).getName();
+		
+		System.out.println("cftNames: ");
+		for(String name : cftNames)
+			System.out.println(name);
 		
 		int newItemsCount = gui.getComboEventListView().getItemCount();
 		gui.getComboEventListView().setItems(cftNames);
@@ -253,9 +258,9 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	
 	private HashMap<String, EventType> updateEventMap(HashMap<String, EventType> map) {
 		for(EventInstanceContainer cft : cfts)
-			for (EventInstance instance : cft.getEventInstances())
-				if (!map.containsKey(instance.getEvent().getName()))
-					map.put(instance.getEvent().getName(), instance.getEvent());
+			for (EventInstance instance : cft.getEvents())
+				if (!map.containsKey(instance.getType().getName()))
+					map.put(instance.getType().getName(), instance.getType());
 		
 		return map;
 	}
@@ -267,8 +272,10 @@ public class FailureEventListGuiHandler implements GuiHandler {
 
 	@Override
 	public EventType createNewEvent(String newEventsName) {
-		FailureEventListCreateEventGui creator = new FailureEventListCreateEventGui();
-		return creator.createEvent(newEventsName);
+//		FailureEventListCreateEventGui creator = new FailureEventListCreateEventGui();
+		
+//		return creator.createEvent(newEventsName); //TODO: Complete
+		return null;
 	}	
 	
 	@Override

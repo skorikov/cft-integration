@@ -17,11 +17,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.proskor.fel.EventType;
-import de.proskor.fel.EventInstanceContainer;
-import de.proskor.fel.EventInstance;
-import de.proskor.fel.impl.EventTypeImpl;
-import de.proskor.fel.impl.EventInstanceImpl;
+import de.proskor.fel.container.EventContainer;
+import de.proskor.fel.container.EventInstanceContainer;
+import de.proskor.fel.container.EventTypeContainer;
+import de.proskor.fel.event.EventInstance;
+import de.proskor.fel.event.EventType;
 
 public class FailureEventListCreateEventGui extends Shell {
 	private class UserInputData {
@@ -45,8 +45,8 @@ public class FailureEventListCreateEventGui extends Shell {
 		return (author != "") && (description != "");
 	}
 	
-	public EventType createEvent(final String eventName) {
-		configContentsForEvent(eventName);
+	public EventType createEvent(final String eventName, ArrayList<EventTypeContainer> possibleContainers, EventTypeContainer defaultSelectedContainer) {
+		configContentsForEvent(eventName, possibleContainers, defaultSelectedContainer);
 		prepareAndShow();
 
 		if (!userAccepted)
@@ -54,28 +54,33 @@ public class FailureEventListCreateEventGui extends Shell {
 		
 		String author = userInputData.author;
 		String description = userInputData.description;
+		EventTypeContainer container = possibleContainers.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
 		
-		// ID & GUID werden von EA zugewie�en und beim Erstellen eines Events hier nicht gesetzt.
-		String guid = "";
-		int id = -1;
+		EventType event = container.createEvent(eventName);
+		event.setAuthor(author);
+		event.setDescription(description);
 		
-		return new EventTypeImpl(eventName, author, description, guid, id);
+		return event;
 	}
 
-	public EventInstance createEventInstance(EventType event, ArrayList<EventInstanceContainer> possibleParentCFTs, EventInstanceContainer defaultSelectedCFT) {
-		configContentsForEventInstance(event, possibleParentCFTs, defaultSelectedCFT);
+	public EventInstance createEventInstance(EventType event, ArrayList<EventInstanceContainer> possibleContainers, EventInstanceContainer defaultSelectedContainer) {
+		configContentsForEvent(event.getName(), possibleContainers, defaultSelectedContainer);
 		prepareAndShow();
 
 		if (!userAccepted)
 			return null;
 		
-		EventInstanceContainer cft = possibleParentCFTs.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
+		EventInstanceContainer cft = possibleContainers.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
 		String author = userInputData.author;
 		String description = userInputData.description;
-		String guid = "";
-		int id = -1;
+
 		
-		return new EventInstanceImpl(event, cft, author, description, guid, id);
+		EventInstance eventInstance = cft.createEvent(event.getName());
+		eventInstance.setAuthor(author);
+		eventInstance.setDescription(description);
+		// ACHTUNG: Nur debugging. EventType fehlt!
+		
+		return eventInstance;
 	}
 
 	public FailureEventListCreateEventGui() {
@@ -100,27 +105,21 @@ public class FailureEventListCreateEventGui extends Shell {
 		}
 	}
 	
-	private void configContentsForEvent(final String eventName) {
+	private void configContentsForEvent(String eventName, ArrayList<? extends EventContainer> possibleContainers, EventContainer defaultSelectedContainer) {
 		textEventName.setText(eventName);
-		comboCFTs.setEnabled(false);
-	}
-	
-	private void configContentsForEventInstance(EventType event, ArrayList<EventInstanceContainer> possibleParentCFTs, EventInstanceContainer defaultSelectedCFT) {
-		textEventName.setText(event.getName());
-		comboCFTs.setEnabled(true);
 		
-		String[] items = new String[possibleParentCFTs.size()];
+		String[] items = new String[possibleContainers.size()];
 		
 		int i=0;
-		for(EventInstanceContainer cft : possibleParentCFTs) {
-			items[i] = cft.getName();
+		for(EventContainer container : possibleContainers) {
+			items[i] = container.getName();
 			i++;
 		}
 		
 		comboCFTs.setItems(items);
 		
-		if (defaultSelectedCFT != null) 
-			comboCFTs.select(possibleParentCFTs.indexOf(defaultSelectedCFT));
+		if (defaultSelectedContainer != null) 
+			comboCFTs.select(possibleContainers.indexOf(defaultSelectedContainer));
 		else
 			comboCFTs.select(0);
 	}
