@@ -9,5 +9,5 @@ private[automation] class NodeCollection(peer: ICollection) extends AbstractColl
   type PeerType = IDiagramObject
   override def create(peer: IDiagramObject): Node = new NodeImpl(peer)
   override def update(peer: IDiagramObject): Unit = peer.Update()
-  override def matches(element: Node, peer: IDiagramObject) = element.id == peer.get_InstanceID
+  override def matches(element: Node, peer: IDiagramObject) = element.asInstanceOf[NodeImpl].peer.get_InstanceID == peer.get_InstanceID
 }

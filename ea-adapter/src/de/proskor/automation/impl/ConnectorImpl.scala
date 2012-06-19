@@ -7,6 +7,7 @@ import cli.EA.IConnector
 
 class ConnectorImpl(peer: IConnector) extends Connector {
   override def id: Int = peer.get_ConnectorID
+  override def guid: String = peer.get_ConnectorGUID.asInstanceOf[String]
 
   override def name: String = peer.get_Name.asInstanceOf[String]
   override def name_=(name: String): Unit = peer.set_Name(name)

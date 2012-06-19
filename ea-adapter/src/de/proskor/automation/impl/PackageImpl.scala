@@ -7,6 +7,7 @@ import cli.EA.ICollection
 
 class PackageImpl(peer: IPackage) extends Package {
   override def id: Int = peer.get_PackageID
+  override def guid: String = peer.get_PackageGUID.asInstanceOf[String]
 
   override def name: String = peer.get_Name.asInstanceOf[String]
   override def name_=(name: String): Unit = peer.set_Name(name)

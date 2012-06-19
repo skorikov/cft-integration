@@ -7,6 +7,7 @@ import cli.EA.IDiagram
 
 class DiagramImpl(peer: IDiagram) extends Diagram {
   override def id: Int = peer.get_DiagramID
+  override def guid: String = peer.get_DiagramGUID.asInstanceOf[String]
 
   override def name: String = peer.get_Name.asInstanceOf[String]
   override def name_=(name: String): Unit = peer.set_Name(name)

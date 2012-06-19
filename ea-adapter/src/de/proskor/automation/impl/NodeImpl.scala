@@ -6,9 +6,7 @@ import de.proskor.automation.Element
 import de.proskor.automation.Repository
 import cli.EA.IDiagramObject
 
-class NodeImpl(peer: IDiagramObject) extends Node {
-  override def id: Int = peer.get_InstanceID
-
+class NodeImpl(private[automation] val peer: IDiagramObject) extends Node {
   override def left: Int = peer.get_left
   override def left_=(left: Int) {
     peer.set_right(peer.get_right - peer.get_left + left)
@@ -47,9 +45,9 @@ class NodeImpl(peer: IDiagramObject) extends Node {
   override def element_=(element: Element) = peer.set_ElementID(element.id)
 
   override def equals(that: Any): Boolean = that match {
-    case node: Node => id == node.id
+    case node: Node => element == node.element && diagram == node.diagram
     case _ => false
   }
 
-  override def hashCode: Int = id
+  override def hashCode: Int = element.id
 }

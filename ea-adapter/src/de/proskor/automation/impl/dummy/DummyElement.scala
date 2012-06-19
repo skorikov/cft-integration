@@ -4,6 +4,7 @@ import de.proskor.automation.{Collection, Connector, Element, Package}
 
 class DummyElement(parent: Element, val pkg: Package, var name: String) extends Element {
   val id: Int = IdGenerator.next
+  val guid: String = id.toString
   var stereotype: String = ""
 
   lazy val connectors: Collection[Connector] = new DummyConnectorCollection(this)

@@ -7,6 +7,7 @@ import cli.EA.ICollection
 
 class ElementImpl(peer: IElement) extends Element {
   override def id: Int = peer.get_ElementID
+  override def guid: String = peer.get_ElementGUID.asInstanceOf[String]
 
   override def name: String = peer.get_Name.asInstanceOf[String]
   override def name_=(name: String): Unit = peer.set_Name(name)
