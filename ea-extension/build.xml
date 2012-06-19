@@ -16,6 +16,7 @@
 			<fileset dir="ea-extension/bin" />
 			<fileset dir="ea-adapter/bin" />
 			<fileset dir="ea-fel/bin" />
+			<fileset dir="fel-adapter/bin" />
 			<fileset dir="redundancy-removal/bin" />
 		</jar>
 	</target>
