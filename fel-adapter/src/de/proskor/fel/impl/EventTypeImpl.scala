@@ -7,7 +7,7 @@ import de.proskor.fel.event.EventType
 import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.event.EventInstance
 
-class EventTypeImpl(peer: Element) extends EntityImpl(peer) with EventType {
+class EventTypeImpl(private[impl] val peer: Element) extends EntityImpl(peer) with EventType {
   override def getContainer: EventTypeContainer = {
     val types = for {
       connector <- peer.connectors

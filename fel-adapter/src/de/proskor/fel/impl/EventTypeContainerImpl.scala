@@ -1,13 +1,14 @@
 package de.proskor.fel.impl
 
 import java.util.{List => JavaList}
-import collection.JavaConversions._
+
+import scala.collection.JavaConversions.seqAsJavaList
+
 import de.proskor.automation.Element
-import de.proskor.automation.Package
+import de.proskor.automation.Repository
+import de.proskor.fel.container.EventInstanceContainer
 import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.event.EventType
-import de.proskor.fel.container.EventInstanceContainer
-import de.proskor.automation.Repository
 
 class EventTypeContainerImpl(peer: Element) extends EntityImpl(peer) with EventTypeContainer {
   override def getEvents: JavaList[EventType] = {
@@ -28,6 +29,16 @@ class EventTypeContainerImpl(peer: Element) extends EntityImpl(peer) with EventT
     instances.toList
   }
 
-  override def createEvent(name: String): EventType = null
+  override def createEvent(name: String): EventType = {
+    val repository = Repository.instance
+    val pkg = repository.models.find(_.name == "FEL") getOrElse(repository.models.add("FEL", "Package"))
+    val event = pkg.elements.add(name, "Object")
+    event.stereotype = "EventType"
+    val connector = event.connectors.add("", "Connector"); connector.stereotype = "belongsTo"
+    connector.source = event
+    connector.target = peer
+    new EventTypeImpl(event)
+  }
+
   override def addInstance(instance: EventInstanceContainer) {}
 }

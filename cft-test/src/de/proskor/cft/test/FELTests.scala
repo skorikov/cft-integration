@@ -37,12 +37,23 @@ class FELTests {
     val ct = cont.connectors.add("C", "Connector"); ct.stereotype = "instanceOf"
     ct.source = event
     ct.target = et
+    val ct1 = cont.connectors.add("C", "Connector"); ct1.stereotype = "belongsTo"
+    ct1.source = event
+    ct1.target = cont
 
     val er: EventRepository = new EventRepositoryImpl(repository)
     assertEquals(1, er.getEventTypeContainers.size)
 
     val etc1 = er.getEventTypeContainers.get(0)
     assertEquals(1, etc1.getEvents.size)
+
+    assertEquals(1, etc1.getInstances.size)
+    assertEquals("Container", etc1.getInstances.get(0).getName)
+
+    assertEquals(1, etc1.getInstances.get(0).getEvents.size)
+
+    val eventType = etc1.createEvent("test")
+    assertEquals(2, etc1.getEvents.size)
 
     val dialog: FailureEventListDialog = new FailureEventListImpl(er)
     dialog.showEventList

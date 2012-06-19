@@ -60,6 +60,11 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	
 	public void showEventList() {
 		eventsNameMap = updateEventMap(new HashMap<String, EventType>());
+		
+		TreeItem[] items = gui.getTreeEventList().getItems();
+		if (items.length > 0)
+			gui.getTreeEventList().select(items[0]);
+			
 		gui.show();
 	}
 	
@@ -68,11 +73,15 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	 * objects contained in the {@link EventTypeContainer}.   
 	 */
 	public void addEventTypeContainer(EventTypeContainer container) {
+		System.out.println("Adding type container: " + container.getName());
+		
 		for(EventInstanceContainer instContainer : container.getInstances())
 			addEventInstanceContainer(instContainer);
 	}
 	
 	public void addEventInstanceContainer(EventInstanceContainer instanceContainer) {
+		System.out.println("Adding instance container: " + instanceContainer.getName());
+		
 		cfts.add(instanceContainer);
 	}
 	
@@ -111,6 +120,8 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	
 	private void updateGuiTree_addCft(EventInstanceContainer cft) {
 		Tree tree = gui.getEventTree();
+		
+		//System.out.println("updateGui: " + );
 
 		for(EventInstance eventInstance: cft.getEvents()) {
 			if (eventFilter.eventConformsToFilter(eventInstance.getType())) {
@@ -191,6 +202,24 @@ public class FailureEventListGuiHandler implements GuiHandler {
 				gui.getTreeEventList().select(eventItem);
 		}
 	}
+	
+	private EventType getSelectedEvent() {
+		TreeItem eventItem;
+		
+		TreeItem[] selection = gui.getTreeEventList().getSelection();
+		TreeItem item = selection[0];
+		if (item.getParentItem() != null)
+			eventItem = item.getParentItem();
+		else
+			eventItem = item;
+
+		String eventName = eventItem.getText();
+		EventType type = getEventFromGuiByName(eventName);
+		
+		System.out.println("getSelectedEvent() --> " + type.getName() + "; " + type); // DEBUG!
+		
+		return type;
+	}
 
 	@Override
 	public void onTreeItemSelected(TreeItem item) {
@@ -269,13 +298,19 @@ public class FailureEventListGuiHandler implements GuiHandler {
 	public EventType getEventByName(String name) {
 		return eventsNameMap.get(name);
 	}
+	
+	public EventTypeContainer getSelectedEventTypeContainer() {
+		return getSelectedEvent().getContainer();
+	}
 
 	@Override
 	public EventType createNewEvent(String newEventsName) {
-//		FailureEventListCreateEventGui creator = new FailureEventListCreateEventGui();
+		FailureEventListCreateEventGui creator = new FailureEventListCreateEventGui();
 		
-//		return creator.createEvent(newEventsName); //TODO: Complete
-		return null;
+		EventType newEvent = creator.createEvent(newEventsName, getSelectedEventTypeContainer());
+		updateGui();
+		
+		return newEvent;
 	}	
 	
 	@Override
@@ -285,7 +320,10 @@ public class FailureEventListGuiHandler implements GuiHandler {
 			return null;
 		
 		FailureEventListCreateEventGui creator = new FailureEventListCreateEventGui();
-		return creator.createEventInstance(event, cfts, getSelectedCftFromComboEventList());
+		EventInstance newEvent = creator.createEventInstance(event, cfts, getSelectedCftFromComboEventList());
+		updateGui();
+
+		return newEvent;
 	}
 
 	@Override

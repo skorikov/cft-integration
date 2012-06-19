@@ -23,4 +23,10 @@ class EventInstanceImpl(peer: Element) extends EntityImpl(peer) with EventInstan
     } yield new EventTypeImpl(target)
     types.headOption.orNull
   }
+
+  override def setType(typ: EventType) {
+    val connector = peer.connectors.add("", "Connector"); connector.stereotype = "instanceOf"
+    connector.source = peer
+    connector.target = typ.asInstanceOf[EventTypeImpl].peer
+  }
 }

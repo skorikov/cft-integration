@@ -32,7 +32,11 @@ class CftExtension extends ExtensionAdapter {
         val items = for {
           container <- er.getEventTypeContainers
           event <- container.getEvents
-        } yield new MenuItemAdapter(event.getName)
+        } yield new MenuItemAdapter(event.getName) {
+          override def invoke() {
+            
+          }
+        }
         items
       }
     }

@@ -9,4 +9,6 @@ public interface EventInstance extends Instance, Event {
 	
 	@Override 
 	public EventType getType();
+
+	public void setType(EventType typ);
 }

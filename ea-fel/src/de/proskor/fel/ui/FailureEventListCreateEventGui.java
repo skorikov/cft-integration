@@ -1,6 +1,8 @@
 package de.proskor.fel.ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
@@ -45,8 +47,8 @@ public class FailureEventListCreateEventGui extends Shell {
 		return (author != "") && (description != "");
 	}
 	
-	public EventType createEvent(final String eventName, ArrayList<EventTypeContainer> possibleContainers, EventTypeContainer defaultSelectedContainer) {
-		configContentsForEvent(eventName, possibleContainers, defaultSelectedContainer);
+	public EventType createEvent(final String eventName, EventTypeContainer typeContainer) {
+		configContentsForEvent(eventName, Collections.singletonList(typeContainer), typeContainer);
 		prepareAndShow();
 
 		if (!userAccepted)
@@ -54,11 +56,16 @@ public class FailureEventListCreateEventGui extends Shell {
 		
 		String author = userInputData.author;
 		String description = userInputData.description;
-		EventTypeContainer container = possibleContainers.get(userInputData.cftComboIndex); // Indizes zwischen combo-Box und Arraylist verlaufen gleich. 
+		EventTypeContainer container = typeContainer; 
 		
 		EventType event = container.createEvent(eventName);
 		event.setAuthor(author);
 		event.setDescription(description);
+		
+		// DEBUGGING only!
+		EventInstanceContainer containerInst = typeContainer.getInstances().get(0);
+		EventInstance eventInstance = containerInst.createEvent("<defaultInst>");
+		eventInstance.setType(event);		
 		
 		return event;
 	}
@@ -78,6 +85,7 @@ public class FailureEventListCreateEventGui extends Shell {
 		EventInstance eventInstance = cft.createEvent(event.getName());
 		eventInstance.setAuthor(author);
 		eventInstance.setDescription(description);
+
 		// ACHTUNG: Nur debugging. EventType fehlt!
 		
 		return eventInstance;
@@ -105,7 +113,7 @@ public class FailureEventListCreateEventGui extends Shell {
 		}
 	}
 	
-	private void configContentsForEvent(String eventName, ArrayList<? extends EventContainer> possibleContainers, EventContainer defaultSelectedContainer) {
+	private void configContentsForEvent(String eventName, List<? extends EventContainer> possibleContainers, EventContainer defaultSelectedContainer) {
 		textEventName.setText(eventName);
 		
 		String[] items = new String[possibleContainers.size()];
