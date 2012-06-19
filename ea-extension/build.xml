@@ -15,6 +15,7 @@
 			<fileset dir="merge-algorithm/bin" />
 			<fileset dir="ea-extension/bin" />
 			<fileset dir="ea-adapter/bin" />
+			<fileset dir="ea-fel/bin" />
 			<fileset dir="redundancy-removal/bin" />
 		</jar>
 	</target>
