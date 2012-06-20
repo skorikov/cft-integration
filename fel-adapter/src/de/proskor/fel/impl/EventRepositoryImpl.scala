@@ -1,13 +1,14 @@
 package de.proskor.fel.impl
 
 import java.util.{List => JavaList}
-import collection.JavaConversions._
-import de.proskor.fel.EventRepository;
-import de.proskor.fel.event.EventType
-import de.proskor.fel.container.EventTypeContainer
+
+import scala.collection.JavaConversions.seqAsJavaList
+
+import de.proskor.automation.Element
 import de.proskor.automation.Package
 import de.proskor.automation.Repository
-import de.proskor.automation.Element
+import de.proskor.fel.container.EventTypeContainer
+import de.proskor.fel.EventRepository
 
 class EventRepositoryImpl(repository: Repository) extends EventRepository {
   private def felPackage: Package = {
