@@ -11,11 +11,26 @@ import de.proskor.fel.ui.FailureEventListDialog
 import de.proskor.fel.ui.FailureEventListImpl
 import de.proskor.extension.MenuItem
 import de.proskor.automation.impl.RepositoryImpl
+import de.proskor.cft.test.AdapterTests
+import de.proskor.cft.test.PeerTests
+import de.proskor.cft.test.CftTests
 
 class CftExtension extends ExtensionAdapter {
+  private val runner = new TestRunner(Repository.instance.write)
+
   override protected def createMenu = {
     val cftMenu = new MenuItemAdapter("CFT")
-    
+
+    new MenuItemAdapter(cftMenu, "Run Tests") {
+      override def invoke {
+        Repository.instance.write("---- RUNNING TESTS ----")
+        runner.test(classOf[AdapterTests])
+        runner.test(classOf[PeerTests])
+        runner.test(classOf[CftTests])
+        Repository.instance.write("---- ALL TESTS DONE ----")
+      }
+    }
+
     new MenuItemAdapter(cftMenu, "Failure Event List...") {
       override def invoke {
         val er: EventRepository = new EventRepositoryImpl(Repository.instance)
@@ -25,6 +40,8 @@ class CftExtension extends ExtensionAdapter {
     }
 
     new MenuItemAdapter(cftMenu, "Create Event Instance") {
+      setEnabled(false)
+
       override def hasChildren: Boolean = this.getChildren.size > 0
 
       override def getChildren: JavaList[MenuItem] = {
