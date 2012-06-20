@@ -38,9 +38,6 @@
     <Reference Include="Interop.EA">
       <HintPath>lib\Interop.EA.dll</HintPath>
     </Reference>
-    <Reference Include="cft-integration">
-      <HintPath>..\..\ea-extension\dist\cft-integration.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
