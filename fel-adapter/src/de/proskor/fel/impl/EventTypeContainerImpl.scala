@@ -31,8 +31,9 @@ class EventTypeContainerImpl(peer: Element) extends EntityImpl(peer) with EventT
 
   override def createEvent(name: String): EventType = {
     val repository = Repository.instance
-    val pkg = repository.models.find(_.name == "FEL") getOrElse(repository.models.add("FEL", "Package"))
-    val event = pkg.elements.add(name, "Object")
+    val model = repository.models.headOption getOrElse repository.models.add("Model", "Package")
+    val fel = model.packages.find(_.name == "FEL") getOrElse model.packages.add("FEL", "Package")
+    val event = fel.elements.add(name, "Object")
     event.stereotype = "EventType"
     val connector = event.connectors.add("", "Connector"); connector.stereotype = "belongsTo"
     connector.source = event

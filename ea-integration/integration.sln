@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "integration", "integration\integration.csproj", "{182C0126-DA46-42F2-88D7-F6594D361F56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adapter", "integration\adapter.csproj", "{182C0126-DA46-42F2-88D7-F6594D361F56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +15,6 @@ Global
 		{182C0126-DA46-42F2-88D7-F6594D361F56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = integration\integration.csproj
+		StartupItem = integration\adapter.csproj
 	EndGlobalSection
 EndGlobal
