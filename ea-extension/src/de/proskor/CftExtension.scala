@@ -24,8 +24,8 @@ class CftExtension extends ExtensionAdapter {
     new MenuItemAdapter(cftMenu, "Run Tests") {
       override def invoke {
         Repository.instance.write("---- RUNNING TESTS ----")
-        runner.test(classOf[AdapterTests])
-        runner.test(classOf[PeerTests])
+      //  runner.test(classOf[AdapterTests])
+      //  runner.test(classOf[PeerTests])
         runner.test(classOf[CftTests])
         Repository.instance.write("---- ALL TESTS DONE ----")
       }

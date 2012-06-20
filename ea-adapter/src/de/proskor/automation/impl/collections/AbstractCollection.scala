@@ -55,6 +55,7 @@ private[automation] abstract class AbstractCollection[T](peer: ICollection) exte
   override def contains(element: T): Boolean = indexOf(element) >= 0
 
   override def iterator: Iterator[T] = new Iterator[T] {
+    peer.Refresh()
     private var current: Int = -1
     override def hasNext: Boolean = (current + 1) < AbstractCollection.this.size
     override def next: T = {

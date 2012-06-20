@@ -10,10 +10,16 @@ class ElementImpl(peer: IElement) extends Element {
   override def guid: String = peer.get_ElementGUID.asInstanceOf[String]
 
   override def name: String = peer.get_Name.asInstanceOf[String]
-  override def name_=(name: String): Unit = peer.set_Name(name)
+  override def name_=(name: String) {
+    peer.set_Name(name)
+    peer.Update()
+  }
 
   override def stereotype: String = peer.get_Stereotype.asInstanceOf[String]
-  override def stereotype_=(stereotype: String): Unit = peer.set_Stereotype(stereotype)
+  override def stereotype_=(stereotype: String) {
+    peer.set_Stereotype(stereotype)
+    peer.Update()
+  }
 
   override def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
   override def connectors: Collection[Connector] = new ConnectorCollection(peer.get_Connectors.asInstanceOf[ICollection])

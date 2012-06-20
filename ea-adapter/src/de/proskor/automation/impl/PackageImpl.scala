@@ -10,7 +10,11 @@ class PackageImpl(peer: IPackage) extends Package {
   override def guid: String = peer.get_PackageGUID.asInstanceOf[String]
 
   override def name: String = peer.get_Name.asInstanceOf[String]
-  override def name_=(name: String): Unit = peer.set_Name(name)
+  override def name_=(name: String) {
+    peer.set_Name(name)
+    peer.Update()
+    RepositoryImpl.peer.RefreshModelView(0)
+  }
 
   override def packages: Collection[Package] = new PackageCollection(peer.get_Packages.asInstanceOf[ICollection])
   override def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
