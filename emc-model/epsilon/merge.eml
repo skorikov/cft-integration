@@ -1,0 +1,10 @@
+rule Components
+merge left : LEFT!Component
+with right : RIGHT!Component
+into result : RESULT!Component {
+	guard : true
+
+	"hello".println();
+	RESULT!Repository.allInstances().first().packages.first().add(result);
+	result.name := left.name + "_";
+}

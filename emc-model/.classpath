@@ -9,5 +9,9 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.eol.engine"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-adapter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.ecl.engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.erl.engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.eml.engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.etl.engine"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
