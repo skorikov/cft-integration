@@ -21,9 +21,9 @@ object AutomationPropertyGetter extends AbstractPropertyGetter {
     case pkg: Package => property match {
     //  case "id" => pkg.id
       case "name" => pkg.name
-      case "elements" => pkg.elements
+      case "elements" => toJavaSet(pkg.elements.toSet)
       case "parent" => pkg.parent.getOrElse(null)
-      case "packages" => pkg.packages
+      case "packages" => toJavaSet(pkg.packages.toSet)
       case "diagrams" => pkg.diagrams
     }
     case repository: Repository => property match {

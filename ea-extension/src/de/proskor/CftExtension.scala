@@ -14,6 +14,7 @@ import de.proskor.automation.impl.RepositoryImpl
 import de.proskor.cft.test.AdapterTests
 import de.proskor.cft.test.PeerTests
 import de.proskor.cft.test.CftTests
+import de.proskor.shell.EpsilonShell
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -23,7 +24,6 @@ class CftExtension extends ExtensionAdapter {
 
     new MenuItemAdapter(cftMenu, "Run Tests") {
 //      setEnabled(false)
-
       override def invoke {
         Repository.instance.write("---- RUNNING TESTS ----")
         runner.test(classOf[AdapterTests])
@@ -38,6 +38,12 @@ class CftExtension extends ExtensionAdapter {
         val er: EventRepository = new EventRepositoryImpl(Repository.instance)
         val dialog: FailureEventListDialog = new FailureEventListImpl(er)
         dialog.showEventList
+      }
+    }
+
+    new MenuItemAdapter(cftMenu, "Epsilon Shell...") {
+      override def invoke {
+        new EpsilonShell
       }
     }
 

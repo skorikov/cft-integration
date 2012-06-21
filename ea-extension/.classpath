@@ -12,5 +12,6 @@
 	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar" sourcepath="/ECLIPSE_HOME/plugins/org.eclipse.swt.gtk.linux.x86_64.source_3.7.2.v3740f.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-fel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/fel-adapter"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/epsilon-shell"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

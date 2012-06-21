@@ -17,6 +17,8 @@
 			<fileset dir="ea-adapter/bin" />
 			<fileset dir="ea-fel/bin" />
 			<fileset dir="fel-adapter/bin" />
+			<fileset dir="epsilon-shell/bin" />
+			<fileset dir="emc-model/bin" />
 			<fileset dir="redundancy-removal/bin" />
 		</jar>
 	</target>
@@ -31,6 +33,7 @@
 			<arg value="-r:ea-extension/dll/scala.dll" />
 			<arg value="-r:ea-extension/dll/swt.dll" />
 			<arg value="-r:ea-extension/dll/junit.dll" />
+			<arg value="-r:ea-extension/dll/epsilon.dll" />
 			<arg value="ea-extension/dist/${jar}" />
 		</exec>
 	</target>
