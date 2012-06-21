@@ -22,6 +22,8 @@ class CftExtension extends ExtensionAdapter {
     val cftMenu = new MenuItemAdapter("CFT")
 
     new MenuItemAdapter(cftMenu, "Run Tests") {
+      setEnabled(false)
+
       override def invoke {
         Repository.instance.write("---- RUNNING TESTS ----")
       //  runner.test(classOf[AdapterTests])
@@ -40,7 +42,7 @@ class CftExtension extends ExtensionAdapter {
     }
 
     new MenuItemAdapter(cftMenu, "Create Event Instance") {
-      setEnabled(false)
+      override def isVisible: Boolean = hasChildren
 
       override def hasChildren: Boolean = this.getChildren.size > 0
 
@@ -51,7 +53,7 @@ class CftExtension extends ExtensionAdapter {
           event <- container.getEvents
         } yield new MenuItemAdapter(event.getName) {
           override def invoke() {
-            
+            Repository.instance.write("create event instance for '" + event.getName + "'")
           }
         }
         items
