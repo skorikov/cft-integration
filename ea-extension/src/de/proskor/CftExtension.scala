@@ -22,12 +22,12 @@ class CftExtension extends ExtensionAdapter {
     val cftMenu = new MenuItemAdapter("CFT")
 
     new MenuItemAdapter(cftMenu, "Run Tests") {
-      setEnabled(false)
+//      setEnabled(false)
 
       override def invoke {
         Repository.instance.write("---- RUNNING TESTS ----")
-      //  runner.test(classOf[AdapterTests])
-      //  runner.test(classOf[PeerTests])
+        runner.test(classOf[AdapterTests])
+        runner.test(classOf[PeerTests])
         runner.test(classOf[CftTests])
         Repository.instance.write("---- ALL TESTS DONE ----")
       }

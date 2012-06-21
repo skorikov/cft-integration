@@ -81,6 +81,14 @@ class AdapterTests {
     assertNotNull(node)
   }
 
+  @Test
+  def testConnectors() {
+    val mod = model("MODEL")
+    val pk = pkg(mod, "P1")
+    val element = obj(pk, "E1")
+    val connector = element.connectors.add("C1", "Connector")
+  }
+
   private def repository: Repository = Repository.instance
   private def models: Collection[Package] = Repository.instance.models
   private def model(name: String): Package = models.add(name, "Package")

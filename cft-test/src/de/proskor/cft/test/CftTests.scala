@@ -9,14 +9,12 @@ class CftTests {
   @Before
   def clear() = CftTests.clearRepository()
 
-  @Ignore
   @Test
   def testRepository() {
     val repository = Repository("/")
     assertNotNull(repository)
   }
 
-  @Ignore
   @Test
   def testPackageCreation() {
     val repository = Repository("/")
@@ -30,7 +28,6 @@ class CftTests {
     assertEquals(Some(repository), pkg.parent)
   }
 
-  @Ignore
   @Test
   def testPackageCreationWithParent() {
     val repository = Repository("/")
@@ -54,7 +51,6 @@ class CftTests {
     assertEquals(None, pkg.parent)
   }
 
-  @Ignore
   @Test
   def testSubPackageCreation() {
     val repository = Repository("/")
@@ -66,7 +62,6 @@ class CftTests {
     assertTrue(repository.packages.forall(_.packages.contains(subpkg)))
   }
 
-  @Ignore
   @Test
   def testDeepPackageRemoval() {
     val repository = Repository("/")
@@ -78,7 +73,6 @@ class CftTests {
     assertTrue(repository.packages.isEmpty)
   }
 
-  @Ignore
   @Test
   def testComponentCreation() {
     val repository = Repository("/")
@@ -92,7 +86,6 @@ class CftTests {
     assertEquals(Some(pkg), component.parent)
   }
 
-  @Ignore
   @Test
   def testChangePackageName() {
     val repository = Repository("/")
@@ -101,7 +94,6 @@ class CftTests {
     assertEquals("P2", model.name)
   }
 
-  @Ignore
   @Test
   def testChangeComponentName() {
     val repository = Repository("/")
@@ -112,7 +104,6 @@ class CftTests {
     assertEquals("C2", component.name)
   }
 
-  @Ignore
   @Test
   def testComponentRemoval() {
     val repository = Repository("/")
@@ -123,7 +114,6 @@ class CftTests {
     assertEquals(None, component.parent)
   }
 
-  @Ignore
   @Test
   def testEventCreation() {
     val repository = Repository("/")
@@ -140,7 +130,6 @@ class CftTests {
     assertEquals(Some(component), event.parent)
   }
 
-  @Ignore
   @Test
   def testEventRemoval() {
     val repository = Repository("/")
@@ -152,7 +141,6 @@ class CftTests {
     assertEquals(None, event.parent)
   }
 
-  @Ignore
   @Test
   def testEventMove() {
     val repository = Repository("/")
@@ -167,7 +155,6 @@ class CftTests {
     assertEquals(Some(c2), event.parent)
   }
 
-  @Ignore
   @Test
   def testAndCreation() {
     val repository = Repository("/")
@@ -191,12 +178,11 @@ class CftTests {
     val and = And(component, "G1")
     assertTrue(and.inputs.isEmpty)
     val event = Event(component, "BE1")
-    and += event // FIXME
+    and += event
     assertEquals(1, and.inputs.size)
     assertTrue(and.inputs.contains(event))
   }
 
-  @Ignore
   @Test
   def testGateConnectionRemoval() {
     val repository = Repository("/")
@@ -204,38 +190,37 @@ class CftTests {
     val component = Component(pkg, "C1")
     val and = And(component, "G1")
     val event = Event(component, "BE1")
-    and += event // FIXME
+    and += event
     and -= event
     assertEquals(0, and.inputs.size)
   }
 
-  @Ignore
   @Test
   def testOutportCreation() {
     val repository = Repository("/")
-    val pkg = Package(repository, "P1")
+    val model = Package(repository, "P1")
+    val pkg = Package(model, "P2")
     val component = Component(pkg, "C1")
     val event = Event(component, "BE1")
     val outport = Outport(component, "O1")
     assertTrue(outport.inputs.isEmpty)
-    outport += event // FIXME
+    outport += event
     assertEquals(Set(event), outport.inputs)
     outport -= event
     assertTrue(outport.inputs.isEmpty)
   }
 
-  @Ignore
   @Test
   def testNestedComponents() {
     val repository = Repository("/")
-    val pkg = Package(repository, "P1")
+    val model = Package(repository, "P1")
+    val pkg = Package(model, "P2")
     val component = Component(pkg, "C1")
     val subcomponent = Component(component, "C2")
-    assertTrue(component.components.contains(subcomponent)) // FIXME
+    assertTrue(component.components.contains(subcomponent))
     assertEquals(Some(component), subcomponent.parent)
   }
 
-  @Ignore
   @Test
   def testNestedComponentRemoval() {
     val repository = Repository("/")
