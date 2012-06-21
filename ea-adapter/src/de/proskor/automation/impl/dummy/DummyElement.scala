@@ -6,6 +6,8 @@ class DummyElement(parent: Element, val pkg: Package, var name: String) extends 
   val id: Int = IdGenerator.next
   val guid: String = id.toString
   var stereotype: String = ""
+  var author: String = ""
+  var description: String = ""
 
   lazy val connectors: Collection[Connector] = new DummyConnectorCollection(this)
 

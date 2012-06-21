@@ -21,6 +21,18 @@ class ElementImpl(peer: IElement) extends Element {
     peer.Update()
   }
 
+  override def author: String = peer.get_Author.asInstanceOf[String]
+  override def author_=(author: String) {
+    peer.set_Author(author)
+    peer.Update()
+  }
+
+  override def description: String = peer.get_Notes.asInstanceOf[String]
+  override def description_=(description: String) {
+    peer.set_Notes(description)
+    peer.Update()
+  }
+
   override def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
   override def connectors: Collection[Connector] = new ConnectorCollection(peer.get_Connectors.asInstanceOf[ICollection])
 

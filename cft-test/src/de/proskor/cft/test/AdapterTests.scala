@@ -60,6 +60,24 @@ class AdapterTests {
   }
 
   @Test
+  def testElementAuthor() {
+    val mod = model("MODEL")
+    val pk = pkg(mod, "PKG")
+    val element = obj(pk, "E1")
+    element.author = "andrey"
+    assertEquals("andrey", element.author)
+  }
+
+  @Test
+  def testElementDescription() {
+    val mod = model("MODEL")
+    val pk = pkg(mod, "PKG")
+    val element = obj(pk, "E1")
+    element.description = "foobar"
+    assertEquals("foobar", element.description)
+  }
+
+  @Test
   def testKids() {
     val mod = model("test")
     val element = obj(mod, "foo")
