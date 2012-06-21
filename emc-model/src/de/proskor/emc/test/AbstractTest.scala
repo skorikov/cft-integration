@@ -26,7 +26,7 @@ abstract class AbstractTest {
   def code: String
 
   protected def getModule(model: IModel, path: String): IEolModule = {
-    val module: IEolModule = new EolModule;
+    val module: IEolModule = new EolModule
     module.getContext.getModelRepository.addModel(model)
     val is: InputStream = new FileInputStream(path)
     module.parse(convertStreamToString(is))

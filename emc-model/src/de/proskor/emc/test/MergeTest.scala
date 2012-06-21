@@ -10,6 +10,8 @@ import de.proskor.cft.model.Repository
 import de.proskor.cft.model.Package
 import de.proskor.cft.model.Component
 import org.eclipse.epsilon.eml.EmlModule
+import org.eclipse.epsilon.eol.execute.context.Variable
+import de.proskor.cft.model.Event
 
 object MergeTest {
   def main(args: Array[String]) {
@@ -21,7 +23,10 @@ object MergeTest {
     val model = Package(repository, "MODEL")
     val pkg = Package(model, "PKG")
     val left = Component(pkg, "C1")
+    val leftEvent = Event(left, "B1")
     val right = Component(pkg, "C1")
+    val rightEvent = Event(right, "B1")
+    val targetPkg = Package(model, "TARGET")
 
     val leftModel = new CftModel(Set(left)); leftModel.setName("LEFT")
     val rightModel = new CftModel(Set(right)); rightModel.setName("RIGHT")
@@ -41,6 +46,7 @@ object MergeTest {
     merger.getContext.getModelRepository.addModel(rightModel)
     merger.getContext.getModelRepository.addModel(resultModel)
     merger.getContext.setMatchTrace(matches)
+    merger.getContext.getFrameStack.putGlobal(Variable.createReadOnlyVariable("target", targetPkg))
 
     merger.execute
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar" sourcepath="/ECLIPSE_HOME/plugins/org.eclipse.swt.gtk.linux.x86_64.source_3.7.2.v3740f.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/emc-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.eol.engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.epsilon.commons"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.antlr.runtime_3.1.b1"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ea-adapter"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
