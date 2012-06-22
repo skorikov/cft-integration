@@ -13,7 +13,7 @@ object AutomationPropertyGetter extends AbstractPropertyGetter {
     //  case "id" => element.id
       case "name" => element.name
       case "stereotype" => element.stereotype
-      case "elements" => element.elements
+      case "elements" => toJavaSet(element.elements.toSet)
       case "parent" => element.parent.getOrElse(null)
       case "pkg" => element.pkg
       case "connectors" => element.connectors
