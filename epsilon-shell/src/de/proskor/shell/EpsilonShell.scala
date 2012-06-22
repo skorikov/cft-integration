@@ -33,7 +33,7 @@ class EpsilonShell {
     shell setLayout new FormLayout
 
     val text = new Text(shell, SWT.BORDER | SWT.MULTI)
-    text setText "Repository.allInstances().first().println();"
+    text setText "var repository := Repository.allInstances().first();\nrepository.println();"
     val execute = new Button(shell, SWT.PUSH)
     execute setText "E&xecute"
     execute addSelectionListener new SelectionAdapter {

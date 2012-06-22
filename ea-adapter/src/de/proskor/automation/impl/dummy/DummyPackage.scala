@@ -1,6 +1,6 @@
 package de.proskor.automation.impl.dummy
 
-import de.proskor.automation.{Collection, Diagram, Element, Package}
+import de.proskor.automation.{Collection, Diagram, Element, Package, Repository}
 
 class DummyPackage(val parent: Option[Package], var name: String) extends Package {
   val id: Int = IdGenerator.next
@@ -11,4 +11,6 @@ class DummyPackage(val parent: Option[Package], var name: String) extends Packag
       (name: String, typ: String, parent: Package) => new DummyElement(null, parent, name))
   lazy val diagrams: Collection[Diagram] = new DummyCollection(this,
       (name: String, typ: String, parent: Package) => new DummyDiagram(name))
+
+  override def toString: String = parent.map(_.name).getOrElse("/") + "/" + name
 }

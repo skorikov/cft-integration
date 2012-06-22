@@ -9,4 +9,6 @@ object DummyRepository extends Repository {
   override lazy val context: Option[Identity] = None
 
   override def write(text: String) = println(text)
+
+  override val toString: String = "/"
 }
