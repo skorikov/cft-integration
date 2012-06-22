@@ -20,6 +20,7 @@ public interface MenuItem {
 
 	/**
 	 * Get sub-items of this menu item.
+	 * The result collection is read-only.
 	 * @return list of child items.
 	 */
 	public List<MenuItem> getChildren();

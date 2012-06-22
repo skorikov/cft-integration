@@ -50,8 +50,6 @@ class CftExtension extends ExtensionAdapter {
     new MenuItemAdapter(cftMenu, "Create Event Instance") {
       override def isVisible: Boolean = hasChildren
 
-      override def hasChildren: Boolean = this.getChildren.size > 0
-
       override def getChildren: JavaList[MenuItem] = {
         val er: EventRepository = new EventRepositoryImpl(Repository.instance)
         val items = for {
