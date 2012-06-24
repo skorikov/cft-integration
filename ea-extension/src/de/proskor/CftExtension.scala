@@ -19,6 +19,9 @@ import de.proskor.fel.ui.FailureEventListImpl
 import de.proskor.fel.EventRepository
 import de.proskor.shell.EpsilonShell
 import java.util.Collections
+import de.proskor.fel.container.EventTypeContainer
+import de.proskor.fel.impl.EventTypeContainerImpl
+import de.proskor.fel.impl.EventTypeImpl
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -55,7 +58,20 @@ class CftExtension extends ExtensionAdapter {
       override def isVisible = hasChildren
 
       override def getChildren: JavaList[MenuItem] = for (event <- eventTypes) yield new MenuItemAdapter(event.getName) {
-        override def invoke = repository.write("create event instance for '" + event.getName + "'")
+        override def invoke {
+          repository.write("create event instance for '" + event.getName + "'")
+          val container = repository.context.get.asInstanceOf[Element]
+          val eventInstance = container.elements.add(event.getName, "Object")
+          eventInstance.stereotype = "Event"
+          val connector = eventInstance.connectors.add("", "Connector")
+          connector.source = eventInstance
+          connector.target = container
+          connector.stereotype = "belongsTo"
+          val c2 = eventInstance.connectors.add("", "Connector")
+          c2.source = eventInstance
+          c2.target = event.asInstanceOf[EventTypeImpl].peer
+          c2.stereotype = "instanceOf"
+        }
       }
 
       private def repository = Repository.instance
