@@ -1,10 +1,8 @@
 package de.proskor
 
 import java.util.{List => JavaList}
-
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.collection.JavaConversions.seqAsJavaList
-
+import scala.collection.JavaConversions._
+import de.proskor.automation.Element
 import de.proskor.automation.Repository
 import de.proskor.cft.test.AdapterTests
 import de.proskor.cft.test.CftTests
@@ -12,11 +10,15 @@ import de.proskor.cft.test.PeerTests
 import de.proskor.extension.ExtensionAdapter
 import de.proskor.extension.MenuItem
 import de.proskor.extension.MenuItemAdapter
+import de.proskor.fel.container.EventInstanceContainer
+import de.proskor.fel.event.EventType
+import de.proskor.fel.impl.EventInstanceContainerImpl
 import de.proskor.fel.impl.EventRepositoryImpl
 import de.proskor.fel.ui.FailureEventListDialog
 import de.proskor.fel.ui.FailureEventListImpl
 import de.proskor.fel.EventRepository
 import de.proskor.shell.EpsilonShell
+import java.util.Collections
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -52,16 +54,17 @@ class CftExtension extends ExtensionAdapter {
     new MenuItemAdapter(cftMenu, "Create Event Instance") {
       override def isVisible: Boolean = hasChildren
 
-      override def getChildren: JavaList[MenuItem] = for {
-        container <- eventRepository.getEventTypeContainers
-        event <- container.getEvents
-      } yield new MenuItemAdapter(event.getName) {
-        override def invoke() {
-          Repository.instance.write("create event instance for '" + event.getName + "'")
-        }
+      private def repository = Repository.instance
+
+      private def selectedContainer: Option[EventInstanceContainer] = repository.context collect {
+        case element: Element if element.stereotype == "EventInstanceContainer" => new EventInstanceContainerImpl(element)
       }
 
-      lazy val eventRepository: EventRepository = new EventRepositoryImpl(Repository.instance)
+      private def eventTypes: JavaList[EventType] = selectedContainer map { _.getType.getEvents } getOrElse Collections.emptyList()
+
+      override def getChildren: JavaList[MenuItem] = for (event <- eventTypes) yield new MenuItemAdapter(event.getName) {
+        override def invoke = repository.write("create event instance for '" + event.getName + "'")
+      }
     }
 
     cftMenu
