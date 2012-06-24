@@ -52,7 +52,11 @@ class CftExtension extends ExtensionAdapter {
     }
 
     new MenuItemAdapter(cftMenu, "Create Event Instance") {
-      override def isVisible: Boolean = hasChildren
+      override def isVisible = hasChildren
+
+      override def getChildren: JavaList[MenuItem] = for (event <- eventTypes) yield new MenuItemAdapter(event.getName) {
+        override def invoke = repository.write("create event instance for '" + event.getName + "'")
+      }
 
       private def repository = Repository.instance
 
@@ -61,10 +65,6 @@ class CftExtension extends ExtensionAdapter {
       }
 
       private def eventTypes: JavaList[EventType] = selectedContainer map { _.getType.getEvents } getOrElse Collections.emptyList()
-
-      override def getChildren: JavaList[MenuItem] = for (event <- eventTypes) yield new MenuItemAdapter(event.getName) {
-        override def invoke = repository.write("create event instance for '" + event.getName + "'")
-      }
     }
 
     cftMenu

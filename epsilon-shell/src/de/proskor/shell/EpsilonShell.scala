@@ -16,6 +16,7 @@ import de.proskor.emc.automation.AutomationModel
 import de.proskor.automation.Repository
 import java.io.PrintStream
 import java.io.OutputStream
+import org.eclipse.swt.graphics.Font
 
 class EpsilonShell {
   val display = new Display
@@ -28,12 +29,14 @@ class EpsilonShell {
   display.dispose()
 
   private def createShell(display: Display): Shell = {
-    val shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.RESIZE)
+    val shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.RESIZE | SWT.ON_TOP)
     shell setText "Epsilon Shell"
     shell setLayout new FormLayout
 
-    val text = new Text(shell, SWT.BORDER | SWT.MULTI)
-    text setText "var repository := Repository.allInstances().first();\nrepository.println();"
+    val text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL)
+    text setFont new Font(display, "Courier New", 8, SWT.NORMAL)
+    text setTabs 4
+    text setText "var repository := Repository.allInstances().first();\nvar mod := repository.models.first();\nmod.name.println();"
     val execute = new Button(shell, SWT.PUSH)
     execute setText "E&xecute"
     execute addSelectionListener new SelectionAdapter {
