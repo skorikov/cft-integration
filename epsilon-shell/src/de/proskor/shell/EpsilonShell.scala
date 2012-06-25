@@ -36,7 +36,25 @@ class EpsilonShell {
     val text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL)
     text setFont new Font(display, "Courier New", 8, SWT.NORMAL)
     text setTabs 4
-    text setText "var repository := Repository.allInstances().first();\nvar mod := repository.models.first();\nmod.name.println();"
+    text setText """printEventTypes();
+
+operation printEventTypes() {
+  var fel := getFEL();
+  fel.printElements();
+}
+
+operation getFEL(): Package {
+  var repository = Repository.allInstances().first();
+  var mod := repository.models.first();
+  return mod.packages.selectOne(pkg | pkg.name == "FEL");
+}
+
+operation Package printElements() {
+  for (element in self.elements) {
+    element.name.println();
+  }
+}"""
+
     val execute = new Button(shell, SWT.PUSH)
     execute setText "E&xecute"
     execute addSelectionListener new SelectionAdapter {
@@ -67,7 +85,7 @@ class EpsilonShell {
       } 
     }
 
-    var data = new FormData(300, 200)
+    var data = new FormData(600, 400)
     data.left = new FormAttachment(0, 5)
     data.top = new FormAttachment(0, 5)
     data.right = new FormAttachment(100, -5)
