@@ -1,8 +1,13 @@
 package de.proskor
 
+import java.util.Collections
 import java.util.{List => JavaList}
+
 import scala.collection.JavaConversions._
+
+import de.proskor.automation.Diagram
 import de.proskor.automation.Element
+import de.proskor.automation.Node
 import de.proskor.automation.Repository
 import de.proskor.cft.test.AdapterTests
 import de.proskor.cft.test.CftTests
@@ -11,19 +16,16 @@ import de.proskor.extension.ExtensionAdapter
 import de.proskor.extension.MenuItem
 import de.proskor.extension.MenuItemAdapter
 import de.proskor.fel.container.EventInstanceContainer
+import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.event.EventType
 import de.proskor.fel.impl.EventInstanceContainerImpl
 import de.proskor.fel.impl.EventRepositoryImpl
+import de.proskor.fel.impl.EventTypeContainerImpl
+import de.proskor.fel.impl.EventTypeImpl
 import de.proskor.fel.ui.FailureEventListDialog
 import de.proskor.fel.ui.FailureEventListImpl
 import de.proskor.fel.EventRepository
 import de.proskor.shell.EpsilonShell
-import java.util.Collections
-import de.proskor.fel.container.EventTypeContainer
-import de.proskor.fel.impl.EventTypeContainerImpl
-import de.proskor.fel.impl.EventTypeImpl
-import de.proskor.automation.Diagram
-import de.proskor.automation.Node
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -66,6 +68,25 @@ class CftExtension extends ExtensionAdapter {
       node.top = parent.top + (parent.height - 40) / 2
       node.width = 40
       node.height = 40
+    }
+
+    new MenuItemAdapter(menu, "Assign Component Type") {
+      override def getChildren: JavaList[MenuItem] = {
+        val repository = Repository.instance
+        val er: EventRepository = new EventRepositoryImpl(repository)
+        val el: Element = repository.context.get.asInstanceOf[Element]
+        val container = new EventInstanceContainerImpl(el)
+        val typeContainer = container.getType.asInstanceOf[EventTypeContainerImpl]
+        for (cont <- er.getEventTypeContainers) yield new MenuItemAdapter(cont.getName) {
+          override def isChecked = cont.asInstanceOf[EventTypeContainerImpl].peer == typeContainer.peer
+          override def invoke {
+            if (!isChecked) {
+              val connector = el.connectors.find(_.stereotype == "instanceOf").get
+              connector.target = cont.asInstanceOf[EventTypeContainerImpl].peer
+            }
+          }
+        }
+      }
     }
 
     new MenuItemAdapter(menu, "Create Event Instance") {
