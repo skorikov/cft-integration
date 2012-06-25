@@ -11,6 +11,7 @@ object DummyRepository extends Repository {
   override lazy val diagram: Option[Diagram] = None
 
   override def write(text: String) = println(text)
+  override def clear() {}
 
   override val toString: String = "/"
 }

@@ -9,6 +9,7 @@
 				<exclude name="**/MenuState.class" />
 				<exclude name="**/AddIn.class" />
 			</fileset>
+			<zipfileset dir="epsilon-shell" includes="icons/**" />
 			<fileset dir="cft-model/bin" />
 			<fileset dir="cft-test/bin" />
 			<fileset dir="ea-model/bin" />

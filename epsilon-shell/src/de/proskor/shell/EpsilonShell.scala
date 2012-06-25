@@ -17,6 +17,7 @@ import de.proskor.automation.Repository
 import java.io.PrintStream
 import java.io.OutputStream
 import org.eclipse.swt.graphics.Font
+import org.eclipse.swt.graphics.Image
 
 class EpsilonShell {
   val display = new Display
@@ -30,6 +31,8 @@ class EpsilonShell {
 
   private def createShell(display: Display): Shell = {
     val shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.RESIZE | SWT.ON_TOP)
+    val icon = new Image(display, this.getClass.getClassLoader.getResourceAsStream("icons/eol.gif"))
+    shell setImage icon
     shell setText "Epsilon Shell"
     shell setLayout new FormLayout
 
@@ -43,12 +46,14 @@ operation printEventTypes() {
   fel.printElements();
 }
 
+$post _result.name == "FEL"
 operation getFEL(): Package {
   var repository = Repository.allInstances().first();
   var mod := repository.models.first();
   return mod.packages.selectOne(pkg | pkg.name == "FEL");
 }
 
+$pre not self.elements.isEmpty
 operation Package printElements() {
   for (element in self.elements) {
     element.name.println();
@@ -85,6 +90,14 @@ operation Package printElements() {
       } 
     }
 
+    val clear = new Button(shell, SWT.PUSH)
+    clear setText "&Clear"
+    clear addSelectionListener new SelectionAdapter {
+      override def widgetSelected(event: SelectionEvent) {
+        Repository.instance.clear()
+      }
+    }
+
     var data = new FormData(600, 400)
     data.left = new FormAttachment(0, 5)
     data.top = new FormAttachment(0, 5)
@@ -96,6 +109,11 @@ operation Package printElements() {
     data.bottom = new FormAttachment(100, -5)
     data.right = new FormAttachment(100, -5)
     execute setLayoutData data
+
+    data = new FormData
+    data.bottom = new FormAttachment(100, -5)
+    data.right = new FormAttachment(execute, -5)
+    clear setLayoutData data
 
     shell.pack
 

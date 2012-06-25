@@ -37,6 +37,10 @@ object RepositoryImpl extends Repository {
     peer.WriteOutput(outputTab, text, 0)
   }
 
+  override def clear() = withInitializedOutput {
+    peer.ClearOutput(outputTab)
+  }
+
   def getPackageById(id: Int): IPackage = peer.GetPackageByID(id).asInstanceOf[IPackage]
   def getDiagramById(id: Int): IDiagram = peer.GetDiagramByID(id).asInstanceOf[IDiagram]
   def getElementById(id: Int): IElement = peer.GetElementByID(id).asInstanceOf[IElement]
