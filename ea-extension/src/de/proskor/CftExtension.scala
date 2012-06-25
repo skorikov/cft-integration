@@ -70,19 +70,42 @@ class CftExtension extends ExtensionAdapter {
       node.height = 40
     }
 
+    def isConnected(element: Element): Boolean = element.connectors.exists(_.stereotype == "instanceOf")
+
     new MenuItemAdapter(menu, "Assign Component Type") {
+      override def isVisible = hasChildren
+
+      override def hasChildren = {
+        val repository = Repository.instance
+        repository.context match {
+          case Some(element: Element) if element.stereotype == "Component" => getChildren.nonEmpty
+          case _ => false
+        }
+      }
+
       override def getChildren: JavaList[MenuItem] = {
+
         val repository = Repository.instance
         val er: EventRepository = new EventRepositoryImpl(repository)
         val el: Element = repository.context.get.asInstanceOf[Element]
-        val container = new EventInstanceContainerImpl(el)
-        val typeContainer = container.getType.asInstanceOf[EventTypeContainerImpl]
+        var typeContainer: EventTypeContainerImpl = null
+        if (isConnected(el)) {
+          val container = new EventInstanceContainerImpl(el)
+          typeContainer = container.getType.asInstanceOf[EventTypeContainerImpl]
+        }
         for (cont <- er.getEventTypeContainers) yield new MenuItemAdapter(cont.getName) {
-          override def isChecked = cont.asInstanceOf[EventTypeContainerImpl].peer == typeContainer.peer
+          override def isChecked = isConnected(el) && (cont.asInstanceOf[EventTypeContainerImpl].peer == typeContainer.peer)
           override def invoke {
             if (!isChecked) {
-              val connector = el.connectors.find(_.stereotype == "instanceOf").get
-              connector.target = cont.asInstanceOf[EventTypeContainerImpl].peer
+              el.connectors.find(_.stereotype == "instanceOf") match {
+                case Some(connector) => connector.target = cont.asInstanceOf[EventTypeContainerImpl].peer
+                case None => {
+                  val connector = el.connectors.add("", "Connector")
+                  connector.source = el
+                  connector.target = cont.asInstanceOf[EventTypeContainerImpl].peer
+                  connector.stereotype = "instanceOf"
+                }
+              }
             }
           }
         }
@@ -120,7 +143,7 @@ class CftExtension extends ExtensionAdapter {
       private def repository = Repository.instance
 
       private def selectedContainer: Option[EventInstanceContainer] = repository.context collect {
-        case element: Element if element.stereotype == "Component" => new EventInstanceContainerImpl(element)
+        case element: Element if element.stereotype == "Component" && isConnected(element) => new EventInstanceContainerImpl(element)
       }
 
       private def eventTypes: JavaList[EventType] = selectedContainer map { _.getType.getEvents } getOrElse Collections.emptyList()
