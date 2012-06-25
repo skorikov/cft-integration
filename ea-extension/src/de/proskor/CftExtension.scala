@@ -120,15 +120,14 @@ class CftExtension extends ExtensionAdapter {
           val el = repository.context.get.asInstanceOf[Element]
           val diagram = repository.diagram
           var node: Option[Node] = None
-          if (diagram.nonEmpty)
+          if (diagram.isDefined)
             node = findNode(diagram.get, el)
 
-          val container = repository.context.get.asInstanceOf[Element]
-          val eventInstance = container.elements.add(event.getName, "Object")
+          val eventInstance = el.elements.add(event.getName, "Object")
           eventInstance.stereotype = "Event"
           val connector = eventInstance.connectors.add("", "Connector")
           connector.source = eventInstance
-          connector.target = container
+          connector.target = el
           connector.stereotype = "belongsTo"
           val c2 = eventInstance.connectors.add("", "Connector")
           c2.source = eventInstance
