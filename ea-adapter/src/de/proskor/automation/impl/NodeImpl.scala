@@ -42,7 +42,11 @@ class NodeImpl(private[automation] val peer: IDiagramObject) extends Node {
   override def diagram: Diagram = new DiagramImpl(RepositoryImpl.getDiagramById(peer.get_DiagramID))
 
   override def element: Element = new ElementImpl(RepositoryImpl.getElementById(peer.get_ElementID))
-  override def element_=(element: Element) = peer.set_ElementID(element.id)
+  override def element_=(element: Element) = {
+    peer.set_ElementID(element.id)
+    peer.Update()
+    RepositoryImpl.peer.ReloadDiagram(peer.get_DiagramID)
+  }
 
   override def equals(that: Any): Boolean = that match {
     case node: Node => element == node.element && diagram == node.diagram
