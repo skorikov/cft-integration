@@ -7,8 +7,14 @@ class EntityImpl(peer: Element) extends Entity {
   override def getId: Int = peer.id
   override def getGuid: String = peer.guid
   override def getName: String = peer.name
-  override def getAuthor: String = "andrey"
-  override def setAuthor(author: String) {}
-  override def getDescription: String = "desc"
-  override def setDescription(description: String) {}
+
+  override def getAuthor: String = peer.author
+  override def setAuthor(author: String) {
+    peer.author = author
+  }
+
+  override def getDescription: String = peer.description
+  override def setDescription(description: String) {
+    peer.description = description
+  }
 }

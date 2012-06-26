@@ -10,7 +10,7 @@ import de.proskor.fel.container.EventInstanceContainer
 import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.event.EventType
 
-class EventTypeContainerImpl(peer: Element) extends EntityImpl(peer) with EventTypeContainer {
+class EventTypeContainerImpl(val peer: Element) extends EntityImpl(peer) with EventTypeContainer {
   override def getEvents: JavaList[EventType] = {
     val events = for {
       connector <- peer.connectors
@@ -31,8 +31,9 @@ class EventTypeContainerImpl(peer: Element) extends EntityImpl(peer) with EventT
 
   override def createEvent(name: String): EventType = {
     val repository = Repository.instance
-    val pkg = repository.models.find(_.name == "FEL") getOrElse(repository.models.add("FEL", "Package"))
-    val event = pkg.elements.add(name, "Object")
+    val model = repository.models.headOption getOrElse repository.models.add("Model", "Package")
+    val fel = model.packages.find(_.name == "FEL") getOrElse model.packages.add("FEL", "Package")
+    val event = fel.elements.add(name, "Object")
     event.stereotype = "EventType"
     val connector = event.connectors.add("", "Connector"); connector.stereotype = "belongsTo"
     connector.source = event

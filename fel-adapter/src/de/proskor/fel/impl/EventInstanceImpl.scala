@@ -1,9 +1,9 @@
 package de.proskor.fel.impl
 
 import de.proskor.automation.Element
+import de.proskor.fel.container.EventInstanceContainer
 import de.proskor.fel.event.EventInstance
 import de.proskor.fel.event.EventType
-import de.proskor.fel.container.EventInstanceContainer
 
 class EventInstanceImpl(peer: Element) extends EntityImpl(peer) with EventInstance {
   override def getContainer: EventInstanceContainer = {

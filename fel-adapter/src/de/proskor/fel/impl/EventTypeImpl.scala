@@ -1,13 +1,15 @@
 package de.proskor.fel.impl
 
 import java.util.{List => JavaList}
-import collection.JavaConversions._
+
+import scala.collection.JavaConversions.seqAsJavaList
+
 import de.proskor.automation.Element
-import de.proskor.fel.event.EventType
 import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.event.EventInstance
+import de.proskor.fel.event.EventType
 
-class EventTypeImpl(private[impl] val peer: Element) extends EntityImpl(peer) with EventType {
+class EventTypeImpl(val peer: Element) extends EntityImpl(peer) with EventType {
   override def getContainer: EventTypeContainer = {
     val types = for {
       connector <- peer.connectors
