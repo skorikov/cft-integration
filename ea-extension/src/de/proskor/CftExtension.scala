@@ -3,7 +3,8 @@ package de.proskor
 import java.util.Collections
 import java.util.{List => JavaList}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.JavaConversions.seqAsJavaList
 
 import de.proskor.automation.Diagram
 import de.proskor.automation.Element
@@ -16,7 +17,6 @@ import de.proskor.extension.ExtensionAdapter
 import de.proskor.extension.MenuItem
 import de.proskor.extension.MenuItemAdapter
 import de.proskor.fel.container.EventInstanceContainer
-import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.event.EventType
 import de.proskor.fel.impl.EventInstanceContainerImpl
 import de.proskor.fel.impl.EventRepositoryImpl
@@ -30,7 +30,6 @@ import de.proskor.shell.EpsilonShell
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
   private val menu = new MenuItemAdapter("CFT")
-  private var selected: Option[Element] = None
 
   private def item(name: String)(code: => Unit) =
     new MenuItemAdapter(menu, name) {
@@ -57,17 +56,6 @@ class CftExtension extends ExtensionAdapter {
 
     item("Epsilon Shell...") {
       new EpsilonShell
-    }
-
-    item("Test") {
-      Repository.instance.context match {
-        case Some(el: Element) => {
-          for (tv <- el.taggedValues) {
-            Repository.instance.write(tv.name + ": " + tv.value + " (" + tv.description + ")")
-          }
-        }
-        case _ =>
-      }
     }
 
     def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
