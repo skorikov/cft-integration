@@ -35,6 +35,7 @@ class ElementImpl(peer: IElement) extends Element {
 
   override def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
   override def connectors: Collection[Connector] = new ConnectorCollection(peer.get_Connectors.asInstanceOf[ICollection])
+  override def taggedValues: Collection[TaggedValue] = new TaggedValueCollection(peer.get_TaggedValues.asInstanceOf[ICollection])
 
   override def parent: Option[Element] =
     if (peer.get_ParentID > 0)

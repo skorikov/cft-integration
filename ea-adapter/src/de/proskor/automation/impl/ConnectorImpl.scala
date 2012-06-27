@@ -12,6 +12,12 @@ class ConnectorImpl(peer: IConnector) extends Connector {
   override def name: String = peer.get_Name.asInstanceOf[String]
   override def name_=(name: String): Unit = peer.set_Name(name)
 
+  override def description: String = peer.get_Notes.asInstanceOf[String]
+  override def description_=(description: String) {
+    peer.set_Notes(description)
+    peer.Update()
+  }
+
   override def stereotype: String = peer.get_Stereotype.asInstanceOf[String]
   override def stereotype_=(stereotype: String) {
     peer.set_Stereotype(stereotype)

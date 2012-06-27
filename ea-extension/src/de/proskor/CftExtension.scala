@@ -59,6 +59,17 @@ class CftExtension extends ExtensionAdapter {
       new EpsilonShell
     }
 
+    item("Test") {
+      Repository.instance.context match {
+        case Some(el: Element) => {
+          for (tv <- el.taggedValues) {
+            Repository.instance.write(tv.name + ": " + tv.value + " (" + tv.description + ")")
+          }
+        }
+        case _ =>
+      }
+    }
+
     def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
 
     def createNode(diagram: Diagram, parent: Node, kid: Element) {
