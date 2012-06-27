@@ -37,9 +37,6 @@ class FELAdapterTests {
     val ct = cont.connectors.add("C", "Connector"); ct.stereotype = "instanceOf"
     ct.source = event
     ct.target = et
-    val ct1 = cont.connectors.add("C", "Connector"); ct1.stereotype = "belongsTo"
-    ct1.source = event
-    ct1.target = cont
 
     val er: EventRepository = new EventRepositoryImpl(repository)
     assertEquals(1, er.getEventTypeContainers.size)

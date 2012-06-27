@@ -39,7 +39,7 @@ class CftExtension extends ExtensionAdapter {
 
   override protected def createMenu = {
     new MenuItemAdapter(menu, "Run Tests") {
-      setEnabled(false)
+      setVisible(false)
       override def invoke {
         Repository.instance.write("---- RUNNING TESTS ----")
         runner.test(classOf[AdapterTests])
@@ -68,6 +68,7 @@ class CftExtension extends ExtensionAdapter {
       node.top = parent.top + (parent.height - 40) / 2
       node.width = 40
       node.height = 40
+      node.sequence = parent.sequence - 1
     }
 
     def isConnected(element: Element): Boolean = element.connectors.exists(_.stereotype == "instanceOf")
@@ -123,12 +124,8 @@ class CftExtension extends ExtensionAdapter {
           if (diagram.isDefined)
             node = findNode(diagram.get, el)
 
-          val eventInstance = el.elements.add(event.getName, "Object")
+          val eventInstance = el.elements.add(selectedContainer.get.getType.getName + "." + event.getName, "Object")
           eventInstance.stereotype = "Event"
-          val connector = eventInstance.connectors.add("", "Connector")
-          connector.source = eventInstance
-          connector.target = el
-          connector.stereotype = "belongsTo"
           val c2 = eventInstance.connectors.add("", "Connector")
           c2.source = eventInstance
           c2.target = event.asInstanceOf[EventTypeImpl].peer

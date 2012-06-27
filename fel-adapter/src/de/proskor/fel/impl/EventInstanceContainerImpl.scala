@@ -21,22 +21,15 @@ class EventInstanceContainerImpl(val peer: Element) extends EntityImpl(peer) wit
   }
 
   override def getEvents: JavaList[EventInstance] = {
-    val instances = for {
-      connector <- peer.connectors
-      if connector.target == peer && connector.stereotype == "belongsTo"
-      source = connector.source
-    } yield new EventInstanceImpl(source)
-    instances.toList
+    val events = for {
+      element <- peer.elements if element.stereotype == "Event"
+    } yield new EventInstanceImpl(element)
+    events.toList
   }
 
   override def createEvent(name: String): EventInstance = {
-    val repository = Repository.instance
-    val pkg = repository.models.find(_.name == "Trash") getOrElse(repository.models.add("Trash", "Package"))
-    val event = pkg.elements.add(name, "Object")
+    val event = peer.elements.add(name, "Object")
     event.stereotype = "Event"
-    val connector = event.connectors.add("", "Connector"); connector.stereotype = "belongsTo"
-    connector.source = event
-    connector.target = peer
     new EventInstanceImpl(event)
   }
 }
