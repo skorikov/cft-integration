@@ -1,9 +1,9 @@
 package de.proskor.automation
 
-trait Repository {
+trait Repository extends Writable {
   def models: Collection[Package]
   def context: Option[Identity]
-  def write(text: String)
+  def diagram: Option[Diagram]
 }
 
 object Repository {

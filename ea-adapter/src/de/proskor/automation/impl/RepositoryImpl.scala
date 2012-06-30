@@ -1,13 +1,13 @@
 package de.proskor.automation.impl
 
-import de.proskor.automation._
-import de.proskor.automation.impl.collections._
-import cli.EA.IRepository
-import cli.EA.IPackage
+import cli.EA.ICollection
 import cli.EA.IDiagram
 import cli.EA.IElement
-import cli.EA.ICollection
+import cli.EA.IPackage
+import cli.EA.IRepository
 import cli.EA.ObjectType
+import de.proskor.automation.impl.collections._
+import de.proskor.automation._
 
 object RepositoryImpl extends Repository {
   var peer: IRepository = null
@@ -21,6 +21,9 @@ object RepositoryImpl extends Repository {
     case _ => None
   }
 
+  override def diagram: Option[Diagram] =
+    Option(peer.GetCurrentDiagram.asInstanceOf[IDiagram]).map(new DiagramImpl(_))
+
   private def withInitializedOutput(block: => Unit) {
     if (!outputInitialized) {
       peer.CreateOutputTab(outputTab)
@@ -32,6 +35,10 @@ object RepositoryImpl extends Repository {
 
   override def write(text: String) = withInitializedOutput {
     peer.WriteOutput(outputTab, text, 0)
+  }
+
+  override def clear() = withInitializedOutput {
+    peer.ClearOutput(outputTab)
   }
 
   def getPackageById(id: Int): IPackage = peer.GetPackageByID(id).asInstanceOf[IPackage]

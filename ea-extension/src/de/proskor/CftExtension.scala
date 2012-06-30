@@ -1,46 +1,110 @@
 package de.proskor
 
 import java.util.{List => JavaList}
-import collection.JavaConversions._
-import de.proskor.extension.ExtensionAdapter
-import de.proskor.extension.MenuItemAdapter
+import scala.collection.JavaConversions._
+import de.proskor.automation.Element
 import de.proskor.automation.Repository
+import de.proskor.cft.test.AdapterTests
+import de.proskor.cft.test.CftTests
+import de.proskor.cft.test.PeerTests
+import de.proskor.extension.ExtensionAdapter
+import de.proskor.extension.MenuItem
+import de.proskor.extension.MenuItemAdapter
+import de.proskor.fel.container.EventInstanceContainer
+import de.proskor.fel.event.EventType
+import de.proskor.fel.impl.EventInstanceContainerImpl
 import de.proskor.fel.impl.EventRepositoryImpl
-import de.proskor.fel.EventRepository
 import de.proskor.fel.ui.FailureEventListDialog
 import de.proskor.fel.ui.FailureEventListImpl
-import de.proskor.extension.MenuItem
-import de.proskor.automation.impl.RepositoryImpl
+import de.proskor.fel.EventRepository
+import de.proskor.shell.EpsilonShell
+import java.util.Collections
+import de.proskor.fel.container.EventTypeContainer
+import de.proskor.fel.impl.EventTypeContainerImpl
+import de.proskor.fel.impl.EventTypeImpl
+import de.proskor.automation.Diagram
+import de.proskor.automation.Node
 
 class CftExtension extends ExtensionAdapter {
+  private val runner = new TestRunner(Repository.instance.write)
+  private val menu = new MenuItemAdapter("CFT")
+  private var selected: Option[Element] = None
+
+  private def item(name: String)(code: => Unit) =
+    new MenuItemAdapter(menu, name) {
+      override def invoke = code
+    }
+
   override protected def createMenu = {
-    val cftMenu = new MenuItemAdapter("CFT")
-    
-    new MenuItemAdapter(cftMenu, "Failure Event List...") {
+    new MenuItemAdapter(menu, "Run Tests") {
+      setEnabled(false)
       override def invoke {
-        val er: EventRepository = new EventRepositoryImpl(Repository.instance)
-        val dialog: FailureEventListDialog = new FailureEventListImpl(er)
-        dialog.showEventList
+        Repository.instance.write("---- RUNNING TESTS ----")
+        runner.test(classOf[AdapterTests])
+        runner.test(classOf[PeerTests])
+        runner.test(classOf[CftTests])
+        Repository.instance.write("---- ALL TESTS DONE ----")
       }
     }
 
-    new MenuItemAdapter(cftMenu, "Create Event Instance") {
-      override def hasChildren: Boolean = this.getChildren.size > 0
+    item("Failure Event List...") {
+      val er: EventRepository = new EventRepositoryImpl(Repository.instance)
+      val dialog: FailureEventListDialog = new FailureEventListImpl(er)
+      dialog.showEventList
+    }
 
-      override def getChildren: JavaList[MenuItem] = {
-        val er: EventRepository = new EventRepositoryImpl(Repository.instance)
-        val items = for {
-          container <- er.getEventTypeContainers
-          event <- container.getEvents
-        } yield new MenuItemAdapter(event.getName) {
-          override def invoke() {
-            
-          }
+    item("Epsilon Shell...") {
+      new EpsilonShell
+    }
+
+    def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
+
+    def createNode(diagram: Diagram, parent: Node, kid: Element) {
+      val node = diagram.nodes.add("", "Object")
+      node.element = kid
+      node.left = parent.left + (parent.width - 40) / 2
+      node.top = parent.top + (parent.height - 40) / 2
+      node.width = 40
+      node.height = 40
+    }
+
+    new MenuItemAdapter(menu, "Create Event Instance") {
+      override def isVisible = hasChildren
+
+      override def getChildren: JavaList[MenuItem] = for (event <- eventTypes) yield new MenuItemAdapter(event.getName) {
+        override def invoke {
+          val el = repository.context.get.asInstanceOf[Element]
+          val diagram = repository.diagram
+          var node: Option[Node] = None
+          if (diagram.nonEmpty)
+            node = findNode(diagram.get, el)
+
+          val container = repository.context.get.asInstanceOf[Element]
+          val eventInstance = container.elements.add(event.getName, "Object")
+          eventInstance.stereotype = "Event"
+          val connector = eventInstance.connectors.add("", "Connector")
+          connector.source = eventInstance
+          connector.target = container
+          connector.stereotype = "belongsTo"
+          val c2 = eventInstance.connectors.add("", "Connector")
+          c2.source = eventInstance
+          c2.target = event.asInstanceOf[EventTypeImpl].peer
+          c2.stereotype = "instanceOf"
+
+          if (node.nonEmpty)
+            createNode(diagram.get, node.get, eventInstance)
         }
-        items
       }
+
+      private def repository = Repository.instance
+
+      private def selectedContainer: Option[EventInstanceContainer] = repository.context collect {
+        case element: Element if element.stereotype == "Component" => new EventInstanceContainerImpl(element)
+      }
+
+      private def eventTypes: JavaList[EventType] = selectedContainer map { _.getType.getEvents } getOrElse Collections.emptyList()
     }
 
-    cftMenu
+    menu
   }
 }

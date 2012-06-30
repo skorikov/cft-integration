@@ -49,6 +49,7 @@ class AutomationModel(var objects: Set[AnyRef]) extends AbstractModel {
     case _: Repository => "Repository"
     case _: Package => "Package"
     case _: Element => "Element"
+    case _: Collection[_] => "Collection"
     case _ => throw new IllegalArgumentException
   }
 
@@ -91,6 +92,7 @@ class AutomationModel(var objects: Set[AnyRef]) extends AbstractModel {
     case _: Repository => typ == "Repository"
     case _: Package => typ == "Package"
     case _: Element => typ == "Element"
+    case _: Collection[_] => typ == "Collection"
   } else {
     throw new EolModelElementTypeNotFoundException(name, typ)
   }

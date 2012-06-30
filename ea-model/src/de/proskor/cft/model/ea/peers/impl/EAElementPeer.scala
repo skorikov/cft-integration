@@ -23,6 +23,7 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
 
   override def connect(element: ElementPeer) {
     val connector = peer.connectors.add("", "Connector")
+    connector.stereotype = "Connector"
     connector.source = element.asInstanceOf[EAElementPeer].peer
     connector.target = this.peer
   }
@@ -31,12 +32,12 @@ class EAElementPeer(val peer: Element) extends ElementPeer {
   }
 
   override def add(element: ElementPeer): ElementPeer = if (element.isInstanceOf[ProxyPeer]) {
-    val result = peer.elements.add(element.name, "Object")
+    val result = peer.elements.add(element.name, if (Set("Input", "Output").contains(element.stereotype)) "Port" else "Object")
     result.stereotype = element.stereotype
     new EAElementPeer(result)
   } else if (!elements.contains(element)) {
     element.parent.get.remove(element)
-    val result = peer.elements.add(element.name, "Object")
+    val result = peer.elements.add(element.name, if (Set("Input", "Output").contains(element.stereotype)) "Port" else "Object")
     result.stereotype = element.stereotype
     new EAElementPeer(result)
   } else element

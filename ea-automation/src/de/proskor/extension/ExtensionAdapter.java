@@ -6,15 +6,7 @@ package de.proskor.extension;
  */
 public abstract class ExtensionAdapter implements Extension {
 	/** Stores the menu. */
-	private MenuItem menu;
-
-	/**
-	 * Constructor.
-	 * Calls createMenus() to initialize the menu structure.
-	 */
-	protected ExtensionAdapter() {
-		this.menu = this.createMenu();
-	}
+	private MenuItem menu = null;
 
 	/**
 	 * Create the menu.
@@ -36,6 +28,9 @@ public abstract class ExtensionAdapter implements Extension {
 	 */
 	@Override
 	public final MenuItem getMenu() {
+		if (this.menu == null)
+			this.menu = this.createMenu();
+
 		return this.menu;
 	}
 }

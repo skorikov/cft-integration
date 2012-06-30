@@ -13,13 +13,25 @@ class ConnectorImpl(peer: IConnector) extends Connector {
   override def name_=(name: String): Unit = peer.set_Name(name)
 
   override def stereotype: String = peer.get_Stereotype.asInstanceOf[String]
-  override def stereotype_=(stereotype: String): Unit = peer.set_Stereotype(stereotype)
+  override def stereotype_=(stereotype: String) {
+    peer.set_Stereotype(stereotype)
+    if (peer.get_SupplierID > 0 && peer.get_ClientID > 0)
+      peer.Update()
+  }
 
   override def source: Element = new ElementImpl(RepositoryImpl.getElementById(peer.get_ClientID))
-  override def source_=(element: Element): Unit = peer.set_ClientID(element.id)
+  override def source_=(element: Element) {
+    peer.set_ClientID(element.id)
+    if (peer.get_SupplierID > 0)
+      peer.Update()
+  }
 
   override def target: Element = new ElementImpl(RepositoryImpl.getElementById(peer.get_SupplierID))
-  override def target_=(element: Element): Unit = peer.set_SupplierID(element.id)
+  override def target_=(element: Element) {
+    peer.set_SupplierID(element.id)
+    if (peer.get_ClientID > 0)
+      peer.Update()
+  }
 
   override def equals(that: Any): Boolean = that match {
     case connector: Connector => id == connector.id

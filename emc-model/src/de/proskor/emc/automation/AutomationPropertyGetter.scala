@@ -13,7 +13,7 @@ object AutomationPropertyGetter extends AbstractPropertyGetter {
     //  case "id" => element.id
       case "name" => element.name
       case "stereotype" => element.stereotype
-      case "elements" => element.elements
+      case "elements" => toJavaSet(element.elements.toSet)
       case "parent" => element.parent.getOrElse(null)
       case "pkg" => element.pkg
       case "connectors" => element.connectors
@@ -21,9 +21,9 @@ object AutomationPropertyGetter extends AbstractPropertyGetter {
     case pkg: Package => property match {
     //  case "id" => pkg.id
       case "name" => pkg.name
-      case "elements" => pkg.elements
+      case "elements" => toJavaSet(pkg.elements.toSet)
       case "parent" => pkg.parent.getOrElse(null)
-      case "packages" => pkg.packages
+      case "packages" => toJavaSet(pkg.packages.toSet)
       case "diagrams" => pkg.diagrams
     }
     case repository: Repository => property match {

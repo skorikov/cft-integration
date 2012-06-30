@@ -14,7 +14,7 @@ private[automation] abstract class AbstractCollection[T](peer: ICollection) exte
     val result = peer.AddNew(name, typ).asInstanceOf[PeerType]
     update(result)
     peer.Refresh()
-    RepositoryImpl.peer.RefreshModelView(0)
+  //  RepositoryImpl.peer.RefreshModelView(0)
     create(result)
   }
 
@@ -26,7 +26,7 @@ private[automation] abstract class AbstractCollection[T](peer: ICollection) exte
   def removeAt(index: Int) {
     peer.Delete(index.toShort)
     peer.Refresh()
-    RepositoryImpl.peer.RefreshModelView(0)
+  //  RepositoryImpl.peer.RefreshModelView(0)
   }
 
   def indexOf(element: T): Int = {
@@ -55,6 +55,7 @@ private[automation] abstract class AbstractCollection[T](peer: ICollection) exte
   override def contains(element: T): Boolean = indexOf(element) >= 0
 
   override def iterator: Iterator[T] = new Iterator[T] {
+    peer.Refresh()
     private var current: Int = -1
     override def hasNext: Boolean = (current + 1) < AbstractCollection.this.size
     override def next: T = {

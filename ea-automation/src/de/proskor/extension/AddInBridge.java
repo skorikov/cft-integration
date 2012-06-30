@@ -13,15 +13,7 @@ import de.proskor.automation.MenuState;
  */
 public abstract class AddInBridge extends AddInAdapter {
 	/** Actual extension implementation */
-	private Extension extension;
-
-	/**
-	 * Constructor.
-	 * Calls createExtension() to configure itself.
-	 */
-	protected AddInBridge() {
-		this.extension = this.createExtension();
-	}
+	private Extension extension = null;
 
 	/**
 	 * Get the extension implementation.
@@ -35,6 +27,9 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * @return extension implementation.
 	 */
 	private Extension getExtension() {
+		if (this.extension == null)
+			this.extension = this.createExtension();
+
 		return this.extension;
 	}
 

@@ -1,0 +1,15 @@
+rule Components
+merge left : LEFT!Component
+with right : RIGHT!Component
+into result : RESULT!Component {
+	target.add(result);
+	result.name := left.name + "_MERGED";
+}
+
+/* @lazy
+rule Events
+merge left : LEFT!Event
+with right : RIGHT!Event
+into result : RESULT!Event {
+	result.name := left.name + "_MERGED";
+}*/

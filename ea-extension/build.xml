@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="cft" default="deploy">
 	<property name="host" value="192.168.122.39" />
-	<property name="jar" value="ea-extension.jar" />
-	<property name="dll" value="ea-extension.dll" />
+	<property name="jar" value="cft-integration.jar" />
+	<property name="dll" value="cft-integration.dll" />
 	<target name="jar">
 		<jar destfile="ea-extension/dist/${jar}">
 			<fileset dir="ea-automation/bin">
 				<exclude name="**/MenuState.class" />
 				<exclude name="**/AddIn.class" />
 			</fileset>
+			<zipfileset dir="epsilon-shell" includes="icons/**" />
 			<fileset dir="cft-model/bin" />
 			<fileset dir="cft-test/bin" />
 			<fileset dir="ea-model/bin" />
@@ -17,6 +18,8 @@
 			<fileset dir="ea-adapter/bin" />
 			<fileset dir="ea-fel/bin" />
 			<fileset dir="fel-adapter/bin" />
+			<fileset dir="epsilon-shell/bin" />
+			<fileset dir="emc-model/bin" />
 			<fileset dir="redundancy-removal/bin" />
 		</jar>
 	</target>
@@ -25,13 +28,13 @@
 			<arg value="-target:library" />
 			<arg value="-version:1.0.0.0" />
 			<arg value="-out:ea-extension/dist/${dll}" />
-			<arg value="-r:ea-extension/dll/automation.dll" />
+			<arg value="-keyfile:ea-integration/integration/proskor.snk" />
 			<arg value="-r:ea-extension/dll/Interop.EA.dll" />
-			<arg value="-r:ea-extension/dll/scala-library.dll" />
-			<arg value="-r:ea-extension/dll/scalatest-1.6.1.dll" />
+			<arg value="-r:ea-extension/dll/addin.dll" />
+			<arg value="-r:ea-extension/dll/scala.dll" />
 			<arg value="-r:ea-extension/dll/swt.dll" />
 			<arg value="-r:ea-extension/dll/junit.dll" />
-			<arg value="-r:/usr/lib/mono/4.0/mscorlib.dll" />
+			<arg value="-r:ea-extension/dll/epsilon.dll" />
 			<arg value="ea-extension/dist/${jar}" />
 		</exec>
 	</target>

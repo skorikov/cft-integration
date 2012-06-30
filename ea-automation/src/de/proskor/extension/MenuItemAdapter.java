@@ -1,7 +1,8 @@
 package de.proskor.extension;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A dummy implementation for the menu item interface.
@@ -18,9 +19,9 @@ public class MenuItemAdapter implements MenuItem {
 		this.name = name;
 	}
 
-	public MenuItemAdapter(MenuItem parent, String name) {
+	public MenuItemAdapter(MenuItemAdapter parent, String name) {
 		this(name);
-		parent.getChildren().add(this);
+		parent.kids.add(this);
 	}
 
 	@Override
@@ -34,12 +35,12 @@ public class MenuItemAdapter implements MenuItem {
 
 	@Override
 	public boolean hasChildren() {
-		return !this.kids.isEmpty();
+		return !this.getChildren().isEmpty();
 	}
 
 	@Override
 	public List<MenuItem> getChildren() {
-		return this.kids;
+		return Collections.unmodifiableList(this.kids);
 	}
 
 	@Override

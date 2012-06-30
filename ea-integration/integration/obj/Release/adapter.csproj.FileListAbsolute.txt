@@ -1,0 +1,6 @@
+E:\Fraunhofer\Workspaces\git\cft-integration\ea-integration\integration\bin\Release\adapter.dll
+E:\Fraunhofer\Workspaces\git\cft-integration\ea-integration\integration\bin\Release\addin.dll
+E:\Fraunhofer\Workspaces\git\cft-integration\ea-integration\integration\bin\Release\IKVM.OpenJDK.Core.dll
+E:\Fraunhofer\Workspaces\git\cft-integration\ea-integration\integration\bin\Release\Interop.EA.dll
+E:\Fraunhofer\Workspaces\git\cft-integration\ea-integration\integration\obj\Release\ResolveAssemblyReference.cache
+E:\Fraunhofer\Workspaces\git\cft-integration\ea-integration\integration\obj\Release\adapter.dll

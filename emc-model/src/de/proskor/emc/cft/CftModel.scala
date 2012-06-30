@@ -74,7 +74,19 @@ class CftModel(var objects: Set[Element]) extends AbstractModel {
 
   override def getFullyQualifiedTypeNameOf(instance: AnyRef): String = getTypeNameOf(instance)
 
-  override def createInstance(typ: String): AnyRef = throw new IllegalArgumentException
+  override def createInstance(typ: String): AnyRef = if (concreteTypes.contains(typ)) typ match {
+    case "Package" => create(Package(""))
+    case "Component" => create(Component(""))
+    case "Event" => create(Event(""))
+    case "Inport" => create(Inport(""))
+    case "Outport" => create(Outport(""))
+    case "And" => create(And(""))
+    case "Or" => create(Or(""))
+  } else if (allTypes.contains(typ)) {
+    throw new EolNotInstantiableModelElementTypeException(name, typ)
+  } else {
+    throw new EolModelElementTypeNotFoundException(name, typ)
+  }
 
   override def createInstance(typ: String, parameters: JavaCollection[AnyRef]): AnyRef = {
     val (name, parent) = processParameters(parameters)
