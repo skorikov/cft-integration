@@ -84,7 +84,6 @@ public class FailureEventListGui extends Shell {
 	private Label lblStatusEventsVisibleCount;
 	private Label lblComponentsSelectedCount;
 	private Button btnComponentsReload;
-
 	
 	/**
 	 * @wbp.parser.constructor
@@ -108,6 +107,13 @@ public class FailureEventListGui extends Shell {
 		guiHandlerComponents.loadContainerList();
 		guiHandlerComponents.selectFirstTypeInTree(); // Ersten Component markieren
 		guiOpComponentsTreeChanged();
+		
+		guiHandlerEvents.selectFirstTypeInTree(); // Erstes Event markieren
+		guiOpEventsTreeChanged();
+	}
+	
+	public List<EventType> getEventsCreatedByUser() {
+		return guiHandlerCreateEvent.getEventsCreatedByUser();
 	}
 
 	/**
@@ -167,6 +173,25 @@ public class FailureEventListGui extends Shell {
 //		createComponents();
 //	}
 
+	public void show(EventTypeContainer selectedContainer) {
+		guiHandlerComponents.selectComponent(selectedContainer);
+		guiOpComponentsTreeChanged();
+		
+		show();
+	}
+	
+	public void show(EventType selectedEvent) {
+		// Component auswählen und Änderung im GUI+Handler übernehmen
+		guiHandlerComponents.selectComponent(selectedEvent.getContainer());
+		guiOpComponentsTreeChanged();
+		
+		// Event auswählen und Änderung im GUI+Handler übernehmen
+		guiHandlerEvents.selectEvent(selectedEvent);
+		guiOpEventsTreeChanged();
+		
+		show();
+	}
+	
 	public void show() {
 		prepareToShow();
 

@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import de.proskor.fel.EventRepository;
 import de.proskor.fel.Type;
 import de.proskor.fel.container.EventTypeContainer;
+import de.proskor.fel.event.Event;
 import de.proskor.fel.event.EventType;
 import de.proskor.fel.ui.Filters.EventTypeContainerFilter;
 import de.proskor.fel.ui.Filters.EventTypeFilter;
@@ -224,6 +225,10 @@ public class GuiHandlers {
 		public List<EventType> getEvents() {
 			return guiRepositoryEvents.getEvents();
 		}
+
+		public void selectEvent(EventType selectedEvent) {
+			selectType(selectedEvent);
+		}
 	}
 	
 	public static class GuiHandlerCreateEvent extends GuiHandler {
@@ -242,6 +247,7 @@ public class GuiHandlers {
 		private final Button btnChkIsValid;
 		
 		private EventTypeContainer currentContainer;
+		private List<EventType> eventsCreatedByUser;
 		
 		public GuiHandlerCreateEvent(
 				Text textEventName, Text textEventAuthor, Text textEventComponent, StyledText textEventDescription,
@@ -254,6 +260,8 @@ public class GuiHandlers {
 			
 			this.btnChkIsValid = btnChkIsValid;
 			this.btnCreateEvent = btnCreateEvent;
+			
+			eventsCreatedByUser = new ArrayList<EventType>();
 
 			/* 1. Nicht nötig da Per default keine Daten vorhanden. 
 			 * 2. Erzeugt null-pointer Exception durch: 
@@ -265,6 +273,10 @@ public class GuiHandlers {
 			 *        da Konstruktor noch nicht terminiert.
 			 */
 			// clearData(); 
+		}
+		
+		public List<EventType> getEventsCreatedByUser() {
+			return eventsCreatedByUser;
 		}
 		
 		private void setTextFieldsContent(String content) {
@@ -337,10 +349,14 @@ public class GuiHandlers {
 			btnChkIsValid.setSelection(isValid);
 		}
 
-		public void createEvent() {
+		public Event createEvent() {
 			EventType event = currentContainer.createEventType(getCurrentEventName());
 			event.setAuthor(getCurrentEventAuthor());
 			event.setDescription(getCurrentEventDescription());
+			
+			eventsCreatedByUser.add(event);
+			
+			return event;
 		}
 
 		/**
@@ -543,6 +559,10 @@ public class GuiHandlers {
 
 		public List<EventTypeContainer> getComponents() {
 			return guiRepositoryContainer.getContainers();
+		}
+
+		public void selectComponent(EventTypeContainer selectedContainer) {
+			selectType(selectedContainer);
 		}
 	}
 	

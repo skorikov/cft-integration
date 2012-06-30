@@ -97,15 +97,13 @@ public class FailureEventListImpl implements FailureEventList {
 	}
 
 	@Override
-	public void showDialog(EventTypeContainer currentContainer) {
-		// TODO Auto-generated method stub
-		
+	public void showDialog(EventTypeContainer selectedContainer) {
+		felGui.show(selectedContainer);
 	}
 
 	@Override
-	public void showDialog(EventType currentEvent) {
-		// TODO Auto-generated method stub
-		
+	public void showDialog(EventType selectedEvent) {
+		felGui.show(selectedEvent);
 	}
 
 	@Override
