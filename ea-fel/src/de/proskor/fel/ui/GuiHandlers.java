@@ -45,6 +45,7 @@ public class GuiHandlers {
 	
 	private static abstract class GuiHandlerWithRepository extends GuiHandler {
 		private List<Type> selectionBackup;
+		private List<Type> expandedBackup;
 		private final Tree elementsTree;
 		
 		protected GuiHandlerWithRepository(Tree elementsTree) {
@@ -53,17 +54,49 @@ public class GuiHandlers {
 		}
 
 		/**
+		 * Stores each {@link Type} whose associated {@link TreeItem TreeItem} has <code>treeItem.getExpanded() == true</code>. 
+		 * The {@link Tree} state can therefore be restored after clearing all items.
+		 * 
+		 * @see #expandedRestore()
+		 */
+		protected void expandedBackup() {
+			expandedBackup = new ArrayList<Type>();
+			
+			for(TreeItem item : getGuiRepository().getTreeItems()) {
+				if (item.getExpanded()) {
+					Type type = getGuiRepository().getTypeByTreeItem(item);
+					expandedBackup.add(type);
+				}
+			}
+		}
+		
+		/**
+		 * Restores the {@link TreeItem#getExpanded()} value of each {@link TreeItem} which is associated 
+		 * with the stored {@link Type} from {@link #expandedBackup()}. 
+		 */
+		protected void expandedRestore() {
+			List<Type> types = getGuiRepository().getTypes();
+			
+			for(Type expandedType : expandedBackup) {
+				if (types.contains(expandedType)) {
+					TreeItem treeItem = getGuiRepository().getTreeItemByType(expandedType);
+					treeItem.setExpanded(true);
+				}
+			}
+		}
+		
+		/**
 		 * Stores the currently selected {@link TreeItem} Objects in the associated {@link Tree}.
 		 * The selection can be restored by calling {@link #selectionRestore()}.
 		 */
-		public void selectionBackup() {
+		protected void selectionBackup() {
 			selectionBackup = getSelectedTypes();
 		}
 
 		/**
 		 * Selects the {@link Type} Objects, which have been selected when calling {@link #selectionBackup()} and are still being part of the {@link Tree}.
 		 */
-		public void selectionRestore() {
+		protected void selectionRestore() {
 			List<Type> currentTypesInTree = getGuiRepository().getTypes(); 
 			ArrayList<Type> newSelection = new ArrayList<Type>();
 			
@@ -149,6 +182,8 @@ public class GuiHandlers {
 		}
 
 		private void componentsSelectionOrFilterChanged() {
+			eventTypeFilter.applyGuiFilterConfig();
+			
 			for(EventTypeContainer container : currentComponentsSelection) { // Container aus Selection...
 				for(EventType event : container.getEvents()) { // beinhalten Events...
 					if (eventTypeFilter.typeConformsToFilter(event)) { // es werden die verwendet, die dem Filter entsprechen
@@ -184,6 +219,10 @@ public class GuiHandlers {
 		@Override
 		protected GuiRepository getGuiRepository() {
 			return guiRepositoryEvents;
+		}
+
+		public List<EventType> getEvents() {
+			return guiRepositoryEvents.getEvents();
 		}
 	}
 	
@@ -382,6 +421,9 @@ public class GuiHandlers {
 		}
 		
 		public void loadContainerList() {
+			selectionBackup();
+			expandedBackup();
+			
 			guiRepositoryContainer.clear();
 
 			for (EventTypeContainer c : eventRepository.getEventTypeContainers()) {
@@ -390,6 +432,9 @@ public class GuiHandlers {
 			
 			if (treeComponents.getItemCount() > 0)
 				treeComponents.select(treeComponents.getItem(0));
+			
+			selectionRestore();
+			expandedRestore();
 		}
 		
 		public void selectContainerByFieldMatch(boolean clearOldSelection) {
@@ -494,6 +539,10 @@ public class GuiHandlers {
 		@Override
 		protected GuiRepository getGuiRepository() {
 			return guiRepositoryContainer;
+		}
+
+		public List<EventTypeContainer> getComponents() {
+			return guiRepositoryContainer.getContainers();
 		}
 	}
 	

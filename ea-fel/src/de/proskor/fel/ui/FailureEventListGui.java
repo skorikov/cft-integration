@@ -40,6 +40,7 @@ public class FailureEventListGui extends Shell {
 	private final GuiHandlerComponents guiHandlerComponents;
 	private final GuiHandlerEvents guiHandlerEvents;
 	private final GuiHandlerCreateEvent guiHandlerCreateEvent;
+	private StatusManager statusManager;
 	
 	public Button btnClose;
 	public Text textEventFilterByFieldsMatch;
@@ -79,6 +80,12 @@ public class FailureEventListGui extends Shell {
 	private ToolItem tltmCopyName;
 	private ToolItem tltmComponent;
 	
+	private Label lblStatusComponentsCount;
+	private Label lblStatusEventsVisibleCount;
+	private Label lblComponentsSelectedCount;
+	private Button btnComponentsReload;
+
+	
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -94,16 +101,69 @@ public class FailureEventListGui extends Shell {
 		guiHandlerComponents = new GuiHandlerComponents(eventRepository, treeComponents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
 		guiHandlerCreateEvent = new GuiHandlerCreateEvent(textCreateEventName, textCreateEventAuthor, textCreateEventComponent, textCreateEventDescription, btnCreateEvent, btnChkCreateEventIsValid);
 		guiHandlerEvents = new GuiHandlerEvents(treeEvents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
-
+		
+		statusManager = new StatusManager(lblStatusComponentsCount, lblComponentsSelectedCount, lblStatusEventsVisibleCount);
+		
+		btnComponentsReload = new Button(this, SWT.NONE);
+		btnComponentsReload.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandlerComponents.loadContainerList();
+				guiOpComponentsTreeChanged();
+			}
+		});
+		btnComponentsReload.setToolTipText("Reloads components from Enterprise Architect incase there have been changes.");
+		btnComponentsReload.setBounds(778, 457, 100, 25);
+		btnComponentsReload.setText("Reload");
+		
 		// Ausgangs-Zustände herstellen:
 		guiHandlerComponents.loadContainerList();
-		guiHandlerCreateEvent.componentsSelectionChanged(guiHandlerComponents.getSelectedComponent()); // Um aktuellen Component zu übernehmen
-		guiHandlerEvents.componentsSetSelection(guiHandlerComponents.getSelectedComponents()); // Um aktuellen Component zu übernehmen
+		guiOpComponentsTreeChanged();
 	}
-	
+
+	/**
+	 * Impliziert {@link #guiOpEventsTreeChanged()}
+	 */
 	private void guiOpComponentsTreeChanged() {
+		List<EventTypeContainer> selectedComponents = guiHandlerComponents.getSelectedComponents();
+		
 		guiHandlerCreateEvent.componentsSelectionChanged(guiHandlerComponents.getSelectedComponent());					
-		guiHandlerEvents.componentsSetSelection(guiHandlerComponents.getSelectedComponents());
+		
+		statusManager.setComponentsSelectedCount(selectedComponents.size());		
+		statusManager.setComponentsCount(guiHandlerComponents.getComponents().size()); // eigentlich nur einmal nötig - aber falls components nachgeladen werden (z.B. durch eine weitere Funktion "Reload"), muss diese Zahl aktualisiert werden.
+	
+		guiOpEventsTreeChanged();
+	}
+
+	private void guiOpEventsTreeChanged() {
+		List<EventTypeContainer> selectedComponents = guiHandlerComponents.getSelectedComponents();
+		guiHandlerEvents.componentsSetSelection(selectedComponents);
+
+		statusManager.setEventsDisplayedCount(guiHandlerEvents.getEvents().size());		
+	}
+
+	private static class StatusManager {
+		private Label componentsCount;
+		private Label componentsSelectedCount;
+		private Label eventsDisplayedCount;
+		
+		public StatusManager(Label componentsCount, Label componentsSelectedCount, Label eventsDisplayedCount) {
+			this.componentsCount = componentsCount;
+			this.componentsSelectedCount = componentsSelectedCount;
+			this.eventsDisplayedCount = eventsDisplayedCount;
+		}
+		
+		public void setComponentsCount(int count) {
+			componentsCount.setText("Components: " + count);
+		}
+		
+		public void setComponentsSelectedCount(int count) {
+			componentsSelectedCount.setText("Components selected: " + count);
+		}
+		
+		public void setEventsDisplayedCount(int count) {
+			eventsDisplayedCount.setText("Events displayed: " + count);
+		}
 	}
 
 //	/**
@@ -151,7 +211,7 @@ public class FailureEventListGui extends Shell {
 				close();
 			}
 		});
-		btnClose.setBounds(886, 457, 98, 25);
+		btnClose.setBounds(884, 457, 100, 25);
 		btnClose.setText("Close");
 
 		grpEvents = new Group(this, SWT.NONE);
@@ -163,6 +223,12 @@ public class FailureEventListGui extends Shell {
 		lblFilterByEvent.setText("Filter:");
 
 		textEventFilterByFieldsMatch = new Text(grpEvents, SWT.BORDER);
+		textEventFilterByFieldsMatch.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				guiHandlerEvents.reloadEvents();
+				guiOpEventsTreeChanged();
+			}
+		});
 		textEventFilterByFieldsMatch.setToolTipText("Only shows events matching the filter.");
 		textEventFilterByFieldsMatch.setBounds(43, 18, 314, 21);
 
@@ -192,6 +258,14 @@ public class FailureEventListGui extends Shell {
 		treeColumnEventIdGuid.setText("ID / GUID");
 
 		comboEventFilterMode = new Combo(grpEvents, SWT.BORDER | SWT.READ_ONLY);
+		comboEventFilterMode.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				if (guiHandlerEvents != null) {// dies ist beim Initialisieren der GUI der Fall. Danach nicht mehr.
+					guiHandlerEvents.reloadEvents();
+					guiOpEventsTreeChanged();
+				}
+			}
+		});
 		// Nur zur Vorschau:
 		comboEventFilterMode.setItems(new String[] {"[[ Any Field ]]", "Name", "Author", "Description", "ID", "GUID"});
 		comboEventFilterMode.setBounds(363, 17, 110, 23);
@@ -514,6 +588,7 @@ public class FailureEventListGui extends Shell {
 				guiHandlerCreateEvent.eventDataChanged();
 				
 				guiHandlerEvents.reloadEvents();
+				guiOpEventsTreeChanged();
 			}
 		});
 		btnCreateEvent.setText("Create Event");
@@ -580,6 +655,21 @@ public class FailureEventListGui extends Shell {
 		btnChkCreateEventIsValid.setEnabled(false);
 		grpCreateEvent.setTabList(new Control[]{textCreateEventName, textCreateEventAuthor, textCreateEventDescription, btnCreateEvent, buttonCreateEventClearData});
 
+		Group group = new Group(this, SWT.NONE);
+		group.setBounds(10, 450, 483, 30);
+		
+		lblStatusComponentsCount = new Label(group, SWT.NONE);
+		lblStatusComponentsCount.setText("Components: 10");
+		lblStatusComponentsCount.setBounds(10, 10, 134, 15);
+		
+		lblStatusEventsVisibleCount = new Label(group, SWT.NONE);
+		lblStatusEventsVisibleCount.setText("Events displayed: 10");
+		lblStatusEventsVisibleCount.setBounds(343, 10, 130, 15);
+		
+		lblComponentsSelectedCount = new Label(group, SWT.NONE);
+		lblComponentsSelectedCount.setText("Components selected: 10");
+		lblComponentsSelectedCount.setBounds(150, 10, 150, 15);
+		
 		createContents();
 	}
 
