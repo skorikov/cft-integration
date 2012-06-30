@@ -188,6 +188,13 @@ public class GuiHandlers {
 	}
 	
 	public static class GuiHandlerCreateEvent extends GuiHandler {
+		public static class EventData {
+			public EventTypeContainer container;
+			public String name;
+			public String author;
+			public String description;
+		}
+		
 		private final Text textEventName;
 		private final Text textEventAuthor;
 		private final Text textEventComponent;
@@ -295,6 +302,24 @@ public class GuiHandlers {
 			EventType event = currentContainer.createEventType(getCurrentEventName());
 			event.setAuthor(getCurrentEventAuthor());
 			event.setDescription(getCurrentEventDescription());
+		}
+
+		/**
+		 * Sets the <i>Event-Data</i> (also in the GUI). {@link EventData} Attributes with the value <code>null</code> are being ignored and not changed.
+		 * @param eventData
+		 */
+		public void setEventData(EventData eventData) {
+			if (eventData == null)
+				return;
+			
+			if (eventData.container != null)
+				setCurrentContainer(eventData.container);
+			if (eventData.name != null)
+				textEventName.setText(eventData.name);
+			if (eventData.author != null)
+				textEventAuthor.setText(eventData.author);
+			if (eventData.description != null)
+				textEventDescription.setText(eventData.description);
 		}
 	}
 	

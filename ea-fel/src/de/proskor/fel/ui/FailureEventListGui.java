@@ -30,6 +30,7 @@ import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.EventType;
 import de.proskor.fel.ui.GuiHandlers.GuiHandlerComponents;
 import de.proskor.fel.ui.GuiHandlers.GuiHandlerCreateEvent;
+import de.proskor.fel.ui.GuiHandlers.GuiHandlerCreateEvent.EventData;
 import de.proskor.fel.ui.GuiHandlers.GuiHandlerEvents;
 
 public class FailureEventListGui extends Shell {
@@ -75,6 +76,8 @@ public class FailureEventListGui extends Shell {
 	private ToolItem tltmA;
 	private ToolItem toolItem_2;
 	private ToolItem tltmClear;
+	private ToolItem tltmCopyName;
+	private ToolItem tltmComponent;
 	
 	/**
 	 * @wbp.parser.constructor
@@ -196,7 +199,7 @@ public class FailureEventListGui extends Shell {
 		comboEventFilterMode.select(0);
 		
 		ToolBar toolBar_3 = new ToolBar(grpEvents, SWT.FLAT | SWT.RIGHT);
-		toolBar_3.setBounds(239, 308, 234, 23);
+		toolBar_3.setBounds(192, 308, 281, 23);
 		
 		ToolItem tltmCopyAll = new ToolItem(toolBar_3, SWT.NONE);
 		tltmCopyAll.addSelectionListener(new SelectionAdapter() {
@@ -204,7 +207,13 @@ public class FailureEventListGui extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				EventType event = guiHandlerEvents.getSelectedEvent();
 				
-				guiHandlerCreateEvent.componentsSelectionChanged(event.getContainer());
+				EventData eventData = new EventData();
+				eventData.container = event.getContainer();
+				eventData.name = event.getName();
+				eventData.author = event.getAuthor(); 
+				eventData.description = event.getDescription();
+						
+				guiHandlerCreateEvent.setEventData(eventData);
 				guiHandlerCreateEvent.eventDataChanged();
 			}
 		});
@@ -213,20 +222,74 @@ public class FailureEventListGui extends Shell {
 		
 		toolItem = new ToolItem(toolBar_3, SWT.SEPARATOR);
 		
+		tltmCopyName = new ToolItem(toolBar_3, SWT.NONE);
+		tltmCopyName.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				EventType event = guiHandlerEvents.getSelectedEvent();
+				
+				EventData eventData = new EventData();
+				eventData.name = event.getName();
+						
+				guiHandlerCreateEvent.setEventData(eventData);
+				guiHandlerCreateEvent.eventDataChanged();
+			}
+		});
+		tltmCopyName.setText("Name");
+		
 		ToolItem tltmCopyAuthor = new ToolItem(toolBar_3, SWT.NONE);
+		tltmCopyAuthor.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				EventType event = guiHandlerEvents.getSelectedEvent();
+				
+				EventData eventData = new EventData();
+				eventData.author = event.getAuthor(); 
+						
+				guiHandlerCreateEvent.setEventData(eventData);
+				guiHandlerCreateEvent.eventDataChanged();
+			}
+		});
 		tltmCopyAuthor.setToolTipText("Copies the author of the currently selected Event into the \"Create Event\" dialog.");
 		tltmCopyAuthor.setText("Author");
 		
 		ToolItem tltmCopyDescription = new ToolItem(toolBar_3, SWT.NONE);
+		tltmCopyDescription.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				EventType event = guiHandlerEvents.getSelectedEvent();
+				
+				EventData eventData = new EventData();
+				eventData.description = event.getDescription();
+						
+				guiHandlerCreateEvent.setEventData(eventData);
+				guiHandlerCreateEvent.eventDataChanged();
+			}
+		});
 		tltmCopyDescription.setToolTipText("Copies the description of the currently selected Event into the \"Create Event\" dialog.");
 		tltmCopyDescription.setText("Description");
+		
+		tltmComponent = new ToolItem(toolBar_3, SWT.NONE);
+		tltmComponent.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				EventType event = guiHandlerEvents.getSelectedEvent();
+				
+				EventData eventData = new EventData();
+				eventData.container = event.getContainer();
+						
+				guiHandlerCreateEvent.setEventData(eventData);
+				guiHandlerCreateEvent.eventDataChanged();
+			}
+		});
+		tltmComponent.setText("Component");
 		
 		ToolItem tltmCopyComponent = new ToolItem(toolBar_3, SWT.NONE);
 		tltmCopyComponent.setToolTipText("Copies component of the currently selected Event into the \"Create Event\" dialog.");
 		tltmCopyComponent.setText("Component");
 		
 		Label lblCopy = new Label(grpEvents, SWT.NONE);
-		lblCopy.setBounds(172, 313, 61, 15);
+		lblCopy.setBounds(125, 313, 61, 15);
 		lblCopy.setText("Reuse Data:");
 		grpEvents.setTabList(new Control[]{textEventFilterByFieldsMatch, comboEventFilterMode, treeEvents});
 
