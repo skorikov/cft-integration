@@ -56,4 +56,12 @@ public class EventTypeContainerImpl extends EntityImpl implements EventTypeConta
 	public List<EventTypeContainer> getChildren() {
 		return children;
 	}
+	
+	@Override
+	public String getQualifiedName() {
+		if (parent != null)
+			return parent.getQualifiedName() + "." + getName();
+		else
+			return getName();
+	}
 }

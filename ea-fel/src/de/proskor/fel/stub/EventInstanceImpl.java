@@ -25,5 +25,10 @@ public class EventInstanceImpl extends EntityImpl implements EventInstance {
 	@Override
 	public void setType(EventType typ) {
 		this.typ = typ;
+	}	
+	
+	@Override
+	public String getQualifiedName() {
+		return getContainer().getQualifiedName() + "." + getName();
 	}
 }

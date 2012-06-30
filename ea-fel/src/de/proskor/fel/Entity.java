@@ -7,5 +7,6 @@ public interface Entity {
 	public String getDescription();
 	public String getAuthor();
 	public void setDescription(String description);
-	public void setAuthor(String author);	
+	public void setAuthor(String author);
+	public String getQualifiedName();
 }

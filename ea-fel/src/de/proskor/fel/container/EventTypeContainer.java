@@ -16,7 +16,4 @@ public interface EventTypeContainer extends EventContainer, Type {
 	public EventType createEvent(String name);
 	
 	public void addInstance(EventInstanceContainer instance);
-	
-	public EventTypeContainer getParent();
-	public List<EventTypeContainer> getChildren();
 }

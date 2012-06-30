@@ -30,4 +30,9 @@ public class EventTypeImpl extends EntityImpl implements EventType {
 		this.instances.add(eventInstance);
 		eventInstance.setType(this);
 	}
+	
+	@Override
+	public String getQualifiedName() {
+		return getContainer().getQualifiedName() + "." + getName();
+	}
 }

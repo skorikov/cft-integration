@@ -8,4 +8,7 @@ public interface EventContainer {
 	public List<? extends Event> getEvents();
 	public String getName();
 	public Event createEvent(String name);
+	
+	public EventTypeContainer getParent();
+	public List<EventTypeContainer> getChildren();
 }
