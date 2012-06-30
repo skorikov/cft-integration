@@ -10,7 +10,7 @@ import de.proskor.fel.container.EventInstanceContainer
 import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.event.EventInstance
 
-class EventInstanceContainerImpl(peer: Element) extends EntityImpl(peer) with EventInstanceContainer {
+class EventInstanceContainerImpl(val peer: Element) extends EntityImpl(peer) with EventInstanceContainer {
   override def getType: EventTypeContainer = {
     val types = for {
       connector <- peer.connectors
@@ -21,22 +21,18 @@ class EventInstanceContainerImpl(peer: Element) extends EntityImpl(peer) with Ev
   }
 
   override def getEvents: JavaList[EventInstance] = {
-    val instances = for {
-      connector <- peer.connectors
-      if connector.target == peer && connector.stereotype == "belongsTo"
-      source = connector.source
-    } yield new EventInstanceImpl(source)
-    instances.toList
+    val events = for {
+      element <- peer.elements if element.stereotype == "Event"
+    } yield new EventInstanceImpl(element)
+    events.toList
   }
 
   override def createEvent(name: String): EventInstance = {
-    val repository = Repository.instance
-    val pkg = repository.models.find(_.name == "Trash") getOrElse(repository.models.add("Trash", "Package"))
-    val event = pkg.elements.add(name, "Object")
+    val event = peer.elements.add(name, "Object")
     event.stereotype = "Event"
-    val connector = event.connectors.add("", "Connector"); connector.stereotype = "belongsTo"
-    connector.source = event
-    connector.target = peer
     new EventInstanceImpl(event)
   }
+
+  override def getChildren: JavaList[EventTypeContainer] = List() // TODO
+  override def getParent: EventTypeContainer = null // TODO
 }

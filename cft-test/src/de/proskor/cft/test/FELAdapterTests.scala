@@ -5,7 +5,7 @@ import org.junit.Assert.{assertEquals, assertNotNull, assertFalse, assertTrue}
 import org.junit.{AfterClass, Before, BeforeClass, Test, Ignore}
 import de.proskor.fel.EventRepository
 import de.proskor.fel.impl.EventRepositoryImpl;
-import de.proskor.fel.ui.FailureEventListDialog
+import de.proskor.fel.ui.FailureEventList
 import de.proskor.fel.ui.FailureEventListImpl
 
 class FELAdapterTests {
@@ -37,9 +37,6 @@ class FELAdapterTests {
     val ct = cont.connectors.add("C", "Connector"); ct.stereotype = "instanceOf"
     ct.source = event
     ct.target = et
-    val ct1 = cont.connectors.add("C", "Connector"); ct1.stereotype = "belongsTo"
-    ct1.source = event
-    ct1.target = cont
 
     val er: EventRepository = new EventRepositoryImpl(repository)
     assertEquals(1, er.getEventTypeContainers.size)
@@ -55,8 +52,8 @@ class FELAdapterTests {
     val eventType = etc1.createEvent("test")
     assertEquals(2, etc1.getEvents.size)
 
-    val dialog: FailureEventListDialog = new FailureEventListImpl(er)
-    dialog.showEventList
+    val dialog: FailureEventList = new FailureEventListImpl(er)
+    dialog.showDialog
   }
 
   @Test

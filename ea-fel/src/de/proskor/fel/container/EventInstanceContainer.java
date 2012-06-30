@@ -13,5 +13,9 @@ public interface EventInstanceContainer extends EventContainer, Instance {
 	public List<EventInstance> getEvents();
 
 	@Override
+	@Deprecated
+	/**
+	 * Exemplare werden anders erzeugt.
+	 */
 	public EventInstance createEvent(String name);
 }

@@ -16,6 +16,12 @@ class PackageImpl(peer: IPackage) extends Package {
     RepositoryImpl.peer.RefreshModelView(0)
   }
 
+  override def description: String = peer.get_Notes.asInstanceOf[String]
+  override def description_=(description: String) {
+    peer.set_Notes(description)
+    peer.Update()
+  }
+
   override def packages: Collection[Package] = new PackageCollection(peer.get_Packages.asInstanceOf[ICollection])
   override def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])
   override def diagrams: Collection[Diagram] = new DiagramCollection(peer.get_Diagrams.asInstanceOf[ICollection])

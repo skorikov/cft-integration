@@ -9,6 +9,7 @@ class DummyConnector(var name: String, parent: Element) extends Connector {
   val id: Int = IdGenerator.next
   val guid: String = id.toString
   var stereotype: String = ""
+  var description: String = ""
 
   def source: Element = _source
   def source_=(element: Element) {

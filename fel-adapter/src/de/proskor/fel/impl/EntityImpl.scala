@@ -17,4 +17,6 @@ class EntityImpl(peer: Element) extends Entity {
   override def setDescription(description: String) {
     peer.description = description
   }
+
+  override def getQualifiedName: String = "TODO"
 }

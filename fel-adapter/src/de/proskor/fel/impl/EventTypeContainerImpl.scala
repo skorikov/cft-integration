@@ -42,4 +42,7 @@ class EventTypeContainerImpl(val peer: Element) extends EntityImpl(peer) with Ev
   }
 
   override def addInstance(instance: EventInstanceContainer) {}
+
+  override def getChildren: JavaList[EventTypeContainer] = List() // TODO
+  override def getParent: EventTypeContainer = null // TODO
 }
