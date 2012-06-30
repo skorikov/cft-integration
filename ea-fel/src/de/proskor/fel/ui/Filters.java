@@ -55,7 +55,7 @@ public class Filters {
 
 		public TypeFilter(String filterName) {
 			filterMode = FilterMode.anyField;
-			filterString = "";
+			setFilterString("");
 			
 			FilterMode.filterPrefix = filterName;
 		}

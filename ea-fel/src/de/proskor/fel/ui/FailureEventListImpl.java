@@ -45,7 +45,7 @@ public class FailureEventListImpl implements FailureEventList {
 		entityImpl.setName(name);
 	}
 	
-	private static EventTypeContainer createDummyComponent(String name, EventTypeContainer parentContainer, int containerInstancesCount, int subContainerCount, int subContainerDepth, int eventsCount, int eventInstancesCount) {
+	private static EventTypeContainer createDummyComponent(String name, EventTypeContainer parentContainer, int subContainerCount, int subContainerDepth, int eventsCount) {
 		EventTypeContainer typeContainer;
 		
 		if (parentContainer != null)
@@ -57,29 +57,16 @@ public class FailureEventListImpl implements FailureEventList {
 		typeContainer.setDescription("@Description-Generated");
 		setEntityStubData(typeContainer, name);
 		
-		EventInstanceContainer[] instanceContainer = new EventInstanceContainer[containerInstancesCount];
-		
-		for(int i=0; i<containerInstancesCount; i++) {
-			instanceContainer[i] = new EventInstanceContainerImpl();
-			((EventInstanceContainerImpl)instanceContainer[i]).setName(name + " Instance ["+i+"]");
-			typeContainer.addInstance(instanceContainer[i]);
-
-			for(int k=0; k<eventInstancesCount; k++) { 
-				EventType event = typeContainer.createEvent(name+".event." + k);
-				event.setAuthor("@Author-Generated");
-				event.setDescription("@Description-Generated");
-				
-				EventInstance evInst = instanceContainer[i].createEvent("@Instance");
-				evInst.setAuthor("@Author-Generated");
-				evInst.setDescription("@Description-Generated");
-				event.addInstance(evInst);
-			}
+		for(int i=0; i<eventsCount; i++) { 
+			EventType event = typeContainer.createEventType(name+".event." + i);
+			event.setAuthor("@Author-Generated["+i+"]");
+			event.setDescription("@Description-Generated["+i+"]");
 		}
 		
 		if (subContainerDepth > 0) {
 			for(int i=0; i<subContainerCount; i++) {
 				EventTypeContainer subContainer = createDummyComponent(
-						name+"."+i, typeContainer, containerInstancesCount, subContainerCount, subContainerDepth-1, eventsCount, eventInstancesCount
+						name+"."+i, typeContainer, subContainerCount, subContainerDepth-1, eventsCount
 					);
 			}
 		}
@@ -93,52 +80,10 @@ public class FailureEventListImpl implements FailureEventList {
 		EventRepository rep = new EventRepositoryImpl();
 
 		for(int i=0; i<5; i++) {
-			EventTypeContainer dummyContainer = createDummyComponent("Dummy["+i+"]", null, 3, 4, 3, 5, 10);
+			EventTypeContainer dummyContainer = createDummyComponent("Dummy["+i+"]", null, 4, 3, 5);
 			rep.getEventTypeContainers().add(dummyContainer);
 		}
 		
-		
-		EventTypeContainer typeContainer = new EventTypeContainerImpl();
-		setEntityStubData(typeContainer, "component1");
-		typeContainer.setAuthor("comp1.author");
-		typeContainer.setDescription("comp1.description");
-		rep.getEventTypeContainers().add(typeContainer);
-
-		EventType eventCommon = typeContainer.createEvent("common event");
-		eventCommon.setAuthor("Yoda");
-		eventCommon.setDescription("The force is strong.");
-		
-		EventInstanceContainer[] instanceContainer = new EventInstanceContainerImpl[4];
-		
-		for(int i=0; i<instanceContainer.length; i++) {
-			instanceContainer[i] = new EventInstanceContainerImpl();
-			((EventInstanceContainerImpl)instanceContainer[i]).setName("CFT" + i);
-			typeContainer.addInstance(instanceContainer[i]);
-
-			for(int k=0; k<2; k++) { 
-				EventType event = typeContainer.createEvent("Event " + i+"."+k);
-				event.setAuthor("Yoda");
-				event.setDescription("The force is strong.");
-				
-				EventInstance evInst = instanceContainer[i].createEvent("<ev.inst>");
-				evInst.setAuthor("Darth Vader");
-				evInst.setDescription("The force is strong.");
-				event.addInstance(evInst);
-
-				System.out.println("- " + evInst);
-			}
-		}
-		
-		for(int i=0; i<instanceContainer.length; i++) { 
-			EventInstance evInst = instanceContainer[i].createEvent("<common.inst>");
-
-			evInst.setAuthor("Darth Vader");
-			evInst.setDescription("Anything");
-			eventCommon.addInstance(evInst);
-
-			System.out.println("- " + evInst);
-		}
-
 		
 		FailureEventListImpl fel = new FailureEventListImpl(rep);
 		fel.showDialog();

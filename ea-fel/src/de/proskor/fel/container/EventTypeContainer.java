@@ -12,12 +12,7 @@ public interface EventTypeContainer extends EventContainer, Type {
 	@Override
 	public List<EventInstanceContainer> getInstances();
 	
-	@Override
-	@Deprecated
-	/**
-	 * Soll in createEventType o.ä. umbenannt werden.
-	 */
-	public EventType createEvent(String name);
+	public EventType createEventType(String name);
 	
 	public void addInstance(EventInstanceContainer instance);
 	

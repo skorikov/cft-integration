@@ -33,7 +33,7 @@ public class EventTypeContainerImpl extends EntityImpl implements EventTypeConta
 	}
 
 	@Override
-	public EventType createEvent(String name) {
+	public EventType createEventType(String name) {
 		EventTypeImpl eventType = new EventTypeImpl();
 		eventType.setName(name);
 		eventType.setContainer(this);

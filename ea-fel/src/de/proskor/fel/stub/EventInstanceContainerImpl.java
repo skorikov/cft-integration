@@ -32,15 +32,6 @@ public class EventInstanceContainerImpl extends EntityImpl implements EventInsta
 	}
 
 	@Override
-	public EventInstance createEvent(String name) {
-		EventInstanceImpl event = new EventInstanceImpl();
-		event.setName(name);
-		event.setContainer(this);
-		this.eventInstances.add(event);
-		return event;
-	}
-
-	@Override
 	public String getQualifiedName() {
 		if (parent != null)
 			return parent.getQualifiedName() + "." + getName();

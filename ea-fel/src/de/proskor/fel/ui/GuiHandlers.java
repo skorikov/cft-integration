@@ -11,17 +11,17 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.proskor.fel.EventRepository;
+import de.proskor.fel.Type;
 import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.EventType;
 import de.proskor.fel.ui.Filters.EventTypeContainerFilter;
 import de.proskor.fel.ui.Filters.EventTypeFilter;
-import de.proskor.fel.ui.GuiRepository.EventTypeContainerHandler;
-import de.proskor.fel.ui.GuiRepository.EventTypesHandler;
+import de.proskor.fel.ui.GuiRepositories.GuiRepository;
+import de.proskor.fel.ui.GuiRepositories.GuiRepositoryEventTypeContainer;
+import de.proskor.fel.ui.GuiRepositories.GuiRepositoryEventTypes;
 
 public class GuiHandlers {
 	private static abstract class GuiHandler {
-		public abstract void updateGui();
-		
 		protected void expandTreeItems(Tree tree, boolean expanded) {
 			for(TreeItem item : tree.getItems())
 				expandTreeItem(item, expanded);
@@ -37,38 +37,153 @@ public class GuiHandlers {
 		protected void expandSelectedTreeItems(Tree tree, boolean expanded) {
 			TreeItem[] items = tree.getSelection();
 			
-			for(TreeItem item : items)
+			for(TreeItem item : items) {
 				item.setExpanded(expanded);
+			}
 		}
 	}
 	
-	public static class GuiHandlerEvents extends GuiHandler {
-		private final EventTypesHandler eventsHandler;
+	private static abstract class GuiHandlerWithRepository extends GuiHandler {
+		private List<Type> selectionBackup;
+		private final Tree elementsTree;
+		
+		protected GuiHandlerWithRepository(Tree elementsTree) {
+			selectionBackup = null;
+			this.elementsTree = elementsTree;
+		}
+
+		/**
+		 * Stores the currently selected {@link TreeItem} Objects in the associated {@link Tree}.
+		 * The selection can be restored by calling {@link #selectionRestore()}.
+		 */
+		public void selectionBackup() {
+			selectionBackup = getSelectedTypes();
+		}
+
+		/**
+		 * Selects the {@link Type} Objects, which have been selected when calling {@link #selectionBackup()} and are still being part of the {@link Tree}.
+		 */
+		public void selectionRestore() {
+			List<Type> currentTypesInTree = getGuiRepository().getTypes(); 
+			ArrayList<Type> newSelection = new ArrayList<Type>();
+			
+			// Events finden, die im alten und neuen Event-Repository sind.
+			for(Type formerSelectedType : selectionBackup) {
+				if (currentTypesInTree.contains(formerSelectedType))
+					newSelection.add(formerSelectedType);
+			}
+			
+			List<TreeItem> newSelectionItems = getGuiRepository().getTreeItemsByTypes(newSelection);
+			getGuiRepository().elementsTree.setSelection(DataUtils.treeItemListToArray(newSelectionItems));
+		}
+		
+		protected List<Type> getInvertedSelection() {
+			List<Type> origSelection = getSelectedTypes();
+			List<Type> allTypes = getGuiRepository().getTypes();
+
+			ArrayList<Type> newSelection = new ArrayList<Type>();
+			
+			for(Type type : allTypes) {
+				if (!origSelection.contains(type))
+					newSelection.add(type);
+			}
+			
+			return newSelection;
+		}
+		
+		public void selectionInvert() {
+			List<Type> invertedSelection = getInvertedSelection();
+			List<TreeItem> newSelectionItems = getGuiRepository().getTreeItemsByTypes(invertedSelection);
+			
+			elementsTree.setSelection(DataUtils.treeItemListToArray(newSelectionItems));
+		}
+		
+		public List<Type> getSelectedTypes() {
+			ArrayList<TreeItem> selectedItems = DataUtils.treeItemArrayToList(elementsTree.getSelection());
+			return getGuiRepository().getTypesByTreeItems(selectedItems);
+		}
+
+		protected void selectType(Type type) {
+			TreeItem item = getGuiRepository().getTreeItemByType(type);
+			elementsTree.setSelection(item);
+		}
+		
+		public void clearSelection() {
+			elementsTree.setSelection(new TreeItem[] {});
+		}
+		
+		protected void selectFirstTypeInTree() {
+			if (elementsTree.getItemCount() == 0)
+				return;
+			else
+				elementsTree.setSelection(elementsTree.getItem(0));
+		}
+
+		protected abstract GuiRepository getGuiRepository();
+	}
+	
+	public static class GuiHandlerEvents extends GuiHandlerWithRepository {
+		private final GuiRepositoryEventTypes guiRepositoryEvents;
 		private final EventTypeFilter eventTypeFilter;
 		
 		private final Tree treeEvents;
 		private final Combo comboEventFilterMode;
 		private final Text textEventFilterByFieldsMatch;
+		private List<EventTypeContainer> currentComponentsSelection;
 		
 		public GuiHandlerEvents(Tree treeEvents, Combo comboEventFilterMode, Text textEventFilterByFieldsMatch) {
+			super(treeEvents);
 			this.treeEvents = treeEvents;
 			this.comboEventFilterMode = comboEventFilterMode;
 			this.textEventFilterByFieldsMatch = textEventFilterByFieldsMatch;
 			
-			eventsHandler = new EventTypesHandler(treeEvents);
+			guiRepositoryEvents = new GuiRepositoryEventTypes(treeEvents);
 			eventTypeFilter = new EventTypeFilter("", comboEventFilterMode, textEventFilterByFieldsMatch);
 			
 			configGuiForFirstUse();			
 		}
 		
-		public void configGuiForFirstUse() {
+		private void configGuiForFirstUse() {
 			comboEventFilterMode.setItems(eventTypeFilter.getFilterModeNames());
 			comboEventFilterMode.select(0);
 		}
 
-		@Override
-		public void updateGui() {
+		private void componentsSelectionOrFilterChanged() {
+			for(EventTypeContainer container : currentComponentsSelection) { // Container aus Selection...
+				for(EventType event : container.getEvents()) { // beinhalten Events...
+					if (eventTypeFilter.typeConformsToFilter(event)) { // es werden die verwendet, die dem Filter entsprechen
+						guiRepositoryEvents.addEvent(event);
+					}
+				}
+			}
+		}
 		
+		public void componentsSetSelection(List<EventTypeContainer> selection) {
+			this.currentComponentsSelection = selection;
+			reloadEvents();
+		}
+
+		public void reloadEvents() {
+			selectionBackup(); 
+			
+			guiRepositoryEvents.clear();
+			componentsSelectionOrFilterChanged(); // Bewirkt das neu-Laden der Events
+			
+			selectionRestore();
+		}
+
+		public EventType getSelectedEvent() {
+			List<Type> selectedTypes = getSelectedTypes();
+			
+			if (selectedTypes.size() > 0)
+				return (EventType)selectedTypes.get(0);
+			else
+				return null;
+		}
+
+		@Override
+		protected GuiRepository getGuiRepository() {
+			return guiRepositoryEvents;
 		}
 	}
 	
@@ -115,11 +230,14 @@ public class GuiHandlers {
 		
 		public void clearData() {
 			setTextFieldsContent("");
-			updateGui();
+			eventDataChanged();
 		}
 		
 		private void updateComponentQualifiedName(EventTypeContainer component) {
-			textEventComponent.setText(component.getQualifiedName());
+			if (component == null)
+				textEventComponent.setText("");
+			else
+				textEventComponent.setText(component.getQualifiedName());
 		}
 		
 		private String getCurrentEventName() {
@@ -135,12 +253,20 @@ public class GuiHandlers {
 		}
 		
 		private boolean eventDataIsValid() {
-			String currentName = getCurrentEventName();
-			if (currentName.equals(""))
+			if (getCurrentEventName().equals(""))
+				return false;
+			
+			if (getCurrentEventAuthor().equals(""))
+				return false;
+			
+			if (getCurrentEventDescription().equals(""))
+				return false;
+			
+			if (currentContainer == null)
 				return false;
 			
 			for(EventType event : currentContainer.getEvents()) {
-				if (event.getName().equalsIgnoreCase(currentName))
+				if (event.getName().equalsIgnoreCase(getCurrentEventName()))
 					return false;
 			}
 			
@@ -152,13 +278,13 @@ public class GuiHandlers {
 			updateComponentQualifiedName(container);
 		}
 
-		public void componentsSelectionChanged(List<EventTypeContainer> newSelection) {
-			if (newSelection.size() > 0) 
-				setCurrentContainer(newSelection.get(0));
+		public void componentsSelectionChanged(EventTypeContainer currentContainer) {
+			setCurrentContainer(currentContainer);
+			
+			eventDataChanged();
 		}
 
-		@Override
-		public void updateGui() {
+		public void eventDataChanged() {
 			boolean isValid = eventDataIsValid();
 			
 			btnCreateEvent.setEnabled(isValid);
@@ -166,14 +292,14 @@ public class GuiHandlers {
 		}
 
 		public void createEvent() {
-			EventType event = currentContainer.createEvent(getCurrentEventName());
+			EventType event = currentContainer.createEventType(getCurrentEventName());
 			event.setAuthor(getCurrentEventAuthor());
 			event.setDescription(getCurrentEventDescription());
 		}
 	}
 	
-	public static class GuiHandlerComponents extends GuiHandler {
-		private final EventTypeContainerHandler containerHandler;
+	public static class GuiHandlerComponents extends GuiHandlerWithRepository {
+		private final GuiRepositoryEventTypeContainer guiRepositoryContainer;
 		private final EventTypeContainerFilter containerFilter;
 		private final EventRepository eventRepository;
 		
@@ -182,24 +308,45 @@ public class GuiHandlers {
 		private final Text textComponentsSelectByFieldsMatch;
 		
 		public GuiHandlerComponents(EventRepository eventRepository, Tree treeComponents, Combo comboComponentsSelectByFieldsMatch, Text textComponentsSelectByFieldsMatch) {
+			super(treeComponents);
 			this.eventRepository = eventRepository;
 			
 			this.treeComponents = treeComponents;
 			this.comboComponentsSelectByFieldsMatch = comboComponentsSelectByFieldsMatch;
 			this.textComponentsSelectByFieldsMatch = textComponentsSelectByFieldsMatch;
 			
-			containerHandler = new EventTypeContainerHandler(treeComponents);
+			guiRepositoryContainer = new GuiRepositoryEventTypeContainer(treeComponents);
 			containerFilter = new EventTypeContainerFilter("", comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
 			
 			configGuiForFirstUse();
 		}
 		
+		/**
+		 * Retrieves the first of the Components of {@link #getSelectedComponents()} or <code>null</code> if there are none.
+		 * @see
+		 * #getSelectedComponents()
+		 */
+		public EventTypeContainer getSelectedComponent() {
+			List<EventTypeContainer> selection = getSelectedComponents();
+			
+			if (selection.size() > 0)
+				return selection.get(0);
+			else
+				return null;
+		}
+
+		/**
+		 * Retrieves all Components resp. {@link EventTypeContainer EventTypeContainers} currently selected in the {@link Tree}. 
+		 * 
+		 * @see
+		 * #getSelectedComponent()
+		 */
 		public List<EventTypeContainer> getSelectedComponents() {
 			ArrayList<TreeItem> selection = DataUtils.treeItemArrayToList(treeComponents.getSelection());
 			
 			List<EventTypeContainer> selectedContainer = new ArrayList<EventTypeContainer>();
 			for(TreeItem item : selection)
-				selectedContainer.add((EventTypeContainer)containerHandler.getTypeByTreeItem(item));
+				selectedContainer.add((EventTypeContainer)guiRepositoryContainer.getTypeByTreeItem(item));
 			
 			return selectedContainer;
 		}
@@ -209,16 +356,11 @@ public class GuiHandlers {
 			comboComponentsSelectByFieldsMatch.select(0);
 		}
 		
-		@Override
-		public void updateGui() {
-			updateContainerList();
-		}	
-		
-		private void updateContainerList() {
-			containerHandler.clear();
+		public void loadContainerList() {
+			guiRepositoryContainer.clear();
 
 			for (EventTypeContainer c : eventRepository.getEventTypeContainers()) {
-				containerHandler.addContainerAndSubContainers(c);
+				guiRepositoryContainer.addContainerAndSubContainers(c);
 			}
 			
 			if (treeComponents.getItemCount() > 0)
@@ -229,9 +371,9 @@ public class GuiHandlers {
 			containerFilter.applyGuiFilterConfig();
 			
 			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
-			for (EventTypeContainer c : containerHandler.getContainers()) {
+			for (EventTypeContainer c : guiRepositoryContainer.getContainers()) {
 				if (containerFilter.typeConformsToFilter(c)) {
-					TreeItem cItem = containerHandler.getTreeItemByType(c);
+					TreeItem cItem = guiRepositoryContainer.getTreeItemByType(c);
 					selection.add(cItem);
 				}
 			}
@@ -251,9 +393,9 @@ public class GuiHandlers {
 			ArrayList<TreeItem> currentSelection = DataUtils.treeItemArrayToList(treeComponents.getSelection()); 
 			
 			ArrayList<TreeItem> unselection = new ArrayList<TreeItem>();
-			for (EventTypeContainer c : containerHandler.getContainers()) {
+			for (EventTypeContainer c : guiRepositoryContainer.getContainers()) {
 				if (containerFilter.typeConformsToFilter(c)) {
-					TreeItem cItem = containerHandler.getTreeItemByType(c);
+					TreeItem cItem = guiRepositoryContainer.getTreeItemByType(c);
 					unselection.add(cItem);
 				}
 			}
@@ -276,12 +418,12 @@ public class GuiHandlers {
 			selection.addAll(currentSelection);
 			
 			for(TreeItem selectedContainerItem : currentSelection) {
-				EventTypeContainer container = (EventTypeContainer)containerHandler.getTypeByTreeItem(selectedContainerItem);
+				EventTypeContainer container = (EventTypeContainer)guiRepositoryContainer.getTypeByTreeItem(selectedContainerItem);
 				List<EventTypeContainer> subContainers = DataUtils.getAllSubContainer(container);
 				
 				for(EventTypeContainer sub : subContainers)
 					if (!selection.contains(sub))
-						selection.add(containerHandler.getTreeItemByType(sub));
+						selection.add(guiRepositoryContainer.getTreeItemByType(sub));
 			}
 			
 			TreeItem[] selectionArray = DataUtils.treeItemListToArray(selection);
@@ -294,12 +436,12 @@ public class GuiHandlers {
 			selection.addAll(currentSelection);
 			
 			for(TreeItem selectedContainerItem : currentSelection) {
-				EventTypeContainer container = (EventTypeContainer)containerHandler.getTypeByTreeItem(selectedContainerItem);
+				EventTypeContainer container = (EventTypeContainer)guiRepositoryContainer.getTypeByTreeItem(selectedContainerItem);
 				List<EventTypeContainer> superContainers = DataUtils.getAllSuperContainer(container);
 				
 				for(EventTypeContainer parent : superContainers)
 					if (!selection.contains(parent))
-						selection.add(containerHandler.getTreeItemByType(parent));
+						selection.add(guiRepositoryContainer.getTreeItemByType(parent));
 			}
 			
 			TreeItem[] selectionArray = DataUtils.treeItemListToArray(selection);
@@ -323,9 +465,14 @@ public class GuiHandlers {
 				expandTreeItems(treeComponents, expanded);
 			}
 		}
+
+		@Override
+		protected GuiRepository getGuiRepository() {
+			return guiRepositoryContainer;
+		}
 	}
 	
-	private static class DataUtils {
+	public static class DataUtils {
 		public static List<EventTypeContainer> getAllSubContainer(EventTypeContainer container) {
 			ArrayList<EventTypeContainer> subContainerList = new ArrayList<EventTypeContainer>();
 			
