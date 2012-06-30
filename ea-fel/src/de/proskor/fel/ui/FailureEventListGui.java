@@ -1,5 +1,7 @@
 package de.proskor.fel.ui;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
@@ -12,6 +14,7 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -23,9 +26,12 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 import de.proskor.fel.EventRepository;
+import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.ui.GuiHandlers.GuiHandlerComponents;
 import de.proskor.fel.ui.GuiHandlers.GuiHandlerCreateEvent;
 import de.proskor.fel.ui.GuiHandlers.GuiHandlerEvents;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 
 public class FailureEventListGui extends Shell {
 	private final FailureEventList failureEventList;
@@ -60,10 +66,12 @@ public class FailureEventListGui extends Shell {
 	private Text textCreateEventAuthor;
 	private Text textCreateEventComponent;
 	private StyledText textCreateEventDescription;
+	private Button btnChkCreateEventIsValid;
+	private Button btnCreateEvent;
 	private ToolBar toolBar_2;
 	private ToolItem tltmSupercomponents;
 	private ToolItem tltmSubcomponents;
-
+	
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -75,70 +83,17 @@ public class FailureEventListGui extends Shell {
 		this.failureEventList = failureEventList;
 		this.eventRepository = failureEventList.getRepository();
 		
-		Group grpCreateEvent = new Group(this, SWT.NONE);
-		grpCreateEvent.setText(" Create Event ");
-		grpCreateEvent.setBounds(10, 352, 974, 100);
-		
-		Label lblName = new Label(grpCreateEvent, SWT.NONE);
-		lblName.setText("Name:");
-		lblName.setBounds(10, 25, 41, 15);
-		
-		textCreateEventName = new Text(grpCreateEvent, SWT.BORDER);
-		textCreateEventName.setToolTipText("Name of the event to you wish to create.");
-		textCreateEventName.setBounds(83, 22, 320, 21);
-		
-		Button buttonCreateEventExec = new Button(grpCreateEvent, SWT.NONE);
-		buttonCreateEventExec.setText("Create Event");
-		buttonCreateEventExec.setBounds(854, 21, 110, 32);
-		
-		Label lblAuthor = new Label(grpCreateEvent, SWT.NONE);
-		lblAuthor.setText("Author:");
-		lblAuthor.setBounds(10, 49, 41, 15);
-		
-		textCreateEventAuthor = new Text(grpCreateEvent, SWT.BORDER);
-		textCreateEventAuthor.setToolTipText("Name of the event to you wish to create.");
-		textCreateEventAuthor.setBounds(83, 46, 320, 21);
-		
-		Button buttonCreateEventClearData = new Button(grpCreateEvent, SWT.NONE);
-		buttonCreateEventClearData.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				guiHandlerCreateEvent.clearData();
-			}
-		});
-		buttonCreateEventClearData.setText("Clear");
-		buttonCreateEventClearData.setBounds(854, 58, 110, 32);
-		
-		Label lblComponent = new Label(grpCreateEvent, SWT.NONE);
-		lblComponent.setText("Component:");
-		lblComponent.setBounds(10, 73, 67, 15);
-		
-		textCreateEventComponent = new Text(grpCreateEvent, SWT.BORDER);
-		textCreateEventComponent.setEditable(false);
-		textCreateEventComponent.setToolTipText("Name of the event to you wish to create.");
-		textCreateEventComponent.setBounds(83, 70, 320, 21);
-		
-		Label lblDescription = new Label(grpCreateEvent, SWT.NONE);
-		lblDescription.setText("Description:");
-		lblDescription.setBounds(421, 25, 65, 15);
-		
-		textCreateEventDescription = new StyledText(grpCreateEvent, SWT.BORDER);
-		textCreateEventDescription.setBounds(492, 22, 350, 68);
-		setTabList(new Control[]{grpComponents, grpEvents, btnClose});		
-		
-		
 		// GUI Handler:
 		guiHandlerComponents = new GuiHandlerComponents(eventRepository, treeComponents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
-		guiHandlerCreateEvent = new GuiHandlerCreateEvent(textCreateEventName, textCreateEventAuthor, textCreateEventComponent, textCreateEventDescription);
+		guiHandlerCreateEvent = new GuiHandlerCreateEvent(textCreateEventName, textCreateEventAuthor, textCreateEventComponent, textCreateEventDescription, btnCreateEvent, btnChkCreateEventIsValid);
 		guiHandlerEvents = new GuiHandlerEvents(treeComponents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
 
-		// Listeners:
-		guiHandlerComponents.addGuiChangeListenerComponents(guiHandlerCreateEvent);
-		
 		// Ausgangs-Zustände herstellen:
 		guiHandlerComponents.updateGui();
 		guiHandlerEvents.updateGui();
-		guiHandlerCreateEvent.selectionChanged(guiHandlerComponents.getSelectedComponents()); // Um aktuellen Component zu übernehmen
+		
+		guiHandlerCreateEvent.componentsSelectionChanged(guiHandlerComponents.getSelectedComponents()); // Um aktuellen Component zu übernehmen
+		guiHandlerCreateEvent.updateGui();
 	}
 
 //	/**
@@ -252,6 +207,7 @@ public class FailureEventListGui extends Shell {
 		toolBar_1.setBounds(10, 307, 244, 23);
 		
 		ToolItem tltmExpand = new ToolItem(toolBar_1, SWT.NONE);
+		tltmExpand.setToolTipText("Expand selected Components and their children.");
 		tltmExpand.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -261,6 +217,7 @@ public class FailureEventListGui extends Shell {
 		tltmExpand.setText("Expand");
 		
 		ToolItem tltmExpandAll = new ToolItem(toolBar_1, SWT.NONE);
+		tltmExpandAll.setToolTipText("Expand all Components and their children.");
 		tltmExpandAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -270,6 +227,7 @@ public class FailureEventListGui extends Shell {
 		tltmExpandAll.setText("Expand All");
 		
 		ToolItem tltmCollapse = new ToolItem(toolBar_1, SWT.NONE);
+		tltmCollapse.setToolTipText("Collapse selected Components and their children.");
 		tltmCollapse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -279,6 +237,7 @@ public class FailureEventListGui extends Shell {
 		tltmCollapse.setText("Collapse");
 		
 		ToolItem tltmCollapseAll = new ToolItem(toolBar_1, SWT.NONE);
+		tltmCollapseAll.setToolTipText("Collapse all Components and their children.");
 		tltmCollapseAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -291,7 +250,8 @@ public class FailureEventListGui extends Shell {
 		treeComponents.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandlerComponents.componentTreeSelectionChanged();
+				List<EventTypeContainer> selection = guiHandlerComponents.getSelectedComponents();
+				guiHandlerCreateEvent.componentsSelectionChanged(selection);
 			}
 		});
 		treeComponents.setLinesVisible(true);
@@ -377,7 +337,7 @@ public class FailureEventListGui extends Shell {
 				guiHandlerComponents.selectSuperComponents();
 			}
 		});
-		tltmSupercomponents.setToolTipText("Will select all SuperComponents of the currently selected component(s).");
+		tltmSupercomponents.setToolTipText("Select all SuperComponents of currently selected component(s).");
 		tltmSupercomponents.setText("SuperComponents");
 		
 		tltmSubcomponents = new ToolItem(toolBar_2, SWT.NONE);
@@ -387,16 +347,89 @@ public class FailureEventListGui extends Shell {
 				guiHandlerComponents.selectSubComponents();
 			}
 		});
-		tltmSubcomponents.setToolTipText("Will select all SubComponents of the currently selected component(s).");
+		tltmSubcomponents.setToolTipText("Select all SubComponents of currently selected component(s).");
 		tltmSubcomponents.setText("SubComponents");
 		grpComponents.setTabList(new Control[]{textComponentsSelectByFieldsMatch, treeComponents});
-		textEventFilterByFieldsMatch.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-//				guiHandler.onTextFilterEventChanged(textFilterEventName.getText());
+
+		
+		Group grpCreateEvent = new Group(this, SWT.NONE);
+		grpCreateEvent.setText(" Create Event ");
+		grpCreateEvent.setBounds(10, 352, 974, 100);
+		
+		Label lblName = new Label(grpCreateEvent, SWT.NONE);
+		lblName.setText("Name:");
+		lblName.setBounds(10, 25, 41, 15);
+		
+		textCreateEventName = new Text(grpCreateEvent, SWT.BORDER);
+		textCreateEventName.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				guiHandlerCreateEvent.updateGui();
 			}
 		});
+		textCreateEventName.setToolTipText("Name of the event to you wish to create. The Name hast to be unique within the containing component.");
+		textCreateEventName.setBounds(83, 22, 271, 21);
 		
+		btnCreateEvent = new Button(grpCreateEvent, SWT.NONE);
+		btnCreateEvent.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandlerCreateEvent.createEvent();
+			}
+		});
+		btnCreateEvent.setText("Create Event");
+		btnCreateEvent.setBounds(854, 21, 110, 32);
 		
+		Label lblAuthor = new Label(grpCreateEvent, SWT.NONE);
+		lblAuthor.setText("Author:");
+		lblAuthor.setBounds(10, 49, 41, 15);
+		
+		textCreateEventAuthor = new Text(grpCreateEvent, SWT.BORDER);
+		textCreateEventAuthor.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				guiHandlerCreateEvent.updateGui();
+			}
+		});
+		textCreateEventAuthor.setToolTipText("Specifies the name of the author who created this event.");
+		textCreateEventAuthor.setBounds(83, 46, 320, 21);
+		
+		Button buttonCreateEventClearData = new Button(grpCreateEvent, SWT.NONE);
+		buttonCreateEventClearData.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandlerCreateEvent.clearData();
+			}
+		});
+		buttonCreateEventClearData.setText("Clear");
+		buttonCreateEventClearData.setBounds(854, 58, 110, 32);
+		
+		Label lblComponent = new Label(grpCreateEvent, SWT.NONE);
+		lblComponent.setText("Component:");
+		lblComponent.setBounds(10, 73, 67, 15);
+		
+		textCreateEventComponent = new Text(grpCreateEvent, SWT.BORDER);
+		textCreateEventComponent.setEditable(false);
+		textCreateEventComponent.setToolTipText("The qualified name of the component containing the new event.");
+		textCreateEventComponent.setBounds(83, 70, 320, 21);
+		
+		Label lblDescription = new Label(grpCreateEvent, SWT.NONE);
+		lblDescription.setText("Description:");
+		lblDescription.setBounds(421, 25, 65, 15);
+		
+		textCreateEventDescription = new StyledText(grpCreateEvent, SWT.BORDER);
+		textCreateEventDescription.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				guiHandlerCreateEvent.updateGui();
+			}
+		});
+		textCreateEventDescription.setBounds(492, 22, 350, 68);
+		setTabList(new Control[]{grpComponents, grpEvents, btnClose});		
+		
+		btnChkCreateEventIsValid = new Button(grpCreateEvent, SWT.TOGGLE);
+		btnChkCreateEventIsValid.setToolTipText("The Name hast to be unique within the containing component."); // wird nicht angezeigt, wenn Button.enabled==false
+		btnChkCreateEventIsValid.setBounds(360, 21, 43, 22);
+		btnChkCreateEventIsValid.setText("valid");
+		btnChkCreateEventIsValid.setEnabled(false);
+
 		createContents();
 	}
 

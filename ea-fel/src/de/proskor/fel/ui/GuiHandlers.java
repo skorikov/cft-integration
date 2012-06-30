@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -11,19 +12,16 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import de.proskor.fel.EventRepository;
 import de.proskor.fel.container.EventTypeContainer;
+import de.proskor.fel.event.EventType;
 import de.proskor.fel.ui.Filters.EventTypeContainerFilter;
 import de.proskor.fel.ui.Filters.EventTypeFilter;
 import de.proskor.fel.ui.GuiRepository.EventTypeContainerHandler;
 import de.proskor.fel.ui.GuiRepository.EventTypesHandler;
 
 public class GuiHandlers {
-	private static interface GuiChangeListener {
-	}
-	public static interface GuiChangeListenerComponents extends GuiChangeListener {
-		void selectionChanged(List<EventTypeContainer> newSelection);
-	}
-	
 	private static abstract class GuiHandler {
+		public abstract void updateGui();
+		
 		protected void expandTreeItems(Tree tree, boolean expanded) {
 			for(TreeItem item : tree.getItems())
 				expandTreeItem(item, expanded);
@@ -68,27 +66,44 @@ public class GuiHandlers {
 			comboEventFilterMode.select(0);
 		}
 
+		@Override
 		public void updateGui() {
 		
 		}
 	}
 	
-	public static class GuiHandlerCreateEvent extends GuiHandler implements GuiChangeListenerComponents {
+	public static class GuiHandlerCreateEvent extends GuiHandler {
 		private final Text textEventName;
 		private final Text textEventAuthor;
 		private final Text textEventComponent;
 		private final StyledText textEventDescription;
-//		private final GuiHandlerComponents guiHandlerComponents;
+		private final Button btnCreateEvent;
+		private final Button btnChkIsValid;
 		
-		public GuiHandlerCreateEvent(Text textEventName, Text textEventAuthor, Text textEventComponent, StyledText textEventDescription) {
-//			this.guiHandlerComponents = guiHandlerComponents;
-			
+		private EventTypeContainer currentContainer;
+		
+		public GuiHandlerCreateEvent(
+				Text textEventName, Text textEventAuthor, Text textEventComponent, StyledText textEventDescription,
+				Button btnCreateEvent, Button btnChkIsValid
+				) {
 			this.textEventName = textEventName;
 			this.textEventAuthor = textEventAuthor;
 			this.textEventComponent = textEventComponent;
 			this.textEventDescription = textEventDescription;
 			
-			clearData();
+			this.btnChkIsValid = btnChkIsValid;
+			this.btnCreateEvent = btnCreateEvent;
+
+			/* 1. Nicht nötig da Per default keine Daten vorhanden. 
+			 * 2. Erzeugt null-pointer Exception durch: 
+			 *    GuiHandlerCreateEvent guiHandlerCreateEvent = new GuiHandlerCreateEvent(...);
+			 *    --> GuiHandlerCreateEvent.<Init>
+			 *    --> clearData()
+			 *    --> Text.setText() 
+			 *    --> Text-Listener wird auf guiHandlerCreateEvent ausgelöst, welches noch nicht fertig instanziiert wurde,
+			 *        da Konstruktor noch nicht terminiert.
+			 */
+			// clearData(); 
 		}
 		
 		private void setTextFieldsContent(String content) {
@@ -100,23 +115,64 @@ public class GuiHandlers {
 		
 		public void clearData() {
 			setTextFieldsContent("");
+			updateGui();
 		}
 		
 		private void updateComponentQualifiedName(EventTypeContainer component) {
 			textEventComponent.setText(component.getQualifiedName());
 		}
+		
+		private String getCurrentEventName() {
+			return textEventName.getText().trim();
+		}
+		
+		private String getCurrentEventAuthor() {
+			return textEventAuthor.getText().trim();
+		}
+		
+		private String getCurrentEventDescription() {
+			return textEventDescription.getText().trim();
+		}
+		
+		private boolean eventDataIsValid() {
+			String currentName = getCurrentEventName();
+			if (currentName.equals(""))
+				return false;
+			
+			for(EventType event : currentContainer.getEvents()) {
+				if (event.getName().equalsIgnoreCase(currentName))
+					return false;
+			}
+			
+			return true;
+		}
+		
+		private void setCurrentContainer(EventTypeContainer container) {
+			currentContainer = container;
+			updateComponentQualifiedName(container);
+		}
+
+		public void componentsSelectionChanged(List<EventTypeContainer> newSelection) {
+			if (newSelection.size() > 0) 
+				setCurrentContainer(newSelection.get(0));
+		}
 
 		@Override
-		public void selectionChanged(List<EventTypeContainer> newSelection) {
-			if (newSelection.size() > 0) 
-				updateComponentQualifiedName(newSelection.get(0));
+		public void updateGui() {
+			boolean isValid = eventDataIsValid();
+			
+			btnCreateEvent.setEnabled(isValid);
+			btnChkIsValid.setSelection(isValid);
+		}
+
+		public void createEvent() {
+			EventType event = currentContainer.createEvent(getCurrentEventName());
+			event.setAuthor(getCurrentEventAuthor());
+			event.setDescription(getCurrentEventDescription());
 		}
 	}
 	
 	public static class GuiHandlerComponents extends GuiHandler {
-//		private final GuiHandlerCreateEvent guiHandlerCreateEvent;
-		private final ArrayList<GuiChangeListenerComponents> componentsChangeListener = new ArrayList<GuiHandlers.GuiChangeListenerComponents>();
-		
 		private final EventTypeContainerHandler containerHandler;
 		private final EventTypeContainerFilter containerFilter;
 		private final EventRepository eventRepository;
@@ -138,10 +194,6 @@ public class GuiHandlers {
 			configGuiForFirstUse();
 		}
 		
-		public void addGuiChangeListenerComponents(GuiChangeListenerComponents listener) {
-			componentsChangeListener.add(listener);
-		}
-		
 		public List<EventTypeContainer> getSelectedComponents() {
 			ArrayList<TreeItem> selection = DataUtils.treeItemArrayToList(treeComponents.getSelection());
 			
@@ -157,6 +209,7 @@ public class GuiHandlers {
 			comboComponentsSelectByFieldsMatch.select(0);
 		}
 		
+		@Override
 		public void updateGui() {
 			updateContainerList();
 		}	
@@ -252,11 +305,6 @@ public class GuiHandlers {
 			TreeItem[] selectionArray = DataUtils.treeItemListToArray(selection);
 			treeComponents.setSelection(selectionArray);
 		}		
-		
-		public void componentTreeSelectionChanged() {
-			for (GuiChangeListenerComponents listener : componentsChangeListener)
-				listener.selectionChanged(getSelectedComponents());
-		}
 
 		public void componentTreeExpand(boolean selectionOnly) {
 			componentTreeExpandEx(selectionOnly, true);
