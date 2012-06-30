@@ -20,4 +20,9 @@ public interface EventTypeContainer extends EventContainer, Type {
 	public EventType createEvent(String name);
 	
 	public void addInstance(EventInstanceContainer instance);
+	
+	@Override
+	public EventTypeContainer getParent();
+	@Override
+	public List<EventTypeContainer> getChildren();
 }

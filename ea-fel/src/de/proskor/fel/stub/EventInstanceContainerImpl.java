@@ -10,8 +10,8 @@ import de.proskor.fel.event.EventInstance;
 public class EventInstanceContainerImpl extends EntityImpl implements EventInstanceContainer {
 	private EventTypeContainer type;
 	private List<EventInstance> eventInstances = new ArrayList<EventInstance>();
-	private List<EventTypeContainer> children = new ArrayList<EventTypeContainer>();
-	private EventTypeContainer parent;
+	private List<EventInstanceContainer> children = new ArrayList<EventInstanceContainer>();
+	private EventInstanceContainer parent;
 
 	public EventTypeContainer getTyp() {
 		return type;
@@ -49,12 +49,12 @@ public class EventInstanceContainerImpl extends EntityImpl implements EventInsta
 	}
 
 	@Override
-	public EventTypeContainer getParent() {
+	public EventInstanceContainer getParent() {
 		return parent;
 	}
 
 	@Override
-	public List<EventTypeContainer> getChildren() {
+	public List<EventInstanceContainer> getChildren() {
 		return children;
 	}
 }

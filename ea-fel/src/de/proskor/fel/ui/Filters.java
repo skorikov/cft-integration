@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.proskor.fel.Type;
 
-public class Fitlers {
+public class Filters {
 	public static class TypeFilter {
 		/**
 		 * Specifies which field the <b>filter-String</b> needs to match.

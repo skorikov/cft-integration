@@ -16,6 +16,6 @@ public interface EventContainer {
 	@Deprecated
 	public Event createEvent(String name);
 	
-	public EventTypeContainer getParent();
-	public List<EventTypeContainer> getChildren();
+	public EventContainer getParent();
+	public List<? extends EventContainer> getChildren();
 }
