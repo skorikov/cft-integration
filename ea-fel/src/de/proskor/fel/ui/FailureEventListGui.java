@@ -100,24 +100,13 @@ public class FailureEventListGui extends Shell {
 		// GUI Handler:
 		guiHandlerComponents = new GuiHandlerComponents(eventRepository, treeComponents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
 		guiHandlerCreateEvent = new GuiHandlerCreateEvent(textCreateEventName, textCreateEventAuthor, textCreateEventComponent, textCreateEventDescription, btnCreateEvent, btnChkCreateEventIsValid);
-		guiHandlerEvents = new GuiHandlerEvents(treeEvents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
+		guiHandlerEvents = new GuiHandlerEvents(treeEvents, comboEventFilterMode, textEventFilterByFieldsMatch);
 		
 		statusManager = new StatusManager(lblStatusComponentsCount, lblComponentsSelectedCount, lblStatusEventsVisibleCount);
 		
-		btnComponentsReload = new Button(this, SWT.NONE);
-		btnComponentsReload.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				guiHandlerComponents.loadContainerList();
-				guiOpComponentsTreeChanged();
-			}
-		});
-		btnComponentsReload.setToolTipText("Reloads components from Enterprise Architect incase there have been changes.");
-		btnComponentsReload.setBounds(778, 457, 100, 25);
-		btnComponentsReload.setText("Reload");
-		
 		// Ausgangs-Zustände herstellen:
 		guiHandlerComponents.loadContainerList();
+		guiHandlerComponents.selectFirstTypeInTree(); // Ersten Component markieren
 		guiOpComponentsTreeChanged();
 	}
 
@@ -670,6 +659,18 @@ public class FailureEventListGui extends Shell {
 		lblComponentsSelectedCount.setText("Components selected: 10");
 		lblComponentsSelectedCount.setBounds(150, 10, 150, 15);
 		
+		btnComponentsReload = new Button(this, SWT.NONE);
+		btnComponentsReload.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandlerComponents.loadContainerList();
+				guiOpComponentsTreeChanged();
+			}
+		});
+		btnComponentsReload.setToolTipText("Reloads components from Enterprise Architect incase there have been changes.");
+		btnComponentsReload.setBounds(778, 457, 100, 25);
+		btnComponentsReload.setText("Reload");
+
 		createContents();
 	}
 
