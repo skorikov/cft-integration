@@ -1,9 +1,7 @@
 package de.proskor.fel.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -19,28 +17,23 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
-
-import de.proskor.fel.EventRepository;
-import de.proskor.fel.Type;
-import de.proskor.fel.container.EventTypeContainer;
-import de.proskor.fel.ui.Fitlers.EventTypeContainerFilter;
-import de.proskor.fel.ui.Fitlers.EventTypeFilter;
-import de.proskor.fel.ui.GuiRepository.EventTypeContainerHandler;
-import de.proskor.fel.ui.GuiRepository.EventTypesHandler;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.CoolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+
+import de.proskor.fel.EventRepository;
+import de.proskor.fel.ui.GuiHandlers.GuiHandlerComponents;
+import de.proskor.fel.ui.GuiHandlers.GuiHandlerCreateEvent;
+import de.proskor.fel.ui.GuiHandlers.GuiHandlerEvents;
 
 public class FailureEventListGui extends Shell {
 	private final FailureEventList failureEventList;
 	private final EventRepository eventRepository;
 
-	private final GuiHandler guiHandler;
+	private final GuiHandlerComponents guiHandlerComponents;
+	private final GuiHandlerEvents guiHandlerEvents;
+	private final GuiHandlerCreateEvent guiHandlerCreateEvent;
 	
 	public Button btnClose;
 	public Text textEventFilterByFieldsMatch;
@@ -66,6 +59,7 @@ public class FailureEventListGui extends Shell {
 	private Text textCreateEventName;
 	private Text textCreateEventAuthor;
 	private Text textCreateEventComponent;
+	private StyledText textCreateEventDescription;
 	private ToolBar toolBar_2;
 	private ToolItem tltmSupercomponents;
 	private ToolItem tltmSubcomponents;
@@ -106,6 +100,12 @@ public class FailureEventListGui extends Shell {
 		textCreateEventAuthor.setBounds(83, 46, 320, 21);
 		
 		Button buttonCreateEventClearData = new Button(grpCreateEvent, SWT.NONE);
+		buttonCreateEventClearData.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandlerCreateEvent.clearData();
+			}
+		});
 		buttonCreateEventClearData.setText("Clear");
 		buttonCreateEventClearData.setBounds(854, 58, 110, 32);
 		
@@ -114,7 +114,6 @@ public class FailureEventListGui extends Shell {
 		lblComponent.setBounds(10, 73, 67, 15);
 		
 		textCreateEventComponent = new Text(grpCreateEvent, SWT.BORDER);
-		textCreateEventComponent.setEnabled(false);
 		textCreateEventComponent.setEditable(false);
 		textCreateEventComponent.setToolTipText("Name of the event to you wish to create.");
 		textCreateEventComponent.setBounds(83, 70, 320, 21);
@@ -123,223 +122,23 @@ public class FailureEventListGui extends Shell {
 		lblDescription.setText("Description:");
 		lblDescription.setBounds(421, 25, 65, 15);
 		
-		StyledText textCreateEventDescription = new StyledText(grpCreateEvent, SWT.BORDER);
+		textCreateEventDescription = new StyledText(grpCreateEvent, SWT.BORDER);
 		textCreateEventDescription.setBounds(492, 22, 350, 68);
-		setTabList(new Control[]{grpComponents, grpEvents, btnClose});
+		setTabList(new Control[]{grpComponents, grpEvents, btnClose});		
 		
-		guiHandler = new GuiHandler();
-		guiHandler.updateGui();
-	}
-	
-	private class GuiHandler {
-		private final EventTypesHandler eventsHandler;
-		private final EventTypeContainerHandler containerHandler;
-		private final FailureEventListGui gui = FailureEventListGui.this;
-		private final EventTypeFilter eventTypeFilter;
-		private final EventTypeContainerFilter containerFilter;
 		
-		public GuiHandler() {
-			eventsHandler = new EventTypesHandler(treeEvents);
-			containerHandler = new EventTypeContainerHandler(treeComponents);
-			eventTypeFilter = new EventTypeFilter("", comboEventFilterMode, textEventFilterByFieldsMatch);
-			containerFilter = new EventTypeContainerFilter("", comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
-			
-			configGuiForFirstUse();
-		}
-		
-		public void configGuiForFirstUse() {
-			comboEventFilterMode.setItems(eventTypeFilter.getFilterModeNames());
-			comboEventFilterMode.select(0);
-			
-			comboComponentsSelectByFieldsMatch.setItems(containerFilter.getFilterModeNames());
-			comboComponentsSelectByFieldsMatch.select(0);
-		}
-		
-		private void updateGui() {
-			updateContainerList();
-		}	
-		
-		private void updateContainerList() {
-			containerHandler.clear();
+		// GUI Handler:
+		guiHandlerComponents = new GuiHandlerComponents(eventRepository, treeComponents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
+		guiHandlerCreateEvent = new GuiHandlerCreateEvent(textCreateEventName, textCreateEventAuthor, textCreateEventComponent, textCreateEventDescription);
+		guiHandlerEvents = new GuiHandlerEvents(treeComponents, comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
 
-			for (EventTypeContainer c : eventRepository.getEventTypeContainers()) {
-				containerHandler.addContainerAndSubContainers(c);
-			}
-			
-			if (treeComponents.getItemCount() > 0)
-				treeComponents.select(treeComponents.getItem(0));
-		}
+		// Listeners:
+		guiHandlerComponents.addGuiChangeListenerComponents(guiHandlerCreateEvent);
 		
-		public void selectContainerByFieldMatch(boolean clearOldSelection) {
-			containerFilter.applyGuiFilterConfig();
-			
-			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
-			for (EventTypeContainer c : containerHandler.getContainers()) {
-				if (containerFilter.typeConformsToFilter(c)) {
-					TreeItem cItem = containerHandler.getTreeItemByType(c);
-					selection.add(cItem);
-				}
-			}
-
-			if (!clearOldSelection) {
-				TreeItem[] oldSelection = treeComponents.getSelection(); 
-				ArrayList<TreeItem> oldSelectinList = DataUtils.treeItemArrayToList(oldSelection);
-				selection.addAll(oldSelectinList);
-			}
-			TreeItem[] selectionItems = DataUtils.treeItemListToArray(selection);
-			
-			treeComponents.setSelection(selectionItems);
-		}
-		
-		public void unselectContainerByFieldMatch() {
-			containerFilter.applyGuiFilterConfig();
-			ArrayList<TreeItem> currentSelection = DataUtils.treeItemArrayToList(treeComponents.getSelection()); 
-			
-			ArrayList<TreeItem> unselection = new ArrayList<TreeItem>();
-			for (EventTypeContainer c : containerHandler.getContainers()) {
-				if (containerFilter.typeConformsToFilter(c)) {
-					TreeItem cItem = containerHandler.getTreeItemByType(c);
-					unselection.add(cItem);
-				}
-			}
-
-			for(TreeItem item : unselection)
-				currentSelection.remove(item);			
-			
-			TreeItem[] selectionArray = DataUtils.treeItemListToArray(currentSelection);
-			treeComponents.setSelection(selectionArray);
-		}
-
-		public void selectSubComponents() {
-			selectSubComponentsEx();
-			expandSelectedTreeItems(treeComponents, true);
-		}
-			
-		private void selectSubComponentsEx() {
-			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
-			ArrayList<TreeItem> currentSelection = DataUtils.treeItemArrayToList(treeComponents.getSelection()); 
-			selection.addAll(currentSelection);
-			
-			for(TreeItem selectedContainerItem : currentSelection) {
-				EventTypeContainer container = (EventTypeContainer)containerHandler.getTypeByTreeItem(selectedContainerItem);
-				List<EventTypeContainer> subContainers = DataUtils.getAllSubContainer(container);
-				
-				for(EventTypeContainer sub : subContainers)
-					if (!selection.contains(sub))
-						selection.add(containerHandler.getTreeItemByType(sub));
-			}
-			
-			TreeItem[] selectionArray = DataUtils.treeItemListToArray(selection);
-			treeComponents.setSelection(selectionArray);
-		}
-
-		public void selectSuperComponents() {
-			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
-			ArrayList<TreeItem> currentSelection = DataUtils.treeItemArrayToList(treeComponents.getSelection()); 
-			selection.addAll(currentSelection);
-			
-			for(TreeItem selectedContainerItem : currentSelection) {
-				EventTypeContainer container = (EventTypeContainer)containerHandler.getTypeByTreeItem(selectedContainerItem);
-				List<EventTypeContainer> superContainers = DataUtils.getAllSuperContainer(container);
-				
-				for(EventTypeContainer parent : superContainers)
-					if (!selection.contains(parent))
-						selection.add(containerHandler.getTreeItemByType(parent));
-			}
-			
-			TreeItem[] selectionArray = DataUtils.treeItemListToArray(selection);
-			treeComponents.setSelection(selectionArray);
-		}
-		
-		
-		private void expandTreeItems(Tree tree, boolean expanded) {
-			for(TreeItem item : tree.getItems())
-				expandTreeItem(item, expanded);
-		}
-		
-		private void expandTreeItem(TreeItem item, boolean expanded) {
-			item.setExpanded(expanded);
-			
-			for(TreeItem subItem : item.getItems()) 
-				expandTreeItem(subItem, expanded);
-		}
-		
-		private void expandSelectedTreeItems(Tree tree, boolean expanded) {
-			TreeItem[] items = tree.getSelection();
-			
-			for(TreeItem item : items)
-				item.setExpanded(expanded);
-		}
-
-		public void componentTreeSelectionChanged() {
-			System.out.println("Changed!");
-		}
-
-		public void componentTreeExpand(boolean selectionOnly) {
-			componentTreeExpandEx(selectionOnly, true);
-		}
-
-		public void componentTreeCollapse(boolean selectionOnly) {
-			componentTreeExpandEx(selectionOnly, false);
-		}
-		
-		private void componentTreeExpandEx(boolean selectionOnly, boolean expanded) {
-			if (selectionOnly) {
-				for(TreeItem item : treeComponents.getSelection()) {
-					expandTreeItem(item, expanded);
-				}
-			} else {
-				expandTreeItems(treeComponents, expanded);
-			}
-		}
-	}
-	
-	private static class DataUtils {
-		public static List<EventTypeContainer> getAllSubContainer(EventTypeContainer container) {
-			ArrayList<EventTypeContainer> subContainerList = new ArrayList<EventTypeContainer>();
-			
-			for(EventTypeContainer sub : container.getChildren()) {
-				subContainerList.add(sub);
-				
-				List<EventTypeContainer> subsSubContainerList = getAllSubContainer(sub);
-				subContainerList.addAll(subsSubContainerList);
-			}
-			
-			return subContainerList;
-		}
-		
-		public static List<EventTypeContainer> getAllSuperContainer(EventTypeContainer container) {
-			ArrayList<EventTypeContainer> superContainerList = new ArrayList<EventTypeContainer>();
-			
-			EventTypeContainer parent = container.getParent();
-			while(parent != null) {
-				superContainerList.add(parent);
-				parent = parent.getParent();
-			}
-			
-			return superContainerList;
-		}
-
-		public static ArrayList<TreeItem> treeItemArrayToList(TreeItem[] arr) {
-			ArrayList<TreeItem> list = new ArrayList<TreeItem>();
-			
-			for(TreeItem item : arr)
-				list.add(item);
-			
-			return list;
-		}
-		
-		public static TreeItem[] treeItemListToArray(List<TreeItem> list) {
-			TreeItem[] arr = new TreeItem[list.size()];
-			
-			int i=0;
-			for(TreeItem item : list) {
-				arr[i] = item;
-				i++;
-			}
-			
-			return arr;
-		}
+		// Ausgangs-Zustände herstellen:
+		guiHandlerComponents.updateGui();
+		guiHandlerEvents.updateGui();
+		guiHandlerCreateEvent.selectionChanged(guiHandlerComponents.getSelectedComponents()); // Um aktuellen Component zu übernehmen
 	}
 
 //	/**
@@ -456,7 +255,7 @@ public class FailureEventListGui extends Shell {
 		tltmExpand.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.componentTreeExpand(true);
+				guiHandlerComponents.componentTreeExpand(true);
 			}
 		});
 		tltmExpand.setText("Expand");
@@ -465,7 +264,7 @@ public class FailureEventListGui extends Shell {
 		tltmExpandAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.componentTreeExpand(false);
+				guiHandlerComponents.componentTreeExpand(false);
 			}
 		});
 		tltmExpandAll.setText("Expand All");
@@ -474,7 +273,7 @@ public class FailureEventListGui extends Shell {
 		tltmCollapse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.componentTreeCollapse(true);
+				guiHandlerComponents.componentTreeCollapse(true);
 			}
 		});
 		tltmCollapse.setText("Collapse");
@@ -483,7 +282,7 @@ public class FailureEventListGui extends Shell {
 		tltmCollapseAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.componentTreeCollapse(false);
+				guiHandlerComponents.componentTreeCollapse(false);
 			}
 		});
 		tltmCollapseAll.setText("Collapse All");
@@ -492,7 +291,7 @@ public class FailureEventListGui extends Shell {
 		treeComponents.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.componentTreeSelectionChanged();
+				guiHandlerComponents.componentTreeSelectionChanged();
 			}
 		});
 		treeComponents.setLinesVisible(true);
@@ -520,7 +319,7 @@ public class FailureEventListGui extends Shell {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (keyEventIsReturn(e)) 
-					guiHandler.selectContainerByFieldMatch(true); // Führt Button-OnClick aus. Kann man bei SWT nicht direkt über Button.onClick() machen.  -.- 
+					guiHandlerComponents.selectContainerByFieldMatch(true); // Führt Button-OnClick aus. Kann man bei SWT nicht direkt über Button.onClick() machen.  -.- 
 			}
 		});
 		textComponentsSelectByFieldsMatch.setToolTipText("Selects all components which match the specified name.");
@@ -542,7 +341,7 @@ public class FailureEventListGui extends Shell {
 		tltmSelect.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.selectContainerByFieldMatch(true);
+				guiHandlerComponents.selectContainerByFieldMatch(true);
 			}
 		});
 		tltmSelect.setToolTipText("Selects the specified component(s).");
@@ -552,7 +351,7 @@ public class FailureEventListGui extends Shell {
 		tltmSelect_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.selectContainerByFieldMatch(false);
+				guiHandlerComponents.selectContainerByFieldMatch(false);
 			}
 		});
 		tltmSelect_1.setToolTipText("Adds the matching component(s) to the selection.");
@@ -562,7 +361,7 @@ public class FailureEventListGui extends Shell {
 		tltmSelect_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.unselectContainerByFieldMatch();
+				guiHandlerComponents.unselectContainerByFieldMatch();
 			}
 		});
 		tltmSelect_2.setToolTipText("Removes the matching component(s) from the selection.");
@@ -575,7 +374,7 @@ public class FailureEventListGui extends Shell {
 		tltmSupercomponents.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.selectSuperComponents();
+				guiHandlerComponents.selectSuperComponents();
 			}
 		});
 		tltmSupercomponents.setToolTipText("Will select all SuperComponents of the currently selected component(s).");
@@ -585,7 +384,7 @@ public class FailureEventListGui extends Shell {
 		tltmSubcomponents.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.selectSubComponents();
+				guiHandlerComponents.selectSubComponents();
 			}
 		});
 		tltmSubcomponents.setToolTipText("Will select all SubComponents of the currently selected component(s).");
