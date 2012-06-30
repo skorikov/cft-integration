@@ -8,11 +8,14 @@ public interface EventContainer {
 	public List<? extends Event> getEvents();
 	public String getName();
 
-	@Deprecated
 	/**
 	 * Soll weggehen. Bei EventType in createEventType o.ä. umbenennen.
 	 * @param name
 	 * @return
 	 */
+	@Deprecated
 	public Event createEvent(String name);
+	
+	public EventTypeContainer getParent();
+	public List<EventTypeContainer> getChildren();
 }

@@ -2,10 +2,8 @@ package de.proskor
 
 import java.util.Collections
 import java.util.{List => JavaList}
-
 import scala.collection.JavaConversions.asScalaBuffer
 import scala.collection.JavaConversions.seqAsJavaList
-
 import de.proskor.automation.Diagram
 import de.proskor.automation.Element
 import de.proskor.automation.Node
@@ -22,10 +20,10 @@ import de.proskor.fel.impl.EventInstanceContainerImpl
 import de.proskor.fel.impl.EventRepositoryImpl
 import de.proskor.fel.impl.EventTypeContainerImpl
 import de.proskor.fel.impl.EventTypeImpl
-import de.proskor.fel.ui.FailureEventListDialog
 import de.proskor.fel.ui.FailureEventListImpl
 import de.proskor.fel.EventRepository
 import de.proskor.shell.EpsilonShell
+import de.proskor.fel.ui.FailureEventList
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -50,8 +48,8 @@ class CftExtension extends ExtensionAdapter {
 
     item("Failure Event List...") {
       val er: EventRepository = new EventRepositoryImpl(Repository.instance)
-      val dialog: FailureEventListDialog = new FailureEventListImpl(er)
-      dialog.showEventList
+      val dialog: FailureEventList = new FailureEventListImpl(er)
+      dialog.showDialog
     }
 
     item("Epsilon Shell...") {

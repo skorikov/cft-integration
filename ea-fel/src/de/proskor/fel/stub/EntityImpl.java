@@ -25,6 +25,22 @@ public abstract class EntityImpl implements Entity {
 		return this.id;
 	}
 
+	public static int getGlobalId() {
+		return globalId;
+	}
+
+	public static void setGlobalId(int globalId) {
+		EntityImpl.globalId = globalId;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
 	@Override
 	public String getGuid() {
 		return this.guid;
@@ -57,5 +73,10 @@ public abstract class EntityImpl implements Entity {
 	@Override
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+	
+	@Override
+	public String toString() {
+		return name + " :: author="+author+"; descr.="+description+"; id="+id+"; guid="+guid;
 	}
 }

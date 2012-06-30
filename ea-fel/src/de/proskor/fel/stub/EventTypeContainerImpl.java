@@ -10,7 +10,18 @@ import de.proskor.fel.event.EventType;
 public class EventTypeContainerImpl extends EntityImpl implements EventTypeContainer {
 	private List<EventType> eventTypes = new ArrayList<EventType>();
 	private List<EventInstanceContainer> instances = new ArrayList<EventInstanceContainer>();
+	private final EventTypeContainer parent;
+	private ArrayList<EventTypeContainer> children = new ArrayList<EventTypeContainer>();
 
+	public EventTypeContainerImpl() {
+		parent = null; 
+	}
+	
+	public EventTypeContainerImpl(EventTypeContainer parent) {
+		this.parent = parent; 
+		parent.getChildren().add(this);
+	}
+	
 	@Override
 	public List<EventType> getEvents() {
 		return this.eventTypes;
@@ -33,5 +44,24 @@ public class EventTypeContainerImpl extends EntityImpl implements EventTypeConta
 	@Override
 	public void addInstance(EventInstanceContainer instance) {
 		this.instances.add(instance);
+		((EventInstanceContainerImpl)instance).setType(this);
+	}
+
+	@Override
+	public EventTypeContainer getParent() {
+		return parent;
+	}
+
+	@Override
+	public List<EventTypeContainer> getChildren() {
+		return children;
+	}
+	
+	@Override
+	public String getQualifiedName() {
+		if (parent != null)
+			return parent.getQualifiedName() + "." + getName();
+		else
+			return getName();
 	}
 }

@@ -62,7 +62,7 @@ public class FailureEventListCreateEventGui extends Shell {
 		event.setAuthor(author);
 		event.setDescription(description);
 		
-		// DEBUGGING only!
+		// DEBUGGING only! Nur nötig solange FailureEventList nicht mit EventTypes mit 0 Instances zurecht kommt!
 		EventInstanceContainer containerInst = typeContainer.getInstances().get(0);
 		EventInstance eventInstance = containerInst.createEvent("<defaultInst>");
 		eventInstance.setType(event);		
@@ -81,12 +81,10 @@ public class FailureEventListCreateEventGui extends Shell {
 		String author = userInputData.author;
 		String description = userInputData.description;
 
-		
 		EventInstance eventInstance = cft.createEvent(event.getName());
 		eventInstance.setAuthor(author);
 		eventInstance.setDescription(description);
-
-		// ACHTUNG: Nur debugging. EventType fehlt!
+		event.addInstance(eventInstance);	
 		
 		return eventInstance;
 	}
