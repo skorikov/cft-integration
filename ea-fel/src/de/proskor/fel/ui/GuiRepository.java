@@ -35,6 +35,28 @@ public class GuiRepository {
 			return (Type) mapping.getObjectBMapping(treeItem);
 		}
 		
+		public boolean hasType(Type type) {
+			return getTreeItemByType(type) != null;
+		}
+		
+		public List<Type> getTypesByTreeItems(List<TreeItem> items) {
+			ArrayList<Type> types = new ArrayList<Type>();
+			
+			for(TreeItem item : items)
+				types.add(getTypeByTreeItem(item));
+			
+			return types;
+		}		
+		
+		public List<TreeItem> getTreeItemsByTypes(List<Type> types) {
+			ArrayList<TreeItem> items = new ArrayList<TreeItem>();
+			
+			for(Type type : types)
+				items.add(getTreeItemByType(type));
+			
+			return items;
+		}
+		
 		protected TreeItem addType(Type type) {
 			TreeItem treeItem = createTreeItem(type);
 			mapping.put(type, treeItem);
@@ -108,11 +130,6 @@ public class GuiRepository {
 				addAllSubContainer(subContainerItem, subContainer);
 			}
 		}
-		
-//		public TreeItem addSubContainer(TreeItem parentContainerItem, EventTypeContainer subContainer) {
-//			TreeItem item = addSubType(parentContainerItem, subContainer);
-//			return item;
-//		}
 		
 		public EventTypeContainerHandler(Tree containerTree) {
 			super(containerTree);

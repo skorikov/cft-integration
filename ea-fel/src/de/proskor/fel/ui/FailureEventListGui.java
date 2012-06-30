@@ -1,6 +1,7 @@
 package de.proskor.fel.ui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -23,10 +24,10 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.proskor.fel.EventRepository;
+import de.proskor.fel.Type;
 import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.ui.Fitlers.EventTypeContainerFilter;
 import de.proskor.fel.ui.Fitlers.EventTypeFilter;
-import de.proskor.fel.ui.Fitlers.TypeFilter.FilterMode;
 import de.proskor.fel.ui.GuiRepository.EventTypeContainerHandler;
 import de.proskor.fel.ui.GuiRepository.EventTypesHandler;
 
@@ -38,7 +39,7 @@ public class FailureEventListGui extends Shell {
 	
 	public Button btnClose;
 	public Text textNewEventsName;
-	public Text textFilterEventName;
+	public Text textEventFilterByFieldsMatch;
 	public Button btnCreateEvent;
 	public Text textComponentsSelectByFieldsMatch;
 
@@ -53,12 +54,13 @@ public class FailureEventListGui extends Shell {
 	private TreeColumn trclmnEventAuthor;
 	private TreeColumn treeColumnEventIdGuid;
 	private Button btnComponentsSelectByFieldsMatch;
-	private Button btnFilterEventsBySelectedComponent;
 
 
 	private Tree treeEvents;
 	private Combo comboEventFilterMode;
 	private Combo comboComponentsSelectByFieldsMatch;
+	private Button btnComponentsSelectSub;
+	private Button btnComponentsSelectSuper;
 
 	/**
 	 * @wbp.parser.constructor
@@ -85,8 +87,8 @@ public class FailureEventListGui extends Shell {
 		public GuiHandler() {
 			eventsHandler = new EventTypesHandler(treeEvents);
 			containerHandler = new EventTypeContainerHandler(treeComponents);
-			eventTypeFilter = new EventTypeFilter("", comboEventFilterMode);
-			containerFilter = new EventTypeContainerFilter("", comboComponentsSelectByFieldsMatch);
+			eventTypeFilter = new EventTypeFilter("", comboEventFilterMode, textEventFilterByFieldsMatch);
+			containerFilter = new EventTypeContainerFilter("", comboComponentsSelectByFieldsMatch, textComponentsSelectByFieldsMatch);
 			
 			configGuiForFirstUse();
 		}
@@ -114,14 +116,8 @@ public class FailureEventListGui extends Shell {
 				treeComponents.select(treeComponents.getItem(0));
 		}
 		
-		private void selectContainerByAnyFieldMatch(String text) {
-			
-		}
-		
 		public void selectContainerByFieldMatch() {
-			String text = textComponentsSelectByFieldsMatch.getText();
-			containerFilter.setFilterString(text);
-			containerFilter.applyGuiActiveMode();
+			containerFilter.applyGuiFilterConfig();
 			
 			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
 			for (EventTypeContainer c : containerHandler.getContainers()) {
@@ -131,14 +127,119 @@ public class FailureEventListGui extends Shell {
 				}
 			}
 			
-			TreeItem[] selectionItems = new TreeItem[selection.size()];
-			for(int i=0; i<selection.size(); i++)
-				selectionItems[i] = selection.get(i);
-				
+			TreeItem[] selectionItems = DataUtils.treeItemListToArray(selection);				
 			treeComponents.setSelection(selectionItems);
+		}
+
+		public void selectSubComponents() {
+			selectSubComponentsEx();
+			expandSelectedTreeItems(treeComponents, true);
+		}
+			
+		private void selectSubComponentsEx() {
+			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
+			ArrayList<TreeItem> currentSelection = DataUtils.treeItemArrayToList(treeComponents.getSelection()); 
+			selection.addAll(currentSelection);
+			
+			for(TreeItem selectedContainerItem : currentSelection) {
+				EventTypeContainer container = (EventTypeContainer)containerHandler.getTypeByTreeItem(selectedContainerItem);
+				List<EventTypeContainer> subContainers = DataUtils.getAllSubContainer(container);
+				
+				for(EventTypeContainer sub : subContainers)
+					if (!selection.contains(sub))
+						selection.add(containerHandler.getTreeItemByType(sub));
+			}
+			
+			TreeItem[] selectionArray = DataUtils.treeItemListToArray(selection);
+			treeComponents.setSelection(selectionArray);
+		}
+
+		public void selectSuperComponents() {
+			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
+			ArrayList<TreeItem> currentSelection = DataUtils.treeItemArrayToList(treeComponents.getSelection()); 
+			selection.addAll(currentSelection);
+			
+			for(TreeItem selectedContainerItem : currentSelection) {
+				EventTypeContainer container = (EventTypeContainer)containerHandler.getTypeByTreeItem(selectedContainerItem);
+				List<EventTypeContainer> superContainers = DataUtils.getAllSuperContainer(container);
+				
+				for(EventTypeContainer parent : superContainers)
+					if (!selection.contains(parent))
+						selection.add(containerHandler.getTreeItemByType(parent));
+			}
+			
+			TreeItem[] selectionArray = DataUtils.treeItemListToArray(selection);
+			treeComponents.setSelection(selectionArray);
+		}
+		
+		
+		public void expandTreeItems(Tree tree, boolean expanded) {
+			for(TreeItem item : tree.getItems())
+				expandTreeItem(item, expanded);
+		}
+		
+		public void expandTreeItem(TreeItem item, boolean expanded) {
+			item.setExpanded(expanded);
+			
+			for(TreeItem subItem : item.getItems()) 
+				expandTreeItem(subItem, expanded);
+		}
+		
+		public void expandSelectedTreeItems(Tree tree, boolean expanded) {
+			TreeItem[] items = tree.getSelection();
+			
+			for(TreeItem item : items)
+				item.setExpanded(expanded);
 		}
 	}
 	
+	private static class DataUtils {
+		public static List<EventTypeContainer> getAllSubContainer(EventTypeContainer container) {
+			ArrayList<EventTypeContainer> subContainerList = new ArrayList<EventTypeContainer>();
+			
+			for(EventTypeContainer sub : container.getChildren()) {
+				subContainerList.add(sub);
+				
+				List<EventTypeContainer> subsSubContainerList = getAllSubContainer(sub);
+				subContainerList.addAll(subsSubContainerList);
+			}
+			
+			return subContainerList;
+		}
+		
+		public static List<EventTypeContainer> getAllSuperContainer(EventTypeContainer container) {
+			ArrayList<EventTypeContainer> superContainerList = new ArrayList<EventTypeContainer>();
+			
+			EventTypeContainer parent = container.getParent();
+			while(parent != null) {
+				superContainerList.add(parent);
+				parent = parent.getParent();
+			}
+			
+			return superContainerList;
+		}
+
+		public static ArrayList<TreeItem> treeItemArrayToList(TreeItem[] arr) {
+			ArrayList<TreeItem> list = new ArrayList<TreeItem>();
+			
+			for(TreeItem item : arr)
+				list.add(item);
+			
+			return list;
+		}
+		
+		public static TreeItem[] treeItemListToArray(List<TreeItem> list) {
+			TreeItem[] arr = new TreeItem[list.size()];
+			
+			int i=0;
+			for(TreeItem item : list) {
+				arr[i] = item;
+				i++;
+			}
+			
+			return arr;
+		}
+	}
 
 //	/**
 //	 * Create the shell.
@@ -226,9 +327,9 @@ public class FailureEventListGui extends Shell {
 		lblFilterByEvent.setBounds(10, 21, 30, 15);
 		lblFilterByEvent.setText("Filter:");
 
-		textFilterEventName = new Text(grpEvents, SWT.BORDER);
-		textFilterEventName.setToolTipText("Only shows events matching the filter.");
-		textFilterEventName.setBounds(43, 18, 314, 21);
+		textEventFilterByFieldsMatch = new Text(grpEvents, SWT.BORDER);
+		textEventFilterByFieldsMatch.setToolTipText("Only shows events matching the filter.");
+		textEventFilterByFieldsMatch.setBounds(43, 18, 314, 21);
 
 		treeEvents = new Tree(grpEvents, SWT.BORDER | SWT.FULL_SELECTION);
 		treeEvents.setLinesVisible(true);
@@ -271,7 +372,7 @@ public class FailureEventListGui extends Shell {
 		btnDisplaySubcomponentEvents.setToolTipText("Displays events contained in sub-components, if there are any.");
 		btnDisplaySubcomponentEvents.setText("include sub-component events");
 		btnDisplaySubcomponentEvents.setBounds(288, 312, 185, 16);
-		grpEvents.setTabList(new Control[]{textFilterEventName, comboEventFilterMode, treeEvents, btnShowSupercomponentEvents, btnDisplaySubcomponentEvents});
+		grpEvents.setTabList(new Control[]{textEventFilterByFieldsMatch, comboEventFilterMode, treeEvents, btnShowSupercomponentEvents, btnDisplaySubcomponentEvents});
 
 		Group grpComponents = new Group(this, SWT.NONE);
 		grpComponents.setText(" Components ");
@@ -281,21 +382,21 @@ public class FailureEventListGui extends Shell {
 		btnComponentsTreeCollapseAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				opExpandTreeEntries(treeComponents, false);
+				guiHandler.expandTreeItems(treeComponents, false);
 			}
 		});
 		btnComponentsTreeCollapseAll.setText("Collapse All");
-		btnComponentsTreeCollapseAll.setBounds(122, 306, 110, 25);
+		btnComponentsTreeCollapseAll.setBounds(126, 306, 110, 25);
 
 		Button btnComponentsTreeExpandAll = new Button(grpComponents, SWT.NONE);
 		btnComponentsTreeExpandAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				opExpandTreeEntries(treeComponents, true);
+				guiHandler.expandTreeItems(treeComponents, true);
 			}
 		});
 		btnComponentsTreeExpandAll.setText("Expand All");
-		btnComponentsTreeExpandAll.setBounds(10, 306, 106, 25);
+		btnComponentsTreeExpandAll.setBounds(10, 306, 110, 25);
 
 		treeComponents = new Tree(grpComponents, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 		treeComponents.setLinesVisible(true);
@@ -333,11 +434,6 @@ public class FailureEventListGui extends Shell {
 		lblFind.setBounds(10, 21, 55, 15);
 		lblFind.setText("Find:");
 		
-		btnFilterEventsBySelectedComponent = new Button(grpComponents, SWT.CHECK);
-		btnFilterEventsBySelectedComponent.setToolTipText("Only shows the events of the currently selected component(s).");
-		btnFilterEventsBySelectedComponent.setBounds(251, 310, 222, 16);
-		btnFilterEventsBySelectedComponent.setText("filter events by selected component(s)");
-		
 		btnComponentsSelectByFieldsMatch = new Button(grpComponents, SWT.NONE);
 		btnComponentsSelectByFieldsMatch.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -352,9 +448,31 @@ public class FailureEventListGui extends Shell {
 		comboComponentsSelectByFieldsMatch.setItems(new String[] {"[[ Any Field ]]", "Name", "Author", "Description", "ID", "GUID"});
 		comboComponentsSelectByFieldsMatch.setBounds(363, 17, 110, 23);
 		comboComponentsSelectByFieldsMatch.select(0);
+		
+		btnComponentsSelectSub = new Button(grpComponents, SWT.NONE);
+		btnComponentsSelectSub.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.selectSubComponents();
+			}
+		});
+		btnComponentsSelectSub.setToolTipText("Will select all SubComponents of the currently selected component(s).");
+		btnComponentsSelectSub.setText("SubComponents");
+		btnComponentsSelectSub.setBounds(363, 306, 110, 25);
+		
+		btnComponentsSelectSuper = new Button(grpComponents, SWT.NONE);
+		btnComponentsSelectSuper.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.selectSuperComponents();
+			}
+		});
+		btnComponentsSelectSuper.setToolTipText("Will select all SubComponents of the currently selected component(s).");
+		btnComponentsSelectSuper.setText("SuperComponents");
+		btnComponentsSelectSuper.setBounds(247, 306, 110, 25);
 		grpComponents.setTabList(new Control[]{textComponentsSelectByFieldsMatch, treeComponents, btnComponentsTreeExpandAll, btnComponentsTreeCollapseAll});
 		setTabList(new Control[]{grpComponents, grpEvents, textNewEventsName, btnCreateEvent, btnClose});
-		textFilterEventName.addModifyListener(new ModifyListener() {
+		textEventFilterByFieldsMatch.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 //				guiHandler.onTextFilterEventChanged(textFilterEventName.getText());
 			}
@@ -362,18 +480,6 @@ public class FailureEventListGui extends Shell {
 		
 		
 		createContents();
-	}
-	
-	private void opExpandTreeEntries(Tree tree, boolean expanded) {
-		for(TreeItem item : tree.getItems())
-			opExpandTreeItem(item, expanded);
-	}
-	
-	private void opExpandTreeItem(TreeItem item, boolean expanded) {
-		item.setExpanded(expanded);
-		
-		for(TreeItem subItem : item.getItems()) 
-			opExpandTreeItem(subItem, expanded);
 	}
 
 	private boolean keyEventIsReturn(KeyEvent e) {

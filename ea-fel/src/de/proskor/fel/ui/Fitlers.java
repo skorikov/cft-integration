@@ -1,6 +1,7 @@
 package de.proskor.fel.ui;
 
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Text;
 
 import de.proskor.fel.Type;
 
@@ -124,34 +125,42 @@ public class Fitlers {
 	}
 	
 	private static class GuiTypeFilter extends TypeFilter {
-		protected final Combo comboBox;
+		protected final Combo comboBoxFilterMode;
+		protected final Text textFilterString;
 		
-		public GuiTypeFilter(String filterName, Combo comboBox) {
+		public GuiTypeFilter(String filterName, Combo comboBox, Text textFilterString) {
 			super(filterName);
-			this.comboBox = comboBox;
+			
+			this.comboBoxFilterMode = comboBox;
+			this.textFilterString = textFilterString;
 		}
 		
-		public void applyGuiActiveMode() {
+		public void applyGuiFilterConfig() {
 			setFilterMode(getGuiActiveMode());
+			setFilterString(getGuiFilterString());
 		}
 		
 		public FilterMode getGuiActiveMode() {
-			String selectedFilterName = comboBox.getText();
+			String selectedFilterName = comboBoxFilterMode.getText();
 			FilterMode currentMode = getFilterModeByName(selectedFilterName);
 			
 			return currentMode;
 		}
+		
+		public String getGuiFilterString() {
+			return textFilterString.getText();	
+		}
 	}	
 	
 	public static class EventTypeFilter extends GuiTypeFilter {
-		public EventTypeFilter(String filterName, Combo comboBox) {
-			super(filterName, comboBox);
+		public EventTypeFilter(String filterName, Combo comboBox, Text textFilterString) {
+			super(filterName, comboBox, textFilterString);
 		}
 	}	
 	
 	public static class EventTypeContainerFilter extends GuiTypeFilter {
-		public EventTypeContainerFilter(String filterName, Combo comboBox) {
-			super(filterName, comboBox);
+		public EventTypeContainerFilter(String filterName, Combo comboBox, Text textFilterString) {
+			super(filterName, comboBox, textFilterString);
 		}
 	}
 	
