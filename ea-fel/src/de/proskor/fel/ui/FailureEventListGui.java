@@ -33,6 +33,8 @@ import de.proskor.fel.ui.GuiRepository.EventTypesHandler;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 
 public class FailureEventListGui extends Shell {
 	private final FailureEventList failureEventList;
@@ -59,13 +61,14 @@ public class FailureEventListGui extends Shell {
 	private Tree treeEvents;
 	private Combo comboEventFilterMode;
 	private Combo comboComponentsSelectByFieldsMatch;
-	private Button btnComponentsSelectSub;
-	private Button btnComponentsSelectSuper;
 	private Group grpComponents;
 	private Group grpEvents;
 	private Text textCreateEventName;
 	private Text textCreateEventAuthor;
 	private Text textCreateEventComponent;
+	private ToolBar toolBar_2;
+	private ToolItem tltmSupercomponents;
+	private ToolItem tltmSubcomponents;
 
 	/**
 	 * @wbp.parser.constructor
@@ -249,19 +252,19 @@ public class FailureEventListGui extends Shell {
 		}
 		
 		
-		public void expandTreeItems(Tree tree, boolean expanded) {
+		private void expandTreeItems(Tree tree, boolean expanded) {
 			for(TreeItem item : tree.getItems())
 				expandTreeItem(item, expanded);
 		}
 		
-		public void expandTreeItem(TreeItem item, boolean expanded) {
+		private void expandTreeItem(TreeItem item, boolean expanded) {
 			item.setExpanded(expanded);
 			
 			for(TreeItem subItem : item.getItems()) 
 				expandTreeItem(subItem, expanded);
 		}
 		
-		public void expandSelectedTreeItems(Tree tree, boolean expanded) {
+		private void expandSelectedTreeItems(Tree tree, boolean expanded) {
 			TreeItem[] items = tree.getSelection();
 			
 			for(TreeItem item : items)
@@ -270,6 +273,24 @@ public class FailureEventListGui extends Shell {
 
 		public void componentTreeSelectionChanged() {
 			System.out.println("Changed!");
+		}
+
+		public void componentTreeExpand(boolean selectionOnly) {
+			componentTreeExpandEx(selectionOnly, true);
+		}
+
+		public void componentTreeCollapse(boolean selectionOnly) {
+			componentTreeExpandEx(selectionOnly, false);
+		}
+		
+		private void componentTreeExpandEx(boolean selectionOnly, boolean expanded) {
+			if (selectionOnly) {
+				for(TreeItem item : treeComponents.getSelection()) {
+					expandTreeItem(item, expanded);
+				}
+			} else {
+				expandTreeItems(treeComponents, expanded);
+			}
 		}
 	}
 	
@@ -427,26 +448,45 @@ public class FailureEventListGui extends Shell {
 		grpComponents = new Group(this, SWT.NONE);
 		grpComponents.setText(" Components ");
 		grpComponents.setBounds(10, 10, 483, 341);
-
-		Button btnComponentsTreeCollapseAll = new Button(grpComponents, SWT.NONE);
-		btnComponentsTreeCollapseAll.addSelectionListener(new SelectionAdapter() {
+		
+		ToolBar toolBar_1 = new ToolBar(grpComponents, SWT.FLAT | SWT.RIGHT);
+		toolBar_1.setBounds(10, 307, 244, 23);
+		
+		ToolItem tltmExpand = new ToolItem(toolBar_1, SWT.NONE);
+		tltmExpand.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.expandTreeItems(treeComponents, false);
+				guiHandler.componentTreeExpand(true);
 			}
 		});
-		btnComponentsTreeCollapseAll.setText("Collapse All");
-		btnComponentsTreeCollapseAll.setBounds(126, 306, 110, 25);
-
-		Button btnComponentsTreeExpandAll = new Button(grpComponents, SWT.NONE);
-		btnComponentsTreeExpandAll.addSelectionListener(new SelectionAdapter() {
+		tltmExpand.setText("Expand");
+		
+		ToolItem tltmExpandAll = new ToolItem(toolBar_1, SWT.NONE);
+		tltmExpandAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				guiHandler.expandTreeItems(treeComponents, true);
+				guiHandler.componentTreeExpand(false);
 			}
 		});
-		btnComponentsTreeExpandAll.setText("Expand All");
-		btnComponentsTreeExpandAll.setBounds(10, 306, 110, 25);
+		tltmExpandAll.setText("Expand All");
+		
+		ToolItem tltmCollapse = new ToolItem(toolBar_1, SWT.NONE);
+		tltmCollapse.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.componentTreeCollapse(true);
+			}
+		});
+		tltmCollapse.setText("Collapse");
+		
+		ToolItem tltmCollapseAll = new ToolItem(toolBar_1, SWT.NONE);
+		tltmCollapseAll.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.componentTreeCollapse(false);
+			}
+		});
+		tltmCollapseAll.setText("Collapse All");
 
 		treeComponents = new Tree(grpComponents, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 		treeComponents.addSelectionListener(new SelectionAdapter() {
@@ -495,28 +535,6 @@ public class FailureEventListGui extends Shell {
 		comboComponentsSelectByFieldsMatch.setBounds(363, 17, 110, 23);
 		comboComponentsSelectByFieldsMatch.select(0);
 		
-		btnComponentsSelectSub = new Button(grpComponents, SWT.NONE);
-		btnComponentsSelectSub.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				guiHandler.selectSubComponents();
-			}
-		});
-		btnComponentsSelectSub.setToolTipText("Will select all SubComponents of the currently selected component(s).");
-		btnComponentsSelectSub.setText("SubComponents");
-		btnComponentsSelectSub.setBounds(363, 306, 110, 25);
-		
-		btnComponentsSelectSuper = new Button(grpComponents, SWT.NONE);
-		btnComponentsSelectSuper.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				guiHandler.selectSuperComponents();
-			}
-		});
-		btnComponentsSelectSuper.setToolTipText("Will select all SubComponents of the currently selected component(s).");
-		btnComponentsSelectSuper.setText("SuperComponents");
-		btnComponentsSelectSuper.setBounds(247, 306, 110, 25);
-		
 		ToolBar toolBar = new ToolBar(grpComponents, SWT.FLAT | SWT.RIGHT);
 		toolBar.setBounds(205, 17, 152, 23);
 		
@@ -549,7 +567,30 @@ public class FailureEventListGui extends Shell {
 		});
 		tltmSelect_2.setToolTipText("Removes the matching component(s) from the selection.");
 		tltmSelect_2.setText("Select--");
-		grpComponents.setTabList(new Control[]{textComponentsSelectByFieldsMatch, treeComponents, btnComponentsTreeExpandAll, btnComponentsTreeCollapseAll});
+		
+		toolBar_2 = new ToolBar(grpComponents, SWT.FLAT | SWT.RIGHT);
+		toolBar_2.setBounds(263, 307, 210, 23);
+		
+		tltmSupercomponents = new ToolItem(toolBar_2, SWT.NONE);
+		tltmSupercomponents.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.selectSuperComponents();
+			}
+		});
+		tltmSupercomponents.setToolTipText("Will select all SuperComponents of the currently selected component(s).");
+		tltmSupercomponents.setText("SuperComponents");
+		
+		tltmSubcomponents = new ToolItem(toolBar_2, SWT.NONE);
+		tltmSubcomponents.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.selectSubComponents();
+			}
+		});
+		tltmSubcomponents.setToolTipText("Will select all SubComponents of the currently selected component(s).");
+		tltmSubcomponents.setText("SubComponents");
+		grpComponents.setTabList(new Control[]{textComponentsSelectByFieldsMatch, treeComponents});
 		textEventFilterByFieldsMatch.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 //				guiHandler.onTextFilterEventChanged(textFilterEventName.getText());
