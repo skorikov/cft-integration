@@ -30,6 +30,9 @@ import de.proskor.fel.ui.Fitlers.EventTypeContainerFilter;
 import de.proskor.fel.ui.Fitlers.EventTypeFilter;
 import de.proskor.fel.ui.GuiRepository.EventTypeContainerHandler;
 import de.proskor.fel.ui.GuiRepository.EventTypesHandler;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.custom.StyledText;
 
 public class FailureEventListGui extends Shell {
 	private final FailureEventList failureEventList;
@@ -38,9 +41,7 @@ public class FailureEventListGui extends Shell {
 	private final GuiHandler guiHandler;
 	
 	public Button btnClose;
-	public Text textNewEventsName;
 	public Text textEventFilterByFieldsMatch;
-	public Button btnCreateEvent;
 	public Text textComponentsSelectByFieldsMatch;
 
 	private TreeColumn trclmnComponentName;
@@ -53,7 +54,6 @@ public class FailureEventListGui extends Shell {
 	private TreeColumn treeColumnEventDescription;
 	private TreeColumn trclmnEventAuthor;
 	private TreeColumn treeColumnEventIdGuid;
-	private Button btnComponentsSelectByFieldsMatch;
 
 
 	private Tree treeEvents;
@@ -61,6 +61,11 @@ public class FailureEventListGui extends Shell {
 	private Combo comboComponentsSelectByFieldsMatch;
 	private Button btnComponentsSelectSub;
 	private Button btnComponentsSelectSuper;
+	private Group grpComponents;
+	private Group grpEvents;
+	private Text textCreateEventName;
+	private Text textCreateEventAuthor;
+	private Text textCreateEventComponent;
 
 	/**
 	 * @wbp.parser.constructor
@@ -72,6 +77,52 @@ public class FailureEventListGui extends Shell {
 		
 		this.failureEventList = failureEventList;
 		this.eventRepository = failureEventList.getRepository();
+		
+		Group grpCreateEvent = new Group(this, SWT.NONE);
+		grpCreateEvent.setText(" Create Event ");
+		grpCreateEvent.setBounds(10, 352, 974, 100);
+		
+		Label lblName = new Label(grpCreateEvent, SWT.NONE);
+		lblName.setText("Name:");
+		lblName.setBounds(10, 25, 41, 15);
+		
+		textCreateEventName = new Text(grpCreateEvent, SWT.BORDER);
+		textCreateEventName.setToolTipText("Name of the event to you wish to create.");
+		textCreateEventName.setBounds(83, 22, 320, 21);
+		
+		Button buttonCreateEventExec = new Button(grpCreateEvent, SWT.NONE);
+		buttonCreateEventExec.setText("Create Event");
+		buttonCreateEventExec.setBounds(854, 21, 110, 32);
+		
+		Label lblAuthor = new Label(grpCreateEvent, SWT.NONE);
+		lblAuthor.setText("Author:");
+		lblAuthor.setBounds(10, 49, 41, 15);
+		
+		textCreateEventAuthor = new Text(grpCreateEvent, SWT.BORDER);
+		textCreateEventAuthor.setToolTipText("Name of the event to you wish to create.");
+		textCreateEventAuthor.setBounds(83, 46, 320, 21);
+		
+		Button buttonCreateEventClearData = new Button(grpCreateEvent, SWT.NONE);
+		buttonCreateEventClearData.setText("Clear");
+		buttonCreateEventClearData.setBounds(854, 58, 110, 32);
+		
+		Label lblComponent = new Label(grpCreateEvent, SWT.NONE);
+		lblComponent.setText("Component:");
+		lblComponent.setBounds(10, 73, 67, 15);
+		
+		textCreateEventComponent = new Text(grpCreateEvent, SWT.BORDER);
+		textCreateEventComponent.setEnabled(false);
+		textCreateEventComponent.setEditable(false);
+		textCreateEventComponent.setToolTipText("Name of the event to you wish to create.");
+		textCreateEventComponent.setBounds(83, 70, 320, 21);
+		
+		Label lblDescription = new Label(grpCreateEvent, SWT.NONE);
+		lblDescription.setText("Description:");
+		lblDescription.setBounds(421, 25, 65, 15);
+		
+		StyledText textCreateEventDescription = new StyledText(grpCreateEvent, SWT.BORDER);
+		textCreateEventDescription.setBounds(492, 22, 350, 68);
+		setTabList(new Control[]{grpComponents, grpEvents, btnClose});
 		
 		guiHandler = new GuiHandler();
 		guiHandler.updateGui();
@@ -116,7 +167,7 @@ public class FailureEventListGui extends Shell {
 				treeComponents.select(treeComponents.getItem(0));
 		}
 		
-		public void selectContainerByFieldMatch() {
+		public void selectContainerByFieldMatch(boolean clearOldSelection) {
 			containerFilter.applyGuiFilterConfig();
 			
 			ArrayList<TreeItem> selection = new ArrayList<TreeItem>();
@@ -126,9 +177,34 @@ public class FailureEventListGui extends Shell {
 					selection.add(cItem);
 				}
 			}
+
+			if (!clearOldSelection) {
+				TreeItem[] oldSelection = treeComponents.getSelection(); 
+				ArrayList<TreeItem> oldSelectinList = DataUtils.treeItemArrayToList(oldSelection);
+				selection.addAll(oldSelectinList);
+			}
+			TreeItem[] selectionItems = DataUtils.treeItemListToArray(selection);
 			
-			TreeItem[] selectionItems = DataUtils.treeItemListToArray(selection);				
 			treeComponents.setSelection(selectionItems);
+		}
+		
+		public void unselectContainerByFieldMatch() {
+			containerFilter.applyGuiFilterConfig();
+			ArrayList<TreeItem> currentSelection = DataUtils.treeItemArrayToList(treeComponents.getSelection()); 
+			
+			ArrayList<TreeItem> unselection = new ArrayList<TreeItem>();
+			for (EventTypeContainer c : containerHandler.getContainers()) {
+				if (containerFilter.typeConformsToFilter(c)) {
+					TreeItem cItem = containerHandler.getTreeItemByType(c);
+					unselection.add(cItem);
+				}
+			}
+
+			for(TreeItem item : unselection)
+				currentSelection.remove(item);			
+			
+			TreeItem[] selectionArray = DataUtils.treeItemListToArray(currentSelection);
+			treeComponents.setSelection(selectionArray);
 		}
 
 		public void selectSubComponents() {
@@ -190,6 +266,10 @@ public class FailureEventListGui extends Shell {
 			
 			for(TreeItem item : items)
 				item.setExpanded(expanded);
+		}
+
+		public void componentTreeSelectionChanged() {
+			System.out.println("Changed!");
 		}
 	}
 	
@@ -286,40 +366,10 @@ public class FailureEventListGui extends Shell {
 				close();
 			}
 		});
-		btnClose.setBounds(886, 357, 98, 25);
+		btnClose.setBounds(886, 457, 98, 25);
 		btnClose.setText("Close");
 
-		Label lblNewEventsName = new Label(this, SWT.NONE);
-		lblNewEventsName.setBounds(10, 362, 72, 15);
-		lblNewEventsName.setText("Create Event:");
-
-		textNewEventsName = new Text(this, SWT.BORDER);
-		textNewEventsName.setToolTipText("Name of the event to you wish to create.");
-		//	textNewEventsName.addKeyListener(new KeyAdapter() {
-		//		@Override
-		//		public void keyPressed(KeyEvent e) {
-		//			// RETURN im Text-Feld 				
-		////			if (keyEventIsReturn(e))
-		//		}
-		//	});
-		textNewEventsName.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-//				guiHandler.onTextNewEventsNameChanged(textNewEventsName.getText());
-			}
-		});
-		textNewEventsName.setBounds(84, 359, 313, 21);
-
-		btnCreateEvent = new Button(this, SWT.NONE);
-		btnCreateEvent.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-			}
-		});
-		btnCreateEvent.setBounds(403, 357, 90, 25);
-		btnCreateEvent.setText("Create Event");
-
-		Group grpEvents = new Group(this, SWT.NONE);
+		grpEvents = new Group(this, SWT.NONE);
 		grpEvents.setText(" Events ");
 		grpEvents.setBounds(501, 10, 483, 341);
 
@@ -374,7 +424,7 @@ public class FailureEventListGui extends Shell {
 		btnDisplaySubcomponentEvents.setBounds(288, 312, 185, 16);
 		grpEvents.setTabList(new Control[]{textEventFilterByFieldsMatch, comboEventFilterMode, treeEvents, btnShowSupercomponentEvents, btnDisplaySubcomponentEvents});
 
-		Group grpComponents = new Group(this, SWT.NONE);
+		grpComponents = new Group(this, SWT.NONE);
 		grpComponents.setText(" Components ");
 		grpComponents.setBounds(10, 10, 483, 341);
 
@@ -399,6 +449,12 @@ public class FailureEventListGui extends Shell {
 		btnComponentsTreeExpandAll.setBounds(10, 306, 110, 25);
 
 		treeComponents = new Tree(grpComponents, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
+		treeComponents.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.componentTreeSelectionChanged();
+			}
+		});
 		treeComponents.setLinesVisible(true);
 		treeComponents.setHeaderVisible(true);
 		treeComponents.setBounds(10, 50, 463, 250);
@@ -424,25 +480,15 @@ public class FailureEventListGui extends Shell {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (keyEventIsReturn(e)) 
-					guiHandler.selectContainerByFieldMatch(); // Führt Button-OnClick aus. Kann man bei SWT nicht direkt über Button.onClick() machen.  -.- 
+					guiHandler.selectContainerByFieldMatch(true); // Führt Button-OnClick aus. Kann man bei SWT nicht direkt über Button.onClick() machen.  -.- 
 			}
 		});
 		textComponentsSelectByFieldsMatch.setToolTipText("Selects all components which match the specified name.");
-		textComponentsSelectByFieldsMatch.setBounds(40, 18, 221, 21);
+		textComponentsSelectByFieldsMatch.setBounds(40, 18, 159, 21);
 
 		Label lblFind = new Label(grpComponents, SWT.NONE);
 		lblFind.setBounds(10, 21, 55, 15);
 		lblFind.setText("Find:");
-		
-		btnComponentsSelectByFieldsMatch = new Button(grpComponents, SWT.NONE);
-		btnComponentsSelectByFieldsMatch.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				guiHandler.selectContainerByFieldMatch();
-			}
-		});
-		btnComponentsSelectByFieldsMatch.setBounds(267, 16, 90, 25);
-		btnComponentsSelectByFieldsMatch.setText("Select");
 		
 		comboComponentsSelectByFieldsMatch = new Combo(grpComponents, SWT.READ_ONLY);
 		comboComponentsSelectByFieldsMatch.setItems(new String[] {"[[ Any Field ]]", "Name", "Author", "Description", "ID", "GUID"});
@@ -470,8 +516,40 @@ public class FailureEventListGui extends Shell {
 		btnComponentsSelectSuper.setToolTipText("Will select all SubComponents of the currently selected component(s).");
 		btnComponentsSelectSuper.setText("SuperComponents");
 		btnComponentsSelectSuper.setBounds(247, 306, 110, 25);
+		
+		ToolBar toolBar = new ToolBar(grpComponents, SWT.FLAT | SWT.RIGHT);
+		toolBar.setBounds(205, 17, 152, 23);
+		
+		ToolItem tltmSelect = new ToolItem(toolBar, SWT.NONE);
+		tltmSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.selectContainerByFieldMatch(true);
+			}
+		});
+		tltmSelect.setToolTipText("Selects the specified component(s).");
+		tltmSelect.setText("Select");
+		
+		ToolItem tltmSelect_1 = new ToolItem(toolBar, SWT.NONE);
+		tltmSelect_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.selectContainerByFieldMatch(false);
+			}
+		});
+		tltmSelect_1.setToolTipText("Adds the matching component(s) to the selection.");
+		tltmSelect_1.setText("Select++");
+		
+		ToolItem tltmSelect_2 = new ToolItem(toolBar, SWT.NONE);
+		tltmSelect_2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				guiHandler.unselectContainerByFieldMatch();
+			}
+		});
+		tltmSelect_2.setToolTipText("Removes the matching component(s) from the selection.");
+		tltmSelect_2.setText("Select--");
 		grpComponents.setTabList(new Control[]{textComponentsSelectByFieldsMatch, treeComponents, btnComponentsTreeExpandAll, btnComponentsTreeCollapseAll});
-		setTabList(new Control[]{grpComponents, grpEvents, textNewEventsName, btnCreateEvent, btnClose});
 		textEventFilterByFieldsMatch.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 //				guiHandler.onTextFilterEventChanged(textFilterEventName.getText());
@@ -491,7 +569,7 @@ public class FailureEventListGui extends Shell {
 	 */
 	protected void createContents() {
 		setText("Failure Event List");
-		setSize(1000, 420);
+		setSize(1000, 520);
 	}
 
 	@Override
