@@ -49,9 +49,6 @@ class FELAdapterTests {
 
     assertEquals(1, etc1.getInstances.get(0).getEvents.size)
 
-    val eventType = etc1.createEvent("test")
-    assertEquals(2, etc1.getEvents.size)
-
     val dialog: FailureEventList = new FailureEventListImpl(er)
     dialog.showDialog
   }

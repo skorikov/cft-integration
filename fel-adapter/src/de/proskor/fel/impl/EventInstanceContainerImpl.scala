@@ -27,12 +27,6 @@ class EventInstanceContainerImpl(val peer: Element) extends EntityImpl(peer) wit
     events.toList
   }
 
-  override def createEvent(name: String): EventInstance = {
-    val event = peer.elements.add(name, "Object")
-    event.stereotype = "Event"
-    new EventInstanceImpl(event)
-  }
-
-  override def getChildren: JavaList[EventTypeContainer] = List() // TODO
-  override def getParent: EventTypeContainer = null // TODO
+  override def getChildren: JavaList[EventInstanceContainer] = List() // TODO
+  override def getParent: EventInstanceContainer = null // TODO
 }
