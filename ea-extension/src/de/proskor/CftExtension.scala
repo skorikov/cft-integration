@@ -56,6 +56,14 @@ class CftExtension extends ExtensionAdapter {
       new EpsilonShell
     }
 
+    item("Test") {
+      val repository = Repository.instance
+      val element = repository.models.head.packages.head.element
+      repository.write(element.name)
+      repository.write(element.parent.toString)
+      repository.write(element.pkg.name.toString)
+    }
+
     def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
 
     def createNode(diagram: Diagram, parent: Node, kid: Element) {
