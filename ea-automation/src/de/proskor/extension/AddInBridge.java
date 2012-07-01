@@ -37,7 +37,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Start the extension.
 	 */
 	@Override
-	public final void start() {
+	public void start() {
 		this.getExtension().start();
 	}
 
@@ -45,7 +45,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Stop the extension.
 	 */
 	@Override
-	public final void stop() {
+	public void stop() {
 		this.getExtension().stop();
 	}
 
@@ -53,7 +53,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Get the menu structure.
 	 */
 	@Override
-	public final String[] getMenuItems(IRepository repository, String location, String menu) {
+	public String[] getMenuItems(IRepository repository, String location, String menu) {
 		final MenuItem topMenuItem = this.getMenu();
 
 		if (menu.equals("")) {
@@ -85,7 +85,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Get menu items state.
 	 */
 	@Override
-	public final MenuState getMenuState(IRepository repository, String location, String menu, String item) {
+	public MenuState getMenuState(IRepository repository, String location, String menu, String item) {
 		final MenuItem topMenuItem = this.getMenu();
 		final MenuItem menuItem = this.findMenuItem(topMenuItem, menu, item);
 		return new MenuState(menuItem.isEnabled(), menuItem.isChecked());
@@ -95,7 +95,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Perform action on click.
 	 */
 	@Override
-	public final void menuItemClicked(IRepository repository, String location, String menu, String item) {
+	public void menuItemClicked(IRepository repository, String location, String menu, String item) {
 		final MenuItem topMenuItem = this.getMenu();
 		final MenuItem menuItem = this.findMenuItem(topMenuItem, menu, item);
 

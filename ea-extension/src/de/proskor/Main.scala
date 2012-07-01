@@ -4,7 +4,7 @@ import de.proskor.extension.AddInBridge
 import de.proskor.automation.impl.RepositoryImpl
 import cli.EA.IRepository
 
-class Main extends AddInBridge {
+class Main extends AddInBridge with ExceptionHandler {
   override def initialize(repository: IRepository) {
     RepositoryImpl.peer = repository
   }
