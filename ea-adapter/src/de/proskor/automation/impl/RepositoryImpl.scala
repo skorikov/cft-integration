@@ -43,6 +43,8 @@ object RepositoryImpl extends Repository {
     peer.ClearOutput(outputTab)
   }
 
+  def openDiagram(id: Int): Unit = peer.OpenDiagram(id)
+
   def getPackageById(id: Int): IPackage = peer.GetPackageByID(id).asInstanceOf[IPackage]
   def getDiagramById(id: Int): IDiagram = peer.GetDiagramByID(id).asInstanceOf[IDiagram]
   def getElementById(id: Int): IElement = peer.GetElementByID(id).asInstanceOf[IElement]

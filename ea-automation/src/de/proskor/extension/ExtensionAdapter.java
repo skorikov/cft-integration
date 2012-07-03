@@ -1,5 +1,7 @@
 package de.proskor.extension;
 
+import de.proskor.model.Repository;
+
 /**
  * A dummy implementation of the Extension interface.
  * Clients should refine this class and override the required methods.
@@ -8,6 +10,9 @@ public abstract class ExtensionAdapter implements Extension {
 	/** Stores the menu. */
 	private MenuItem menu = null;
 
+	/** Store the repository. */
+	private Repository repository = null;
+
 	/**
 	 * Create the menu.
 	 * This method is called when the extension is initialized.
@@ -15,9 +20,26 @@ public abstract class ExtensionAdapter implements Extension {
 	 */
 	protected abstract MenuItem createMenu();
 
+	/**
+	 * Get the current repository.
+	 * @return the current repository.
+	 */
+	protected Repository getRepository() {
+		return this.repository;
+	}
+
 	/** NOP */
 	@Override
 	public void start() {}
+
+	/**
+	 * Store the repository reference.
+	 * Clients should obtain the repository by calling the getReposotory method.
+	 */
+	@Override
+	public void initialize(Repository repository) {
+		this.repository = repository;
+	}
 
 	/** NOP */
 	@Override

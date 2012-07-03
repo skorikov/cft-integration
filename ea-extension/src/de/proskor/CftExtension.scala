@@ -28,6 +28,7 @@ import de.proskor.fel.view.ViewRepository
 import de.proskor.fel.view.ArchitecturalView
 import de.proskor.fel.view.ComponentFaultTree
 import de.proskor.fel.impl.ComponentFaultTreeImpl
+import de.proskor.fel.impl.ArchitecturalViewImpl
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -60,6 +61,10 @@ class CftExtension extends ExtensionAdapter {
       new EpsilonShell
     }
 
+    item("Write") {
+      this.getRepository().write("hello world")
+    }
+
     item("Test") {
       val repository = Repository.instance
       val vr: ViewRepository = new EventRepositoryImpl(repository)
@@ -77,7 +82,28 @@ class CftExtension extends ExtensionAdapter {
       }
     }
 
+    new MenuItemAdapter(menu, "Derive CFT") {
+      override def isVisible = Repository.instance.context match {
+        case Some(diagram: Diagram) if diagram.stereotype != "CFT" => true
+        case _ => false
+      }
+      override def invoke {
+        val repository = Repository.instance
+        val context = repository.context.get.asInstanceOf[Diagram]
+        val cft = context.pkg.diagrams.add(context.name + ".CFT", "ObjectDiagram")
+        cft.stereotype = "CFT"
+        val av = new ArchitecturalViewImpl(context)
+        new ComponentFaultTreeImpl(cft).setContext(av)
+        cft.open()
+      }
+    }
+
     new MenuItemAdapter(menu, "Available Components") {
+      override def isVisible = Repository.instance.diagram match {
+        case Some(diagram: Diagram) if diagram.stereotype == "CFT" => true
+        case _ => false
+      }
+      override def isEnabled = hasChildren
       override def getChildren: JavaList[MenuItem] = {
         val repository = Repository.instance
         val vr: ViewRepository = new EventRepositoryImpl(repository)
@@ -85,9 +111,8 @@ class CftExtension extends ExtensionAdapter {
         val diagram = repository.diagram.get
         val cft = new ComponentFaultTreeImpl(diagram)
         if (cft.getContext == null) return List()
-        for (container <- cft.getContext.getEventTypeContainers) yield new MenuItemAdapter(container.getName) {
-          
-        }
+        for (container <- cft.getContext.getEventTypeContainers)
+          yield new MenuItemAdapter(container.getName)
       }
     }
 

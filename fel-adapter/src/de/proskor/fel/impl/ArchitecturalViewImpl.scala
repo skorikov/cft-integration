@@ -6,7 +6,7 @@ import de.proskor.automation.Diagram
 import de.proskor.fel.container.EventTypeContainer
 import de.proskor.fel.view.ArchitecturalView
 
-class ArchitecturalViewImpl(diagram: Diagram) extends ViewImpl(diagram) with ArchitecturalView {
+class ArchitecturalViewImpl(val diagram: Diagram) extends ViewImpl(diagram) with ArchitecturalView {
   override def getEventTypeContainers: JavaList[EventTypeContainer] = {
     val list = for {
       node <- diagram.nodes

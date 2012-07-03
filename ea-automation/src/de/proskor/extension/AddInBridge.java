@@ -3,9 +3,11 @@ package de.proskor.extension;
 import java.util.LinkedList;
 import java.util.List;
 
+import cli.EA.IEventProperties;
 import cli.EA.IRepository;
 import de.proskor.automation.AddInAdapter;
 import de.proskor.automation.MenuState;
+import de.proskor.model.impl.RepositoryImpl;
 
 /**
  * Bridges the AddIn and the Extension interfaces.
@@ -39,6 +41,15 @@ public abstract class AddInBridge extends AddInAdapter {
 	@Override
 	public void start() {
 		this.getExtension().start();
+	}
+
+	/**
+	 * Initialize the repository.
+	 * Allow the configuration of the repository implementations.
+	 */
+	@Override
+	public void initialize(IRepository repository) {
+		this.getExtension().initialize(new RepositoryImpl(repository));
 	}
 
 	/**
@@ -100,6 +111,30 @@ public abstract class AddInBridge extends AddInAdapter {
 		final MenuItem menuItem = this.findMenuItem(topMenuItem, menu, item);
 
 		menuItem.invoke();
+	}
+
+	/**
+	 * TODO
+	 */
+	@Override
+	public boolean deleteElement(IRepository repository, IEventProperties properties) {
+		return true;
+	}
+
+	/**
+	 * TODO
+	 */
+	@Override
+	public boolean deletePackage(IRepository repository, IEventProperties properties) {
+		return true;
+	}
+
+	/**
+	 * TODO
+	 */
+	@Override
+	public boolean deleteDiagram(IRepository repository, IEventProperties properties) {
+		return true;
 	}
 
 	/**

@@ -35,6 +35,7 @@ class ComponentFaultTreeImpl(diagram: Diagram) extends ViewImpl(diagram) with Co
     pkg.diagrams.toSeq ++ pkg.packages.flatMap(allDiagrams)
 
   override def setContext(context: ArchitecturalView) {
-    
+    val tv = fel.element.taggedValues.add("context", "TaggedValue")
+    tv.value = diagram.id.toString + ":" + context.asInstanceOf[ArchitecturalViewImpl].diagram.id.toString
   }
 }

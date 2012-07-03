@@ -1,5 +1,6 @@
 package de.proskor.automation;
 
+import cli.EA.IEventProperties;
 import cli.EA.IRepository;
 
 /**
@@ -59,4 +60,28 @@ public interface AddIn {
 	 * @param item passed by EA.
 	 */
 	public void menuItemClicked(IRepository repository, String location, String menu, String item);
+
+	/**
+	 * Called before deletion of an element.
+	 * @param repository passed by EA.
+	 * @param properties passed by EA.
+	 * @return true to permit deletion of the diagram, false otherwise.
+	 */
+	public boolean deleteElement(IRepository repository, IEventProperties properties);
+
+	/**
+	 * Called before deletion of a package.
+	 * @param repository passed by EA.
+	 * @param properties passed by EA.
+	 * @return true to permit deletion of the diagram, false otherwise.
+	 */
+	public boolean deletePackage(IRepository repository, IEventProperties properties);
+
+	/**
+	 * Called before deletion of a diagram.
+	 * @param repository passed by EA.
+	 * @param properties passed by EA.
+	 * @return true to permit deletion of the diagram, false otherwise.
+	 */
+	public boolean deleteDiagram(IRepository repository, IEventProperties properties);
 }

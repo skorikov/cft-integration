@@ -6,6 +6,7 @@ import cli.EA.IRepository
 
 class Main extends AddInBridge with ExceptionHandler {
   override def initialize(repository: IRepository) {
+    super.initialize(repository)
     RepositoryImpl.peer = repository
   }
 
