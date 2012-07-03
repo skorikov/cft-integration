@@ -24,6 +24,10 @@ import de.proskor.fel.ui.FailureEventListImpl
 import de.proskor.fel.EventRepository
 import de.proskor.shell.EpsilonShell
 import de.proskor.fel.ui.FailureEventList
+import de.proskor.fel.view.ViewRepository
+import de.proskor.fel.view.ArchitecturalView
+import de.proskor.fel.view.ComponentFaultTree
+import de.proskor.fel.impl.ComponentFaultTreeImpl
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -58,10 +62,33 @@ class CftExtension extends ExtensionAdapter {
 
     item("Test") {
       val repository = Repository.instance
-      val element = repository.models.head.packages.head.element
-      repository.write(element.name)
-      repository.write(element.parent.toString)
-      repository.write(element.pkg.name.toString)
+      val vr: ViewRepository = new EventRepositoryImpl(repository)
+      for (view <- vr.getViews) view match {
+        case cft: ComponentFaultTree => {
+          repository.write("CFT: " + cft.getName)
+          repository.write("--CONTEXT: " + cft.getContext.getName)
+        }
+        case av: ArchitecturalView => {
+          repository.write("AV: " + av.getName)
+          for (etc <- av.getEventTypeContainers) {
+            repository.write("--ETC: " + etc.getName)
+          }
+        }
+      }
+    }
+
+    new MenuItemAdapter(menu, "Available Components") {
+      override def getChildren: JavaList[MenuItem] = {
+        val repository = Repository.instance
+        val vr: ViewRepository = new EventRepositoryImpl(repository)
+        if (repository.diagram.isEmpty) return List()
+        val diagram = repository.diagram.get
+        val cft = new ComponentFaultTreeImpl(diagram)
+        if (cft.getContext == null) return List()
+        for (container <- cft.getContext.getEventTypeContainers) yield new MenuItemAdapter(container.getName) {
+          
+        }
+      }
     }
 
     def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
