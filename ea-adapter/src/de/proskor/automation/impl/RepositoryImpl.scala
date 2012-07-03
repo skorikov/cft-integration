@@ -18,6 +18,8 @@ object RepositoryImpl extends Repository {
 
   override def context: Option[Identity] = peer.GetContextItemType.Value match {
     case ObjectType.otElement => Some(new ElementImpl(peer.GetContextObject.asInstanceOf[IElement]))
+    case ObjectType.otPackage => Some(new PackageImpl(peer.GetContextObject.asInstanceOf[IPackage]))
+    case ObjectType.otDiagram => Some(new DiagramImpl(peer.GetContextObject.asInstanceOf[IDiagram]))
     case _ => None
   }
 
