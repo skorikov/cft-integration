@@ -17,26 +17,35 @@ public class RepositoryImpl implements Repository {
 	/** Output. */
 	private Writable output = null;
 
+	/** Default output tab. */
+	private final static String TAB = "OUT";
+
+	/**
+	 * Represents an output tab in EA.
+	 * Multiple output tabs can be created.
+	 */
 	private class Output implements Writable {
-		/** Output tab. */
-		private final static String TAB = "OUT";
+		/** Tab name. */
+		private String tab = null;
 
 		/**
 		 * Constructor.
+		 * Store the tab name.
 		 */
-		public Output() {
-			RepositoryImpl.this.getPeer().CreateOutputTab(Output.TAB);
-			RepositoryImpl.this.getPeer().EnsureOutputVisible(Output.TAB);
+		public Output(String tab) {
+			this.tab = tab;
+			RepositoryImpl.this.getPeer().CreateOutputTab(tab);
+			RepositoryImpl.this.getPeer().EnsureOutputVisible(tab);
 		}
 
 		@Override
 		public void write(String text) {
-			RepositoryImpl.this.getPeer().WriteOutput(Output.TAB, text, 0);
+			RepositoryImpl.this.getPeer().WriteOutput(this.tab, text, 0);
 		}
 
 		@Override
 		public void clear() {
-			RepositoryImpl.this.getPeer().ClearOutput(Output.TAB);
+			RepositoryImpl.this.getPeer().ClearOutput(this.tab);
 		}	
 	}
 
@@ -62,7 +71,7 @@ public class RepositoryImpl implements Repository {
 	 */
 	private Writable getOutput() {
 		if (this.output == null)
-			this.output = new Output();
+			this.output = new Output(RepositoryImpl.TAB);
 
 		return this.output;
 	}
