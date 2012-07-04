@@ -1,12 +1,16 @@
 package de.proskor.model.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cli.EA.ICollection;
+import cli.EA.IElement;
 import cli.EA.IPackage;
 import cli.EA.IRepository;
 import de.proskor.model.Collection;
-import de.proskor.model.Model;
+import de.proskor.model.Element;
+import de.proskor.model.Package;
 import de.proskor.model.Repository;
-import de.proskor.model.Writable;
 
 /**
  * Repository implementation based on the Automation Interface.
@@ -17,41 +21,45 @@ public class RepositoryImpl implements Repository {
 	private IRepository peer = null;
 
 	/** Models cache. */
-	private Collection<Model> models = null;
+	private Collection<Package> models = null;
 
-	/** Output. */
-	private Writable output = null;
+	/** Global packages cache. */
+	private Map<Integer, Package> packageCache = new HashMap<Integer, Package>();
 
-	/** Default output tab. */
-	private final static String TAB = "OUT";
+	/** Global elements cache. */
+	private Map<Integer, Element> elementCache = new HashMap<Integer, Element>();
 
 	/**
 	 * Represents an output tab in EA.
 	 * Multiple output tabs can be created.
 	 */
-	private class Output implements Writable {
+	private class OutputTabImpl implements OutputTab {
 		/** Tab name. */
-		private String tab = null;
+		private String name = null;
 
 		/**
 		 * Constructor.
 		 * Store the tab name.
 		 */
-		public Output(String tab) {
-			this.tab = tab;
-			RepositoryImpl.this.peer.CreateOutputTab(tab);
-			RepositoryImpl.this.peer.EnsureOutputVisible(tab);
+		public OutputTabImpl(String name) {
+			this.name = name;
+			RepositoryImpl.this.peer.CreateOutputTab(this.name);
 		}
 
 		@Override
 		public void write(String text) {
-			RepositoryImpl.this.peer.WriteOutput(this.tab, text, 0);
+			RepositoryImpl.this.peer.EnsureOutputVisible(this.name);
+			RepositoryImpl.this.peer.WriteOutput(this.name, text, 0);
 		}
 
 		@Override
 		public void clear() {
-			RepositoryImpl.this.peer.ClearOutput(this.tab);
-		}	
+			RepositoryImpl.this.peer.ClearOutput(this.name);
+		}
+
+		public void close() {
+			RepositoryImpl.this.peer.RemoveOutputTab(this.name);
+		}
 	}
 
 	/**
@@ -66,40 +74,57 @@ public class RepositoryImpl implements Repository {
 	 * Get output.
 	 * @return output.
 	 */
-	private Writable getOutput() {
-		if (this.output == null)
-			this.output = new Output(RepositoryImpl.TAB);
-
-		return this.output;
+	@Override
+	public OutputTab getOutputTab(String name) {
+		return new OutputTabImpl(name);
 	}
 
 	@Override
-	public void write(String text) {
-		this.getOutput().write(text);
-	}
-
-	@Override
-	public void clear() {
-		this.getOutput().clear();
-	}
-
-	@Override
-	public Collection<Model> getModels() {
+	public Collection<Package> getModels() {
 		if (this.models == null) {
 			final ICollection models = (ICollection) this.peer.get_Models();
-			this.models = new CollectionImpl<Model, IPackage>(models) {
+			this.models = new CollectionImpl<Package, IPackage>(models) {
 				@Override
-				protected int getId(IPackage element) {
-					return element.get_PackageID();
+				protected boolean matches(IPackage object, Package element) {
+					return object.get_PackageID() == element.getId();
 				}
 	
 				@Override
-				protected Model create(ICollection collection, IPackage element) {
-					return new ModelImpl(element);
+				protected Package create(ICollection collection, IPackage element) {
+					element.Update();
+					collection.Refresh();
+					return new PackageImpl(element, null, RepositoryImpl.this);
 				}
 			};
 		}
 
 		return this.models;
+	}
+
+	Element getElementById(int id) {
+		final Element cached = this.elementCache.get(id);
+		if (cached != null)
+			return cached;
+
+		final IElement element = (IElement) this.peer.GetElementByID(id);
+		final Element parent = this.getElementById(element.get_ParentID());
+		final Package pkg = this.getPackageById(element.get_PackageID());
+		final Element result = new ElementImpl(element, parent, pkg);
+		this.elementCache.put(id, result);
+
+		return result;
+	}
+
+	Package getPackageById(int id) {
+		final Package cached = this.packageCache.get(id);
+		if (cached != null)
+			return cached;
+
+		final IPackage pkg = (IPackage) this.peer.GetPackageByID(id);
+		final Package parent = this.getPackageById(pkg.get_ParentID());
+		final Package result = new PackageImpl(pkg, parent, this);
+		this.packageCache.put(id, result);
+
+		return result;
 	}
 }

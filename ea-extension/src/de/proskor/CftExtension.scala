@@ -63,14 +63,19 @@ class CftExtension extends ExtensionAdapter {
 
     item("Write") {
       val repository = this.getRepository();
+      val output = repository.getOutputTab("TEST");
       val models = repository.getModels();
       val iterator = models.iterator();
       while (iterator.hasNext()) {
         val model = iterator.next();
-        val pkg = model.getPackages().get(0);
-        val np = pkg.getPackages().add("Test", "Package");
-        if (pkg.getPackages().contains(np)) {
-          repository.write("success")
+        var it = model.getPackages().iterator();
+        while (it.hasNext()) {
+          val pkg = it.next();
+          val di = pkg.getDiagrams().iterator();
+          while (di.hasNext()) {
+            val diagram = di.next();
+            output.write(diagram.getName());
+          }
         }
       }
     }

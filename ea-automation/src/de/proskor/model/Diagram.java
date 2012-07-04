@@ -1,6 +1,6 @@
 package de.proskor.model;
 
-public interface Package {
+public interface Diagram {
 	int getId();
 	String getGuid();
 
@@ -10,11 +10,9 @@ public interface Package {
 	String getDescription();
 	void setDescription(String description);
 
-	Element getElement();
-	Package getParent();
-	Collection<Package> getPackages();
-	Collection<Diagram> getDiagrams();
-
 	String getStereotype();
 	void setStereotype(String stereotype);
+
+	Package getPackage();
+	Collection<Node> getNodes();
 }

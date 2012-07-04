@@ -1,19 +1,24 @@
 package de.proskor.model.impl;
 
 import cli.EA.ICollection;
+import cli.EA.IDiagram;
 import cli.EA.IPackage;
 import de.proskor.model.Collection;
-import de.proskor.model.Container;
+import de.proskor.model.Diagram;
+import de.proskor.model.Element;
 import de.proskor.model.Package;
 
 public class PackageImpl implements Package {
 	private final IPackage peer;
-	private final Container parent;
+	private final Package parent;
+	private final RepositoryImpl repository;
 	private Collection<Package> packages = null;
+	private Collection<Diagram> diagrams = null;
 
-	public PackageImpl(IPackage peer, Container parent) {
+	public PackageImpl(IPackage peer, Package parent, RepositoryImpl repository) {
 		this.peer = peer;
 		this.parent = parent;
+		this.repository = repository;
 	}
 	
 	@Override
@@ -57,7 +62,12 @@ public class PackageImpl implements Package {
 	}
 
 	@Override
-	public Container getParent() {
+	public Element getElement() {
+		return null;
+	}
+
+	@Override
+	public Package getParent() {
 		return this.parent;
 	}
 
@@ -67,19 +77,41 @@ public class PackageImpl implements Package {
 			final ICollection packages = (ICollection) this.peer.get_Packages();
 			this.packages = new CollectionImpl<Package, IPackage>(packages) {
 				@Override
-				protected int getId(IPackage element) {
-					return element.get_PackageID();
+				protected boolean matches(IPackage object, Package element) {
+					return object.get_PackageID() == element.getId();
 				}
 	
 				@Override
 				protected Package create(ICollection collection, IPackage element) {
 					element.Update();
 					collection.Refresh();
-					return new PackageImpl(element, PackageImpl.this);
+					return new PackageImpl(element, PackageImpl.this, PackageImpl.this.repository);
 				}
 			};
 		}
 		
 		return this.packages;
+	}
+
+	@Override
+	public Collection<Diagram> getDiagrams() {
+		if (this.diagrams == null) {
+			final ICollection diagrams = (ICollection) this.peer.get_Diagrams();
+			this.diagrams = new CollectionImpl<Diagram, IDiagram>(diagrams) {
+				@Override
+				protected boolean matches(IDiagram object, Diagram element) {
+					return object.get_DiagramID() == element.getId();
+				}
+	
+				@Override
+				protected Diagram create(ICollection collection, IDiagram element) {
+					element.Update();
+					collection.Refresh();
+					return new DiagramImpl(element, PackageImpl.this);
+				}
+			};
+		}
+		
+		return this.diagrams;
 	}
 }

@@ -1,6 +1,6 @@
 package de.proskor.model;
 
-public interface Collection<T extends Identity> extends Iterable<T> {
+public interface Collection<T> extends Iterable<T> {
 	public int size();
 	public boolean isEmpty();
 	public void clear();
