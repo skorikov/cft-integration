@@ -11,11 +11,13 @@ import de.proskor.model.Package;
 public class DiagramImpl implements Diagram {
 	private final IDiagram peer;
 	private final Package pkg;
+	private final RepositoryImpl repository;
 	private Collection<Node> nodes = null;
 
-	public DiagramImpl(IDiagram peer, Package pkg) {
+	public DiagramImpl(IDiagram peer, Package pkg, RepositoryImpl repository) {
 		this.peer = peer;
 		this.pkg = pkg;
+		this.repository = repository;
 	}
 	
 	@Override
@@ -75,11 +77,9 @@ public class DiagramImpl implements Diagram {
 	
 				@Override
 				protected Node create(ICollection collection, IDiagramObject element) {
-					// TODO
-					return null;
-				/*	element.Update();
-					collection.Refresh();
-					return new ElementImpl(element, ElementImpl.this, ElementImpl.this.pkg);*/
+				//	element.Update();
+				//	collection.Refresh();
+					return new NodeImpl(element, DiagramImpl.this, repository);
 				}
 			};
 		}

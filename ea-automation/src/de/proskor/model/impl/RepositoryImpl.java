@@ -107,7 +107,12 @@ public class RepositoryImpl implements Repository {
 			return cached;
 
 		final IElement element = (IElement) this.peer.GetElementByID(id);
-		final Element parent = this.getElementById(element.get_ParentID());
+
+		Element parent = null;
+		final int parentId = element.get_ParentID();
+		if (parentId != 0)
+			parent = this.getElementById(parentId);
+
 		final Package pkg = this.getPackageById(element.get_PackageID());
 		final Element result = new ElementImpl(element, parent, pkg);
 		this.elementCache.put(id, result);
@@ -121,7 +126,12 @@ public class RepositoryImpl implements Repository {
 			return cached;
 
 		final IPackage pkg = (IPackage) this.peer.GetPackageByID(id);
-		final Package parent = this.getPackageById(pkg.get_ParentID());
+
+		Package parent = null;
+		final int parentId = pkg.get_ParentID();
+		if (parentId != 0)
+			parent = this.getPackageById(parentId);
+
 		final Package result = new PackageImpl(pkg, parent, this);
 		this.packageCache.put(id, result);
 

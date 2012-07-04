@@ -75,6 +75,11 @@ class CftExtension extends ExtensionAdapter {
           while (di.hasNext()) {
             val diagram = di.next();
             output.write(diagram.getName());
+            val ni = diagram.getNodes().iterator();
+            while (ni.hasNext()) {
+              val node = ni.next();
+              output.write(node.getElement().getName() + " (" + node.getLeft() + "," + node.getTop() + "," + node.getWidth() + "," + node.getHeight() + "|" + node.getSequence() + ")");
+            }
           }
         }
       }

@@ -107,7 +107,7 @@ public class PackageImpl implements Package {
 				protected Diagram create(ICollection collection, IDiagram element) {
 					element.Update();
 					collection.Refresh();
-					return new DiagramImpl(element, PackageImpl.this);
+					return new DiagramImpl(element, PackageImpl.this, PackageImpl.this.repository);
 				}
 			};
 		}
