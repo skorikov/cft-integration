@@ -55,7 +55,7 @@ public class FailureEventListImpl implements FailureEventList {
 		EventRepository rep = new EventRepositoryImpl();
 
 		for(int i=0; i<5; i++) {
-			EventTypeContainer dummyContainer = createDummyComponent("Dummy["+i+"]", null, 4, 3, 5);
+			EventTypeContainer dummyContainer = createDummyComponent("component ["+i+"]", null, 4, 3, 5);
 			rep.getEventTypeContainers().add(dummyContainer);
 		}
 		
