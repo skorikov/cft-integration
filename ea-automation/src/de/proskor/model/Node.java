@@ -9,11 +9,11 @@ public interface Node {
 	int getTop();
 	void setTop(int top);
 
-	int getWidth();
-	void setWidth(int width);
+	int getRight();
+	void setRight(int right);
 
-	int getHeight();
-	void setHeight(int height);
+	int getBottom();
+	void setBottom(int bottom);
 
 	int getSequence();
 	void setSequence(int sequence);

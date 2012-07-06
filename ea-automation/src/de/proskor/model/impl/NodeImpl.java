@@ -52,23 +52,23 @@ public class NodeImpl implements Node {
 	}
 
 	@Override
-	public int getWidth() {
-		return this.peer.get_right() - this.peer.get_left();
+	public int getRight() {
+		return this.peer.get_right();
 	}
 
 	@Override
-	public void setWidth(int width) {
-		this.peer.set_right(this.peer.get_left() + width);
+	public void setRight(int right) {
+		this.peer.set_right(right);
 	}
 
 	@Override
-	public int getHeight() {
-		return this.peer.get_top() - this.peer.get_bottom();
+	public int getBottom() {
+		return -this.peer.get_bottom();
 	}
 
 	@Override
-	public void setHeight(int height) {
-		this.peer.set_bottom(this.peer.get_top() - height);
+	public void setBottom(int bottom) {
+		this.peer.set_bottom(-bottom);
 	}
 
 	@Override
