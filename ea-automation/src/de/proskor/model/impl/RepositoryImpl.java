@@ -29,6 +29,9 @@ public class RepositoryImpl implements Repository {
 	/** Global elements cache. */
 	private Map<Integer, Element> elementCache = new HashMap<Integer, Element>();
 
+	/** Output tabs. */
+	private Map<String, OutputTab> outputCache = new HashMap<String, OutputTab>();
+
 	/**
 	 * Represents an output tab in EA.
 	 * Multiple output tabs can be created.
@@ -36,6 +39,9 @@ public class RepositoryImpl implements Repository {
 	private class OutputTabImpl implements OutputTab {
 		/** Tab name. */
 		private String name = null;
+
+		/** Tab status. */
+		private boolean closed = false;
 
 		/**
 		 * Constructor.
@@ -48,17 +54,25 @@ public class RepositoryImpl implements Repository {
 
 		@Override
 		public void write(String text) {
+			if (this.closed)
+				throw new IllegalStateException("Output tab '" + this.name + "' has been closed.");
+
 			RepositoryImpl.this.peer.EnsureOutputVisible(this.name);
 			RepositoryImpl.this.peer.WriteOutput(this.name, text, 0);
 		}
 
 		@Override
 		public void clear() {
+			if (this.closed)
+				throw new IllegalStateException("Output tab '" + this.name + "' has been closed.");			
+
 			RepositoryImpl.this.peer.ClearOutput(this.name);
 		}
 
 		public void close() {
+			this.closed = true;
 			RepositoryImpl.this.peer.RemoveOutputTab(this.name);
+			RepositoryImpl.this.outputCache.remove(this.name);
 		}
 	}
 
@@ -76,7 +90,14 @@ public class RepositoryImpl implements Repository {
 	 */
 	@Override
 	public OutputTab getOutputTab(String name) {
-		return new OutputTabImpl(name);
+		final OutputTab cached = this.outputCache.get(name);
+		if (cached != null)
+			return cached;
+
+		final OutputTab result = new OutputTabImpl(name);
+		this.outputCache.put(name, result);
+
+		return result;
 	}
 
 	@Override
