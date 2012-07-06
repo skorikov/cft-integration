@@ -14,31 +14,6 @@ public class FailureEventListImpl implements FailureEventList {
 		this.felGui = new FailureEventListGui(this);
 	}
 	
-//	public EventTypeContainer getEventTypeContainerByGuid(String guid) {
-//		for(EventTypeContainer container : eventRepository.getEventTypeContainers()) 
-//			if (container.getGuid().equals(guid))
-//				return container;
-//		
-//		return null;
-//	}	
-//	public EventTypeContainer getEventTypeContainerById(int id) {
-//		for(EventTypeContainer container : eventRepository.getEventTypeContainers()) 
-//			if (container.getId() == id)
-//				return container;
-//		
-//		return null;
-//	}
-	
-//	/**
-//	 * Create {@link EventInstanceContainerImpl EventCFTs} containing the {@link EventInstanceImpl EventInstances}
-//	 * and add them here. Call {@link #showEventList()} to open the GUI and get the <i>Events</i>
-//	 * and <i>EventInstances</i> created by the User (if any). 
-//	 * @param eventCft
-//	 */
-//	public void addEventCFT(EventInstanceContainer eventCft) {
-//		felGuiHandler.addEventCFT(eventCft);
-//	}
-	
 	private static void setEntityStubData(Entity entity, String name) {
 		EntityImpl entityImpl = (EntityImpl) entity;
 		
@@ -80,7 +55,7 @@ public class FailureEventListImpl implements FailureEventList {
 		EventRepository rep = new EventRepositoryImpl();
 
 		for(int i=0; i<5; i++) {
-			EventTypeContainer dummyContainer = createDummyComponent("Dummy["+i+"]", null, 4, 3, 5);
+			EventTypeContainer dummyContainer = createDummyComponent("component ["+i+"]", null, 4, 3, 5);
 			rep.getEventTypeContainers().add(dummyContainer);
 		}
 		
