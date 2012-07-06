@@ -4,6 +4,7 @@ import de.proskor.automation._
 import de.proskor.automation.impl.collections._
 import cli.EA.IPackage
 import cli.EA.ICollection
+import cli.EA.IElement
 
 class PackageImpl(peer: IPackage) extends Package {
   override def id: Int = peer.get_PackageID
@@ -21,6 +22,8 @@ class PackageImpl(peer: IPackage) extends Package {
     peer.set_Notes(description)
     peer.Update()
   }
+
+  override def element: Element = new ElementImpl(peer.get_Element.asInstanceOf[IElement])
 
   override def packages: Collection[Package] = new PackageCollection(peer.get_Packages.asInstanceOf[ICollection])
   override def elements: Collection[Element] = new ElementCollection(peer.get_Elements.asInstanceOf[ICollection])

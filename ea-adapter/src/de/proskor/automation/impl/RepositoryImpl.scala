@@ -18,6 +18,8 @@ object RepositoryImpl extends Repository {
 
   override def context: Option[Identity] = peer.GetContextItemType.Value match {
     case ObjectType.otElement => Some(new ElementImpl(peer.GetContextObject.asInstanceOf[IElement]))
+    case ObjectType.otPackage => Some(new PackageImpl(peer.GetContextObject.asInstanceOf[IPackage]))
+    case ObjectType.otDiagram => Some(new DiagramImpl(peer.GetContextObject.asInstanceOf[IDiagram]))
     case _ => None
   }
 
@@ -40,6 +42,8 @@ object RepositoryImpl extends Repository {
   override def clear() = withInitializedOutput {
     peer.ClearOutput(outputTab)
   }
+
+  def openDiagram(id: Int): Unit = peer.OpenDiagram(id)
 
   def getPackageById(id: Int): IPackage = peer.GetPackageByID(id).asInstanceOf[IPackage]
   def getDiagramById(id: Int): IDiagram = peer.GetDiagramByID(id).asInstanceOf[IDiagram]

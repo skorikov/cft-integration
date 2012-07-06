@@ -3,7 +3,7 @@ package de.proskor.fel.impl
 import de.proskor.automation.Element
 import de.proskor.fel.Entity;
 
-class EntityImpl(peer: Element) extends Entity {
+abstract class EntityImpl(peer: Element) extends Entity {
   override def getId: Int = peer.id
   override def getGuid: String = peer.guid
   override def getName: String = peer.name

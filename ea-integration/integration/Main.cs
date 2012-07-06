@@ -97,6 +97,27 @@ namespace de.proskor.integration {
 		public void EA_MenuClick(IRepository repository, String location, String menu, String item) {
 			this.addin.menuItemClicked(repository, location, menu, item);
 		}
+
+		/**
+		 * Called when an element is being deleted.
+		 */
+		public bool EA_OnPreDeleteElement(IRepository repository, IEventProperties properties) {
+			return this.addin.deleteElement(repository, properties);
+		}
+
+		/**
+		 * Called when a package is being deleted.
+		 */
+		public bool EA_OnPreDeletePackage(IRepository repository, IEventProperties properties) {
+			return this.addin.deletePackage(repository, properties);
+		}
+
+		/**
+		 * Called when a diagram is being deleted.
+		 */
+		public bool EA_OnPreDeleteDiagram(IRepository repository, IEventProperties properties) {
+			return this.addin.deleteDiagram(repository, properties);
+		}
 	}
 }
 

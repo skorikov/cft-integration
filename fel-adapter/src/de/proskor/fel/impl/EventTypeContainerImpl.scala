@@ -29,7 +29,7 @@ class EventTypeContainerImpl(val peer: Element) extends EntityImpl(peer) with Ev
     instances.toList
   }
 
-  override def createEvent(name: String): EventType = {
+  override def createEventType(name: String): EventType = {
     val repository = Repository.instance
     val model = repository.models.headOption getOrElse repository.models.add("Model", "Package")
     val fel = model.packages.find(_.name == "FEL") getOrElse model.packages.add("FEL", "Package")

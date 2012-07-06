@@ -3,9 +3,11 @@ package de.proskor.extension;
 import java.util.LinkedList;
 import java.util.List;
 
+import cli.EA.IEventProperties;
 import cli.EA.IRepository;
 import de.proskor.automation.AddInAdapter;
 import de.proskor.automation.MenuState;
+import de.proskor.model.impl.RepositoryImpl;
 
 /**
  * Bridges the AddIn and the Extension interfaces.
@@ -37,15 +39,24 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Start the extension.
 	 */
 	@Override
-	public final void start() {
+	public void start() {
 		this.getExtension().start();
+	}
+
+	/**
+	 * Initialize the repository.
+	 * Allow the configuration of the repository implementations.
+	 */
+	@Override
+	public void initialize(IRepository repository) {
+		this.getExtension().initialize(new RepositoryImpl(repository));
 	}
 
 	/**
 	 * Stop the extension.
 	 */
 	@Override
-	public final void stop() {
+	public void stop() {
 		this.getExtension().stop();
 	}
 
@@ -53,7 +64,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Get the menu structure.
 	 */
 	@Override
-	public final String[] getMenuItems(IRepository repository, String location, String menu) {
+	public String[] getMenuItems(IRepository repository, String location, String menu) {
 		final MenuItem topMenuItem = this.getMenu();
 
 		if (menu.equals("")) {
@@ -85,7 +96,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Get menu items state.
 	 */
 	@Override
-	public final MenuState getMenuState(IRepository repository, String location, String menu, String item) {
+	public MenuState getMenuState(IRepository repository, String location, String menu, String item) {
 		final MenuItem topMenuItem = this.getMenu();
 		final MenuItem menuItem = this.findMenuItem(topMenuItem, menu, item);
 		return new MenuState(menuItem.isEnabled(), menuItem.isChecked());
@@ -95,11 +106,35 @@ public abstract class AddInBridge extends AddInAdapter {
 	 * Perform action on click.
 	 */
 	@Override
-	public final void menuItemClicked(IRepository repository, String location, String menu, String item) {
+	public void menuItemClicked(IRepository repository, String location, String menu, String item) {
 		final MenuItem topMenuItem = this.getMenu();
 		final MenuItem menuItem = this.findMenuItem(topMenuItem, menu, item);
 
 		menuItem.invoke();
+	}
+
+	/**
+	 * TODO
+	 */
+	@Override
+	public boolean deleteElement(IRepository repository, IEventProperties properties) {
+		return true;
+	}
+
+	/**
+	 * TODO
+	 */
+	@Override
+	public boolean deletePackage(IRepository repository, IEventProperties properties) {
+		return true;
+	}
+
+	/**
+	 * TODO
+	 */
+	@Override
+	public boolean deleteDiagram(IRepository repository, IEventProperties properties) {
+		return true;
 	}
 
 	/**

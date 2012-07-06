@@ -19,9 +19,18 @@ class DiagramImpl(peer: IDiagram) extends Diagram {
   }
 
   override def stereotype: String = peer.get_Stereotype.asInstanceOf[String]
-  override def stereotype_=(stereotype: String): Unit = peer.set_Stereotype(stereotype)
+  override def stereotype_=(stereotype: String): Unit = {
+    peer.set_Stereotype(stereotype)
+    peer.Update()
+  }
+
+  override def open() {
+    RepositoryImpl.openDiagram(peer.get_DiagramID)
+  }
 
   override def nodes: Collection[Node] = new NodeCollection(peer.get_DiagramObjects.asInstanceOf[ICollection])
+
+  override def pkg: Package = new PackageImpl(RepositoryImpl.getPackageById(peer.get_PackageID))
 
   override def equals(that: Any): Boolean = that match {
     case diagram: Diagram => id == diagram.id
