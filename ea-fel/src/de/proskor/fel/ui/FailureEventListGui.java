@@ -12,6 +12,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -63,6 +66,7 @@ public class FailureEventListGui extends Shell {
 	private Combo comboComponentsSelectByFieldsMatch;
 	private Group grpComponents;
 	private Group grpEvents;
+	private Group grpInfos;
 	private Text textCreateEventName;
 	private Text textCreateEventAuthor;
 	private Text textCreateEventComponent;
@@ -84,12 +88,13 @@ public class FailureEventListGui extends Shell {
 	private Label lblStatusEventsVisibleCount;
 	private Label lblComponentsSelectedCount;
 	private Button btnComponentsReload;
+	private Group grpCreateEvent;
 	
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public FailureEventListGui(FailureEventList failureEventList) {
-		super(SWT.CLOSE | SWT.MIN | SWT.TITLE);
+		super(SWT.SHELL_TRIM);
 		
 		createComponents();
 		
@@ -193,8 +198,6 @@ public class FailureEventListGui extends Shell {
 	}
 	
 	public void show() {
-		prepareToShow();
-
 		open();
 		layout();
 
@@ -205,38 +208,26 @@ public class FailureEventListGui extends Shell {
 		}
 	}
 
-	private void prepareToShow() {
 
-	}
-
-
-	private void createComponents() {	
-		this.addShellListener(new ShellAdapter() {
-			@Override
-			public void shellClosed(ShellEvent e) {
-				// Wenn Fenster schließt.
-			}
-		});
-
-		btnClose = new Button(this, SWT.CENTER);
-		btnClose.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				close();
-			}
-		});
-		btnClose.setBounds(884, 457, 100, 25);
-		btnClose.setText("Close");
-
+	private void createWidgetsEventsGroup() {
 		grpEvents = new Group(this, SWT.NONE);
 		grpEvents.setText(" Events ");
-		grpEvents.setBounds(501, 10, 483, 341);
+		grpEvents.setLayout(new FormLayout());
 
 		Label lblFilterByEvent = new Label(grpEvents, SWT.NONE);
-		lblFilterByEvent.setBounds(10, 21, 30, 15);
+		FormData fd_lblFilterByEvent = new FormData();
+		fd_lblFilterByEvent.right = new FormAttachment(0, 37);
+		fd_lblFilterByEvent.top = new FormAttachment(0, 6);
+		fd_lblFilterByEvent.left = new FormAttachment(0, 7);
+		lblFilterByEvent.setLayoutData(fd_lblFilterByEvent);
 		lblFilterByEvent.setText("Filter:");
 
 		textEventFilterByFieldsMatch = new Text(grpEvents, SWT.BORDER);
+		FormData fd_textEventFilterByFieldsMatch = new FormData();
+		fd_textEventFilterByFieldsMatch.right = new FormAttachment(100, -125);
+		fd_textEventFilterByFieldsMatch.top = new FormAttachment(0, 3);
+		fd_textEventFilterByFieldsMatch.left = new FormAttachment(0, 40);
+		textEventFilterByFieldsMatch.setLayoutData(fd_textEventFilterByFieldsMatch);
 		textEventFilterByFieldsMatch.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				guiHandlerEvents.reloadEvents();
@@ -244,34 +235,13 @@ public class FailureEventListGui extends Shell {
 			}
 		});
 		textEventFilterByFieldsMatch.setToolTipText("Only shows events matching the filter.");
-		textEventFilterByFieldsMatch.setBounds(43, 18, 314, 21);
-
-		treeEvents = new Tree(grpEvents, SWT.BORDER | SWT.FULL_SELECTION);
-		treeEvents.setLinesVisible(true);
-		treeEvents.setHeaderVisible(true);
-		treeEvents.setBounds(10, 50, 463, 250);
-
-		trclmnEventName = new TreeColumn(treeEvents, SWT.LEFT);
-		trclmnEventName.setWidth(150);
-		trclmnEventName.setText("Event");
-
-		trclmnEventComponent = new TreeColumn(treeEvents, SWT.CENTER);
-		trclmnEventComponent.setWidth(120);
-		trclmnEventComponent.setText("Component");
-		
-		treeColumnEventDescription = new TreeColumn(treeEvents, SWT.NONE);
-		treeColumnEventDescription.setWidth(120);
-		treeColumnEventDescription.setText("Description");
-		
-		trclmnEventAuthor = new TreeColumn(treeEvents, SWT.NONE);
-		trclmnEventAuthor.setWidth(120);
-		trclmnEventAuthor.setText("Author");
-
-		treeColumnEventIdGuid = new TreeColumn(treeEvents, SWT.LEFT);
-		treeColumnEventIdGuid.setWidth(150);
-		treeColumnEventIdGuid.setText("ID / GUID");
 
 		comboEventFilterMode = new Combo(grpEvents, SWT.BORDER | SWT.READ_ONLY);
+		FormData fd_comboEventFilterMode = new FormData();
+		fd_comboEventFilterMode.left = new FormAttachment(textEventFilterByFieldsMatch, 3, SWT.RIGHT);
+		fd_comboEventFilterMode.right = new FormAttachment(100, -7);
+		fd_comboEventFilterMode.top = new FormAttachment(0, 2);
+		comboEventFilterMode.setLayoutData(fd_comboEventFilterMode);
 		comboEventFilterMode.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				if (guiHandlerEvents != null) {// dies ist beim Initialisieren der GUI der Fall. Danach nicht mehr.
@@ -282,12 +252,22 @@ public class FailureEventListGui extends Shell {
 		});
 		// Nur zur Vorschau:
 		comboEventFilterMode.setItems(new String[] {"[[ Any Field ]]", "Name", "Author", "Description", "ID", "GUID"});
-		comboEventFilterMode.setBounds(363, 17, 110, 23);
 		// Tatsächliche Items werden im GUI-Handler geschrieben
 		comboEventFilterMode.select(0);
 		
+				Label lblReuseData = new Label(grpEvents, SWT.NONE);
+		FormData fd_lblCopy = new FormData();
+		fd_lblCopy.left = new FormAttachment(0, 6);
+		fd_lblCopy.bottom = new FormAttachment(100, -5);
+		lblReuseData.setLayoutData(fd_lblCopy);
+		lblReuseData.setText("Reuse Data:");
+				
 		ToolBar toolBar_3 = new ToolBar(grpEvents, SWT.FLAT | SWT.RIGHT);
-		toolBar_3.setBounds(192, 308, 281, 23);
+		FormData fd_toolBar_3 = new FormData();
+//		fd_toolBar_3.left = new FormAttachment(0, 60);
+		fd_toolBar_3.left = new FormAttachment(lblReuseData, 0, SWT.RIGHT);
+		fd_toolBar_3.bottom = new FormAttachment(100, -2);
+		toolBar_3.setLayoutData(fd_toolBar_3);
 		
 		ToolItem tltmCopyAll = new ToolItem(toolBar_3, SWT.NONE);
 		tltmCopyAll.addSelectionListener(new SelectionAdapter() {
@@ -375,18 +355,51 @@ public class FailureEventListGui extends Shell {
 		ToolItem tltmCopyComponent = new ToolItem(toolBar_3, SWT.NONE);
 		tltmCopyComponent.setToolTipText("Copies component of the currently selected Event into the \"Create Event\" dialog.");
 		tltmCopyComponent.setText("Component");
-		
-		Label lblCopy = new Label(grpEvents, SWT.NONE);
-		lblCopy.setBounds(125, 313, 61, 15);
-		lblCopy.setText("Reuse Data:");
-		grpEvents.setTabList(new Control[]{textEventFilterByFieldsMatch, comboEventFilterMode, treeEvents});
 
+		
+		treeEvents = new Tree(grpEvents, SWT.BORDER | SWT.FULL_SELECTION);
+		FormData fd_treeEvents = new FormData();
+		fd_treeEvents.right = new FormAttachment(100, -7);
+		fd_treeEvents.bottom = new FormAttachment(toolBar_3, -5, SWT.TOP);
+		fd_treeEvents.top = new FormAttachment(0, 35);
+		fd_treeEvents.left = new FormAttachment(0, 7);
+		treeEvents.setLayoutData(fd_treeEvents);
+		treeEvents.setLinesVisible(true);
+		treeEvents.setHeaderVisible(true);
+
+		trclmnEventName = new TreeColumn(treeEvents, SWT.LEFT);
+		trclmnEventName.setWidth(150);
+		trclmnEventName.setText("Event");
+
+		trclmnEventComponent = new TreeColumn(treeEvents, SWT.CENTER);
+		trclmnEventComponent.setWidth(120);
+		trclmnEventComponent.setText("Component");
+		
+		treeColumnEventDescription = new TreeColumn(treeEvents, SWT.NONE);
+		treeColumnEventDescription.setWidth(120);
+		treeColumnEventDescription.setText("Description");
+		
+		trclmnEventAuthor = new TreeColumn(treeEvents, SWT.NONE);
+		trclmnEventAuthor.setWidth(120);
+		trclmnEventAuthor.setText("Author");
+
+		treeColumnEventIdGuid = new TreeColumn(treeEvents, SWT.LEFT);
+		treeColumnEventIdGuid.setWidth(150);
+		treeColumnEventIdGuid.setText("ID / GUID");
+
+		grpEvents.setTabList(new Control[]{textEventFilterByFieldsMatch, comboEventFilterMode, treeEvents});
+	}
+
+	private void createWidgetsComponentsGroup() {
 		grpComponents = new Group(this, SWT.NONE);
 		grpComponents.setText(" Components ");
-		grpComponents.setBounds(10, 10, 483, 341);
-		
+		grpComponents.setLayout(new FormLayout());
+
 		ToolBar toolBar_1 = new ToolBar(grpComponents, SWT.FLAT | SWT.RIGHT);
-		toolBar_1.setBounds(10, 307, 463, 23);
+		FormData fd_toolBar_1 = new FormData();
+		fd_toolBar_1.left = new FormAttachment(0, 1);
+		fd_toolBar_1.bottom = new FormAttachment(100, -2);
+		toolBar_1.setLayoutData(fd_toolBar_1);
 		
 		ToolItem tltmExpand = new ToolItem(toolBar_1, SWT.NONE);
 		tltmExpand.setToolTipText("Expand selected Components and their children.");
@@ -479,6 +492,12 @@ public class FailureEventListGui extends Shell {
 		tltmClear.setText("Clear");
 
 		treeComponents = new Tree(grpComponents, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
+		FormData fd_treeComponents = new FormData();
+		fd_treeComponents.top = new FormAttachment(0, 35);
+		fd_treeComponents.bottom = new FormAttachment(toolBar_1, -5, SWT.TOP);
+		fd_treeComponents.right = new FormAttachment(0, 470);
+		fd_treeComponents.left = new FormAttachment(0, 7);
+		treeComponents.setLayoutData(fd_treeComponents);
 		treeComponents.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -487,7 +506,6 @@ public class FailureEventListGui extends Shell {
 		});
 		treeComponents.setLinesVisible(true);
 		treeComponents.setHeaderVisible(true);
-		treeComponents.setBounds(10, 50, 463, 250);
 
 		trclmnComponentName = new TreeColumn(treeComponents, SWT.LEFT);
 		trclmnComponentName.setWidth(200);
@@ -506,6 +524,11 @@ public class FailureEventListGui extends Shell {
 		trclmnComponentIdGuid.setText("ID / GUID");
 
 		textComponentsSelectByFieldsMatch = new Text(grpComponents, SWT.BORDER);
+		FormData fd_textComponentsSelectByFieldsMatch = new FormData();
+		fd_textComponentsSelectByFieldsMatch.right = new FormAttachment(0, 196);
+		fd_textComponentsSelectByFieldsMatch.top = new FormAttachment(0, 3);
+		fd_textComponentsSelectByFieldsMatch.left = new FormAttachment(0, 37);
+		textComponentsSelectByFieldsMatch.setLayoutData(fd_textComponentsSelectByFieldsMatch);
 		textComponentsSelectByFieldsMatch.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -517,19 +540,29 @@ public class FailureEventListGui extends Shell {
 			}
 		});
 		textComponentsSelectByFieldsMatch.setToolTipText("Selects all components which match the specified name.");
-		textComponentsSelectByFieldsMatch.setBounds(40, 18, 159, 21);
 
 		Label lblFind = new Label(grpComponents, SWT.NONE);
-		lblFind.setBounds(10, 21, 55, 15);
+		FormData fd_lblFind = new FormData();
+		fd_lblFind.right = new FormAttachment(0, 62);
+		fd_lblFind.top = new FormAttachment(0, 6);
+		fd_lblFind.left = new FormAttachment(0, 7);
+		lblFind.setLayoutData(fd_lblFind);
 		lblFind.setText("Find:");
 		
 		comboComponentsSelectByFieldsMatch = new Combo(grpComponents, SWT.READ_ONLY);
+		FormData fd_comboComponentsSelectByFieldsMatch = new FormData();
+		fd_comboComponentsSelectByFieldsMatch.right = new FormAttachment(0, 470);
+		fd_comboComponentsSelectByFieldsMatch.top = new FormAttachment(0, 2);
+		fd_comboComponentsSelectByFieldsMatch.left = new FormAttachment(0, 360);
+		comboComponentsSelectByFieldsMatch.setLayoutData(fd_comboComponentsSelectByFieldsMatch);
 		comboComponentsSelectByFieldsMatch.setItems(new String[] {"[[ Any Field ]]", "Name", "Author", "Description", "ID", "GUID"});
-		comboComponentsSelectByFieldsMatch.setBounds(363, 17, 110, 23);
 		comboComponentsSelectByFieldsMatch.select(0);
 		
 		ToolBar toolBar = new ToolBar(grpComponents, SWT.FLAT | SWT.RIGHT);
-		toolBar.setBounds(205, 17, 152, 23);
+		FormData fd_toolBar = new FormData();
+		fd_toolBar.top = new FormAttachment(0, 2);
+		fd_toolBar.left = new FormAttachment(0, 202);
+		toolBar.setLayoutData(fd_toolBar);
 		
 		ToolItem tltmSelectionSet = new ToolItem(toolBar, SWT.NONE);
 		tltmSelectionSet.addSelectionListener(new SelectionAdapter() {
@@ -566,17 +599,27 @@ public class FailureEventListGui extends Shell {
 		tltmSelectionRemove.setToolTipText("Removes the matching component(s) from the selection.");
 		tltmSelectionRemove.setText("Select--");
 		grpComponents.setTabList(new Control[]{textComponentsSelectByFieldsMatch, treeComponents});
-
-		
-		Group grpCreateEvent = new Group(this, SWT.NONE);
+	}
+	
+	private void createWidgetsCreateEventGroup() {
+		grpCreateEvent = new Group(this, SWT.NONE);
 		grpCreateEvent.setText(" Create Event ");
-		grpCreateEvent.setBounds(10, 352, 974, 100);
-		
+		grpCreateEvent.setLayout(new FormLayout());
+
 		Label lblName = new Label(grpCreateEvent, SWT.NONE);
+		FormData fd_lblName = new FormData();
+		fd_lblName.right = new FormAttachment(0, 48);
+		fd_lblName.top = new FormAttachment(0, 10);
+		fd_lblName.left = new FormAttachment(0, 7);
+		lblName.setLayoutData(fd_lblName);
 		lblName.setText("Name:");
-		lblName.setBounds(10, 25, 41, 15);
 		
 		textCreateEventName = new Text(grpCreateEvent, SWT.BORDER);
+		FormData fd_textCreateEventName = new FormData();
+		fd_textCreateEventName.right = new FormAttachment(0, 351);
+		fd_textCreateEventName.top = new FormAttachment(0, 7);
+		fd_textCreateEventName.left = new FormAttachment(0, 80);
+		textCreateEventName.setLayoutData(fd_textCreateEventName);
 		textCreateEventName.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -592,9 +635,14 @@ public class FailureEventListGui extends Shell {
 			}
 		});
 		textCreateEventName.setToolTipText("Name of the event to you wish to create. The Name hast to be unique within the containing component.");
-		textCreateEventName.setBounds(83, 22, 271, 21);
 		
 		btnCreateEvent = new Button(grpCreateEvent, SWT.NONE);
+		FormData fd_btnCreateEvent = new FormData();
+		fd_btnCreateEvent.left = new FormAttachment(100, -120);
+		fd_btnCreateEvent.bottom = new FormAttachment(100, -45);
+		fd_btnCreateEvent.right = new FormAttachment(100, -5);
+		fd_btnCreateEvent.top = new FormAttachment(0, 7);
+		btnCreateEvent.setLayoutData(fd_btnCreateEvent);
 		btnCreateEvent.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -606,13 +654,21 @@ public class FailureEventListGui extends Shell {
 			}
 		});
 		btnCreateEvent.setText("Create Event");
-		btnCreateEvent.setBounds(854, 21, 110, 32);
 		
 		Label lblAuthor = new Label(grpCreateEvent, SWT.NONE);
+		FormData fd_lblAuthor = new FormData();
+		fd_lblAuthor.right = new FormAttachment(0, 48);
+		fd_lblAuthor.top = new FormAttachment(0, 34);
+		fd_lblAuthor.left = new FormAttachment(0, 7);
+		lblAuthor.setLayoutData(fd_lblAuthor);
 		lblAuthor.setText("Author:");
-		lblAuthor.setBounds(10, 49, 41, 15);
 		
 		textCreateEventAuthor = new Text(grpCreateEvent, SWT.BORDER);
+		FormData fd_textCreateEventAuthor = new FormData();
+		fd_textCreateEventAuthor.right = new FormAttachment(0, 400);
+		fd_textCreateEventAuthor.top = new FormAttachment(0, 31);
+		fd_textCreateEventAuthor.left = new FormAttachment(0, 80);
+		textCreateEventAuthor.setLayoutData(fd_textCreateEventAuthor);
 		textCreateEventAuthor.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -628,9 +684,14 @@ public class FailureEventListGui extends Shell {
 			}
 		});
 		textCreateEventAuthor.setToolTipText("Specifies the name of the author who created this event.");
-		textCreateEventAuthor.setBounds(83, 46, 320, 21);
 		
 		Button buttonCreateEventClearData = new Button(grpCreateEvent, SWT.NONE);
+		FormData fdButtonsClearAndCreate = new FormData();
+		fdButtonsClearAndCreate.left = new FormAttachment(100, -120);
+		fdButtonsClearAndCreate.bottom = new FormAttachment(0, 75);
+		fdButtonsClearAndCreate.right = new FormAttachment(100, -5);
+		fdButtonsClearAndCreate.top = new FormAttachment(0, 43);
+		buttonCreateEventClearData.setLayoutData(fdButtonsClearAndCreate);
 		buttonCreateEventClearData.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -638,52 +699,74 @@ public class FailureEventListGui extends Shell {
 			}
 		});
 		buttonCreateEventClearData.setText("Clear");
-		buttonCreateEventClearData.setBounds(854, 58, 110, 32);
 		
 		Label lblComponent = new Label(grpCreateEvent, SWT.NONE);
+		FormData fd_lblComponent = new FormData();
+		fd_lblComponent.top = new FormAttachment(0, 58);
+		fd_lblComponent.left = new FormAttachment(0, 7);
+		lblComponent.setLayoutData(fd_lblComponent);
 		lblComponent.setText("Component:");
-		lblComponent.setBounds(10, 73, 67, 15);
 		
 		textCreateEventComponent = new Text(grpCreateEvent, SWT.BORDER);
+		FormData fd_textCreateEventComponent = new FormData();
+		fd_textCreateEventComponent.right = new FormAttachment(0, 400);
+		fd_textCreateEventComponent.top = new FormAttachment(0, 55);
+		fd_textCreateEventComponent.left = new FormAttachment(0, 80);
+		textCreateEventComponent.setLayoutData(fd_textCreateEventComponent);
 		textCreateEventComponent.setEditable(false);
 		textCreateEventComponent.setToolTipText("The qualified name of the component containing the new event.");
-		textCreateEventComponent.setBounds(83, 70, 320, 21);
 		
 		Label lblDescription = new Label(grpCreateEvent, SWT.NONE);
+		FormData fd_lblDescription = new FormData();
+		fd_lblDescription.right = new FormAttachment(0, 483);
+		fd_lblDescription.top = new FormAttachment(0, 10);
+		fd_lblDescription.left = new FormAttachment(0, 418);
+		lblDescription.setLayoutData(fd_lblDescription);
 		lblDescription.setText("Description:");
-		lblDescription.setBounds(421, 25, 65, 15);
 		
-		textCreateEventDescription = new StyledText(grpCreateEvent, SWT.BORDER);
+		textCreateEventDescription = new StyledText(grpCreateEvent, SWT.BORDER | SWT.WRAP);
+		FormData fd_textCreateEventDescription = new FormData();
+		fd_textCreateEventDescription.left = new FormAttachment(0, 489);
+		fd_textCreateEventDescription.right = new FormAttachment(btnCreateEvent, -10, SWT.LEFT);
+		fd_textCreateEventDescription.bottom = new FormAttachment(0, 75);
+		fd_textCreateEventDescription.top = new FormAttachment(0, 7);
+		textCreateEventDescription.setLayoutData(fd_textCreateEventDescription);
 		textCreateEventDescription.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				guiHandlerCreateEvent.eventDataChanged();
 			}
 		});
-		textCreateEventDescription.setBounds(492, 22, 350, 68);
-		setTabList(new Control[]{grpComponents, grpEvents, btnClose});		
 		
 		btnChkCreateEventIsValid = new Button(grpCreateEvent, SWT.TOGGLE);
-		btnChkCreateEventIsValid.setToolTipText("The Name hast to be unique within the containing component."); // wird nicht angezeigt, wenn Button.enabled==false
-		btnChkCreateEventIsValid.setBounds(360, 21, 43, 22);
+		FormData fd_btnChkCreateEventIsValid = new FormData();
+		fd_btnChkCreateEventIsValid.bottom = new FormAttachment(0, 28);
+		fd_btnChkCreateEventIsValid.right = new FormAttachment(0, 400);
+		fd_btnChkCreateEventIsValid.top = new FormAttachment(0, 6);
+		fd_btnChkCreateEventIsValid.left = new FormAttachment(0, 357);
+		btnChkCreateEventIsValid.setLayoutData(fd_btnChkCreateEventIsValid);
+		btnChkCreateEventIsValid.setToolTipText("The Name hast to be unique within the containing component.");
 		btnChkCreateEventIsValid.setText("valid");
 		btnChkCreateEventIsValid.setEnabled(false);
 		grpCreateEvent.setTabList(new Control[]{textCreateEventName, textCreateEventAuthor, textCreateEventDescription, btnCreateEvent, buttonCreateEventClearData});
-
-		Group group = new Group(this, SWT.NONE);
-		group.setBounds(10, 450, 483, 30);
+	}
+	
+	private void createWidgetsInfosGroup() {
+		grpInfos = new Group(this, SWT.NONE);
 		
-		lblStatusComponentsCount = new Label(group, SWT.NONE);
+		lblStatusComponentsCount = new Label(grpInfos, SWT.NONE);
 		lblStatusComponentsCount.setText("Components: 10");
 		lblStatusComponentsCount.setBounds(10, 10, 134, 15);
 		
-		lblStatusEventsVisibleCount = new Label(group, SWT.NONE);
+		lblStatusEventsVisibleCount = new Label(grpInfos, SWT.NONE);
 		lblStatusEventsVisibleCount.setText("Events displayed: 10");
 		lblStatusEventsVisibleCount.setBounds(343, 10, 130, 15);
 		
-		lblComponentsSelectedCount = new Label(group, SWT.NONE);
+		lblComponentsSelectedCount = new Label(grpInfos, SWT.NONE);
 		lblComponentsSelectedCount.setText("Components selected: 10");
 		lblComponentsSelectedCount.setBounds(150, 10, 150, 15);
-		
+	}
+	
+	private void createWidgetsButtons() {
 		btnComponentsReload = new Button(this, SWT.NONE);
 		btnComponentsReload.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -693,9 +776,105 @@ public class FailureEventListGui extends Shell {
 			}
 		});
 		btnComponentsReload.setToolTipText("Reloads components from Enterprise Architect incase there have been changes.");
-		btnComponentsReload.setBounds(778, 457, 100, 25);
 		btnComponentsReload.setText("Reload");
+		
+		btnClose = new Button(this, SWT.NONE);
+		btnClose.setText("Close");
+		btnClose.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				close();
+			}
+		});
 
+	}
+	
+	private void createWidgetAlignmentsAndSizes() {
+		/* Setzt die Alginments der Widgets.
+		 * ==> Die Widget-Größen sind dadurch impliziert.
+		 */
+		
+		// ------------------------------------------------------------------------------------------
+		// Components:
+		// ------------------------------------------------------------------------------------------
+		FormData fd_grpComponents = new FormData();
+		fd_grpComponents.bottom = new FormAttachment(grpCreateEvent, -5, SWT.TOP);
+		fd_grpComponents.right = new FormAttachment(0, 493);
+		fd_grpComponents.top = new FormAttachment(0, 10);
+		fd_grpComponents.left = new FormAttachment(0, 10);
+		grpComponents.setLayoutData(fd_grpComponents);
+
+		
+		// ------------------------------------------------------------------------------------------
+		// Events:
+		// ------------------------------------------------------------------------------------------
+		FormData fd_grpEvents = new FormData();
+		fd_grpEvents.top = new FormAttachment(0, 10);
+		fd_grpEvents.bottom = new FormAttachment(grpCreateEvent, -5, SWT.TOP);
+		fd_grpEvents.left = new FormAttachment(grpComponents, 10);
+		fd_grpEvents.right = new FormAttachment(100, -10);
+		grpEvents.setLayoutData(fd_grpEvents);
+
+		
+		// ------------------------------------------------------------------------------------------
+		// Create Event:
+		// ------------------------------------------------------------------------------------------
+		FormData fd_grpCreateEvent = new FormData();
+		fd_grpCreateEvent.top = new FormAttachment(btnClose, -110, SWT.TOP);
+		fd_grpCreateEvent.bottom = new FormAttachment(btnClose, -10, SWT.TOP);
+		fd_grpCreateEvent.right = new FormAttachment(100, -10);
+		fd_grpCreateEvent.left = new FormAttachment(0, 10);
+		grpCreateEvent.setLayoutData(fd_grpCreateEvent);
+
+		
+		// ------------------------------------------------------------------------------------------
+		// Infos:
+		// ------------------------------------------------------------------------------------------
+		FormData fd_group = new FormData();
+		fd_group.bottom = new FormAttachment(100, -8);
+		fd_group.right = new FormAttachment(0, 490);
+		fd_group.left = new FormAttachment(0, 10);
+		grpInfos.setLayoutData(fd_group);
+
+		
+		// ------------------------------------------------------------------------------------------
+		// Buttons:
+		// ------------------------------------------------------------------------------------------
+		// Button "Close":
+		FormData fd_btnClose = new FormData();
+		fd_btnClose.left = new FormAttachment(100, -120);
+		fd_btnClose.right = new FormAttachment(100, -10);
+		fd_btnClose.bottom = new FormAttachment(100, -5);
+		btnClose.setLayoutData(fd_btnClose);
+
+		// Button "Reload":
+		FormData fd_btnComponentsReload = new FormData();
+		fd_btnComponentsReload.left = new FormAttachment(btnClose, -120, SWT.LEFT);
+		fd_btnComponentsReload.top = new FormAttachment(btnClose, 0, SWT.TOP);
+		fd_btnComponentsReload.right = new FormAttachment(btnClose, -10);
+		fd_btnComponentsReload.bottom = new FormAttachment(100, -5);
+		btnComponentsReload.setLayoutData(fd_btnComponentsReload);
+	}
+	
+	private void createComponents() {	
+		this.addShellListener(new ShellAdapter() {
+			@Override
+			public void shellClosed(ShellEvent e) {
+				// Wenn Fenster schließt.
+			}
+		});
+		setLayout(new FormLayout());
+		
+		createWidgetsComponentsGroup();
+		createWidgetsEventsGroup();
+		createWidgetsCreateEventGroup();
+		createWidgetsInfosGroup();
+		createWidgetsButtons();
+		
+		createWidgetAlignmentsAndSizes();
+
+		setTabList(new Control[]{grpComponents, grpEvents, btnClose});
+		
 		createContents();
 	}
 
@@ -708,7 +887,7 @@ public class FailureEventListGui extends Shell {
 	 */
 	protected void createContents() {
 		setText("Failure Event List");
-		setSize(1000, 520);
+		setSize(1009, 527);
 	}
 
 	@Override
