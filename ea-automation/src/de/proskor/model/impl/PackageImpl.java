@@ -1,6 +1,7 @@
 package de.proskor.model.impl;
 
 import cli.EA.ICollection;
+import cli.EA.IDiagram;
 import cli.EA.IElement;
 import cli.EA.IPackage;
 import cli.EA.IRepository;
@@ -97,8 +98,8 @@ public class PackageImpl implements Package {
 	@Override
 	public Collection<Package> getPackages() {
 		final IPackage peer = this.getPeer();
-		final ICollection packages = (ICollection) peer.get_Packages();
-		return new CollectionImpl<Package, IPackage>(packages) {
+		final ICollection collection = (ICollection) peer.get_Packages();
+		return new CollectionImpl<Package, IPackage>(collection) {
 			@Override
 			protected boolean matches(IPackage object, Package element) {
 				return object.get_PackageID() == element.getId();
@@ -114,8 +115,8 @@ public class PackageImpl implements Package {
 	@Override
 	public Collection<Element> getElements() {
 		final IPackage peer = this.getPeer();
-		final ICollection elements = (ICollection) peer.get_Elements();
-		return new CollectionImpl<Element, IElement>(elements) {
+		final ICollection collection = (ICollection) peer.get_Elements();
+		return new CollectionImpl<Element, IElement>(collection) {
 			@Override
 			protected boolean matches(IElement object, Element element) {
 				return object.get_ElementID() == element.getId();
@@ -130,7 +131,18 @@ public class PackageImpl implements Package {
 
 	@Override
 	public Collection<Diagram> getDiagrams() {
-		// TODO
-		return null;
+		final IPackage peer = this.getPeer();
+		final ICollection collection = (ICollection) peer.get_Diagrams();
+		return new CollectionImpl<Diagram, IDiagram>(collection) {
+			@Override
+			protected boolean matches(IDiagram object, Diagram element) {
+				return object.get_DiagramID() == element.getId();
+			}
+
+			@Override
+			protected Diagram create(IDiagram element) {
+				return new DiagramImpl(PackageImpl.this.repository, element.get_DiagramID());
+			}
+		};
 	}
 }

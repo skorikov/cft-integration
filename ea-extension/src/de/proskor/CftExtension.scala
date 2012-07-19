@@ -30,6 +30,7 @@ import de.proskor.fel.view.ComponentFaultTree
 import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.ArchitecturalViewImpl
 import de.proskor.model.{Element => JavaElement}
+import de.proskor.model.impl.DiagramImpl
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -77,6 +78,7 @@ class CftExtension extends ExtensionAdapter {
         var it = model.getPackages().iterator();
         while (it.hasNext()) {
           val pkg = it.next();
+          output.write(pkg.getName());
           val di = pkg.getDiagrams().iterator();
           while (di.hasNext()) {
             val diagram = di.next();

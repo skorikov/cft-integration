@@ -3,87 +3,93 @@ package de.proskor.model.impl;
 import cli.EA.ICollection;
 import cli.EA.IDiagram;
 import cli.EA.IDiagramObject;
+import cli.EA.IRepository;
 import de.proskor.model.Collection;
 import de.proskor.model.Diagram;
 import de.proskor.model.Node;
 import de.proskor.model.Package;
 
 public class DiagramImpl implements Diagram {
-	private final IDiagram peer;
-	private final Package pkg;
-	private final RepositoryImpl repository;
-	private Collection<Node> nodes = null;
+	private final IRepository repository;
+	private final int id;
 
-	public DiagramImpl(IDiagram peer, Package pkg, RepositoryImpl repository) {
-		this.peer = peer;
-		this.pkg = pkg;
+	public DiagramImpl(IRepository repository, int id) {
 		this.repository = repository;
+		this.id = id;
 	}
-	
+
+	private IDiagram getPeer() {
+		return (IDiagram) this.repository.GetDiagramByID(this.id);
+	}
+
 	@Override
 	public int getId() {
-		return this.peer.get_DiagramID();
+		return this.id;
 	}
 
 	@Override
 	public String getGuid() {
-		return (String) this.peer.get_DiagramGUID();
+		final IDiagram peer = this.getPeer();
+		return (String) peer.get_DiagramGUID();
 	}
 
 	@Override
 	public String getName() {
-		return (String) this.peer.get_Name();
+		final IDiagram peer = this.getPeer();
+		return (String) peer.get_Name();
 	}
 
 	@Override
 	public void setName(String name) {
-		this.peer.set_Name(name);
+		final IDiagram peer = this.getPeer();
+		peer.set_Name(name);
 	}
 
 	@Override
 	public String getDescription() {
-		return (String) this.peer.get_Notes();
+		final IDiagram peer = this.getPeer();
+		return (String) peer.get_Notes();
 	}
 
 	@Override
 	public void setDescription(String description) {
-		this.peer.set_Notes(description);
+		final IDiagram peer = this.getPeer();
+		peer.set_Notes(description);
 	}
 
 	@Override
 	public String getStereotype() {
-		return (String) this.peer.get_Stereotype();
+		final IDiagram peer = this.getPeer();
+		return (String) peer.get_Stereotype();
 	}
 
 	@Override
 	public void setStereotype(String stereotype) {
-		this.peer.set_Stereotype(stereotype);
+		final IDiagram peer = this.getPeer();
+		peer.set_Stereotype(stereotype);
 	}
 
 	@Override
 	public Package getPackage() {
-		return this.pkg;
+		final IDiagram peer = this.getPeer();
+		final int packageId = peer.get_PackageID();
+		return new PackageImpl(this.repository, packageId);
 	}
 
 	@Override
 	public Collection<Node> getNodes() {
-		if (this.nodes == null) {
-			final ICollection nodes = (ICollection) this.peer.get_DiagramObjects();
-			this.nodes = new CollectionImpl<Node, IDiagramObject>(nodes) {
-				@Override
-				protected boolean matches(IDiagramObject object, Node element) {
-					return object.get_InstanceID() == element.getId();
-				}
-	
-				@Override
-				protected Node create(IDiagramObject element) {
-				//	element.Update();
-				//	collection.Refresh();
-					return new NodeImpl(element, DiagramImpl.this, repository);
-				}
-			};
-		}
-		
-		return this.nodes;
+		final IDiagram peer = this.getPeer();
+		final ICollection collection = (ICollection) peer.get_DiagramObjects();
+		return new CollectionImpl<Node, IDiagramObject>(collection) {
+			@Override
+			protected boolean matches(IDiagramObject object, Node element) {
+				return object.get_InstanceID() == element.getId();
+			}
+
+			@Override
+			protected Node create(IDiagramObject element) {
+				return new NodeImpl(DiagramImpl.this.repository, DiagramImpl.this.id, element.get_InstanceID());
+			}
+		};
 	}
 }

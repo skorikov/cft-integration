@@ -144,14 +144,14 @@ public class RepositoryImpl implements Repository {
 	}
 
 	public Diagram getDiagramById(int id) {
-		final IDiagram diagram = (IDiagram) this.peer.GetDiagramByID(id);
+//		final IDiagram diagram = (IDiagram) this.peer.GetDiagramByID(id);
+//
+//		Package pkg = null;
+//		final int packageId = diagram.get_PackageID();
+//		if (packageId != 0)
+//			pkg = this.getPackageById(packageId);
 
-		Package pkg = null;
-		final int packageId = diagram.get_PackageID();
-		if (packageId != 0)
-			pkg = this.getPackageById(packageId);
-
-		final Diagram result = new DiagramImpl(diagram, pkg, this);
+		final Diagram result = new DiagramImpl(this.peer, id);
 
 		return result;
 	}
