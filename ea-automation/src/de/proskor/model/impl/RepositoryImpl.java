@@ -138,4 +138,20 @@ public class RepositoryImpl implements Repository {
 
 		return new DiagramImpl(this.peer, id);
 	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (that instanceof RepositoryImpl)
+			return this.peer.get_ConnectionString().equals(((RepositoryImpl) that).peer.get_ConnectionString());
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.peer.get_ConnectionString().hashCode();
+	}
 }

@@ -142,4 +142,20 @@ class ElementImpl implements Element {
 		connector.Update();
 		return new ConnectorImpl(this.repository, connector.get_ConnectorID());
 	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (that instanceof ElementImpl)
+			return this.id == ((ElementImpl) that).id;
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.id;
+	}
 }

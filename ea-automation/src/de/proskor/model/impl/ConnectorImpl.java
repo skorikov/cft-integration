@@ -104,4 +104,20 @@ class ConnectorImpl implements Connector {
 		peer.set_SupplierID(target.getId());
 		// TODO: Update
 	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (that instanceof ConnectorImpl)
+			return this.id == ((ConnectorImpl) that).id;
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.id;
+	}
 }

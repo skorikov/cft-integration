@@ -92,4 +92,20 @@ class DiagramImpl implements Diagram {
 			}
 		};
 	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (that instanceof DiagramImpl)
+			return this.id == ((DiagramImpl) that).id;
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.id;
+	}
 }

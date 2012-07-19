@@ -107,4 +107,20 @@ class NodeImpl implements Node {
 		final IDiagramObject peer = this.getPeer();
 		peer.set_Sequence(sequence);
 	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (that instanceof NodeImpl)
+			return this.nodeId == ((NodeImpl) that).nodeId;
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.nodeId;
+	}
 }

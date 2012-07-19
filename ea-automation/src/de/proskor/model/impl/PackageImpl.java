@@ -145,4 +145,20 @@ class PackageImpl implements Package {
 			}
 		};
 	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (that instanceof PackageImpl)
+			return this.id == ((PackageImpl) that).id;
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.id;
+	}
 }

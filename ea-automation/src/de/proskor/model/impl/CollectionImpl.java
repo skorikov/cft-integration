@@ -134,4 +134,39 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 		}
 		throw new NoSuchElementException();
 	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (that instanceof CollectionImpl) {
+			final CollectionImpl<?, ?> collection = (CollectionImpl<?, ?>) that;
+			final int size = this.size();
+
+			if (size != collection.size())
+				return false;
+
+			for (int i = 0; i < size; i++) {
+				if (!this.get(i).equals(collection.get(i)))
+					return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		final int size = this.size();
+		int hash = 0;
+		
+		for (int i = 0; i < size; i++) {
+			hash = (hash * 7) + this.get(i).hashCode();
+		}
+
+		return hash;
+	}
 }
