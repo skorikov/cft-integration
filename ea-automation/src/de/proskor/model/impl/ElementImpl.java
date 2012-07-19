@@ -2,91 +2,109 @@ package de.proskor.model.impl;
 
 import cli.EA.ICollection;
 import cli.EA.IElement;
+import cli.EA.IRepository;
 import de.proskor.model.Collection;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
 
 public class ElementImpl implements Element {
-	private final IElement peer;
-	private final Element parent;
-	private final Package pkg;
-	private Collection<Element> elements = null;
+	private final IRepository repository;
+	private final int id;
 
-	public ElementImpl(IElement peer, Element parent, Package pkg) {
-		this.peer = peer;
-		this.parent = parent;
-		this.pkg = pkg;
+	public ElementImpl(IRepository repository, int id) {
+		this.repository = repository;
+		this.id = id;
 	}
-	
+
+	private IElement getPeer() {
+		return (IElement) this.repository.GetElementByID(this.id);
+	}
+
 	@Override
 	public int getId() {
-		return this.peer.get_ElementID();
+		return this.id;
 	}
 
 	@Override
 	public String getGuid() {
-		return (String) this.peer.get_ElementGUID();
+		final IElement peer = this.getPeer();
+		return (String) peer.get_ElementGUID();
 	}
 
 	@Override
 	public String getName() {
-		return (String) this.peer.get_Name();
+		final IElement peer = this.getPeer();
+		return (String) peer.get_Name();
 	}
 
 	@Override
 	public void setName(String name) {
-		this.peer.set_Name(name);
+		final IElement peer = this.getPeer();
+		peer.set_Name(name);
 	}
 
 	@Override
 	public String getDescription() {
-		return (String) this.peer.get_Notes();
+		final IElement peer = this.getPeer();
+		return (String) peer.get_Notes();
 	}
 
 	@Override
 	public void setDescription(String description) {
-		this.peer.set_Notes(description);
+		final IElement peer = this.getPeer();
+		peer.set_Notes(description);
 	}
 
 	@Override
 	public String getStereotype() {
-		return (String) this.peer.get_Stereotype();
+		final IElement peer = this.getPeer();
+		return (String) peer.get_StereotypeEx();
 	}
 
 	@Override
 	public void setStereotype(String stereotype) {
-		this.peer.set_Stereotype(stereotype);
+		final IElement peer = this.getPeer();
+		peer.set_StereotypeEx(stereotype);
 	}
 
 	@Override
-	public Element getParent() {
-		return this.parent;
+	public boolean isChild() {
+		final IElement peer = this.getPeer();
+		return peer.get_ParentID() != 0;
 	}
 
 	@Override
 	public Package getPackage() {
-		return this.pkg;
+		final IElement peer = this.getPeer();
+		final int packageId = peer.get_PackageID();
+		return new PackageImpl(this.repository, packageId);
+	}
+
+	@Override
+	public Element getParent() {
+		final IElement peer = this.getPeer();
+		final int parentId = peer.get_ParentID();
+
+		if (parentId == 0)
+			throw new IllegalStateException();
+
+		return new ElementImpl(this.repository, parentId);
 	}
 
 	@Override
 	public Collection<Element> getElements() {
-		if (this.elements == null) {
-			final ICollection elements = (ICollection) this.peer.get_Elements();
-			this.elements = new CollectionImpl<Element, IElement>(elements) {
-				@Override
-				protected boolean matches(IElement object, Element element) {
-					return object.get_ElementID() == element.getId();
-				}
-	
-				@Override
-				protected Element create(ICollection collection, IElement element) {
-					element.Update();
-					collection.Refresh();
-					return new ElementImpl(element, ElementImpl.this, ElementImpl.this.pkg);
-				}
-			};
-		}
-		
-		return this.elements;
+		final IElement peer = this.getPeer();
+		final ICollection elements = (ICollection) peer.get_Elements();
+		return new CollectionImpl<Element, IElement>(elements) {
+			@Override
+			protected boolean matches(IElement object, Element element) {
+				return object.get_ElementID() == element.getId();
+			}
+
+			@Override
+			protected Element create(IElement element) {
+				return new ElementImpl(ElementImpl.this.repository, element.get_ElementID());
+			}
+		};
 	}
 }

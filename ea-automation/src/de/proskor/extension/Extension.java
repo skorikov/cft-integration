@@ -6,7 +6,7 @@ import de.proskor.model.Repository;
  * Extension interface. 
  * All extensions should implement this.
  */
-public interface Extension extends MenuProvider {
+public interface Extension extends MenuProvider, DeletionListener {
 	/**
 	 * Called when the extension is started.
 	 */

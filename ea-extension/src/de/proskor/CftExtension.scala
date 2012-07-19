@@ -29,6 +29,7 @@ import de.proskor.fel.view.ArchitecturalView
 import de.proskor.fel.view.ComponentFaultTree
 import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.ArchitecturalViewImpl
+import de.proskor.model.{Element => JavaElement}
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -38,6 +39,11 @@ class CftExtension extends ExtensionAdapter {
     new MenuItemAdapter(menu, name) {
       override def invoke = code
     }
+
+  override def deleteElement(element: JavaElement): Boolean = {
+    this.getRepository().getOutputTab("delete").write("deleting " + element.getName())
+    !element.getName().equals("test")
+  }
 
   override protected def createMenu = {
     new MenuItemAdapter(menu, "Run Tests") {
@@ -83,6 +89,24 @@ class CftExtension extends ExtensionAdapter {
           }
         }
       }
+    }
+
+    var c1: de.proskor.model.Collection[de.proskor.model.Package] = null
+
+    item("INIT") {
+      val repository = this.getRepository();
+      val models = repository.getModels();
+      val iterator = models.iterator();
+      while (iterator.hasNext()) {
+        val model = iterator.next();
+        c1 = model.getPackages();
+      }
+    }
+
+    item("GO") {
+      val repository = this.getRepository();
+      val output = repository.getOutputTab("TEST");
+      output.write(c1.size().toString)
     }
 
     item("Test") {

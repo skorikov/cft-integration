@@ -76,7 +76,7 @@ public class DiagramImpl implements Diagram {
 				}
 	
 				@Override
-				protected Node create(ICollection collection, IDiagramObject element) {
+				protected Node create(IDiagramObject element) {
 				//	element.Update();
 				//	collection.Refresh();
 					return new NodeImpl(element, DiagramImpl.this, repository);

@@ -15,7 +15,6 @@ import de.proskor.model.Collection;
 public abstract class CollectionImpl<T, E> implements Collection<T> {
 	private final ICollection peer;
 	private int changeCount = 0;
-	private int size = -1;
 
 	private class IteratorImpl implements Iterator<T> {
 		private int current = 0;
@@ -34,7 +33,11 @@ public abstract class CollectionImpl<T, E> implements Collection<T> {
 			if (!this.hasNext())
 				throw new NoSuchElementException();
 
-			return CollectionImpl.this.get(current++);
+			try {
+				return CollectionImpl.this.get(current);
+			} finally {
+				this.current++;
+			}
 		}
 
 		@Override
@@ -50,7 +53,7 @@ public abstract class CollectionImpl<T, E> implements Collection<T> {
 
 	protected abstract boolean matches(E object, T element);
 
-	protected abstract T create(ICollection collection, E element);
+	protected abstract T create(E element);
 
 	@Override
 	public Iterator<T> iterator() {
@@ -59,32 +62,29 @@ public abstract class CollectionImpl<T, E> implements Collection<T> {
 
 	@Override
 	public int size() {
-		this.updateSize();
-		return this.size;
+		this.peer.Refresh();
+		return this.peer.get_Count();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		this.updateSize();
-		return this.size == 0;
+		return this.size() == 0;
 	}
 
 	@Override
 	public void clear() {
-		this.updateSize();
-		if (this.size > 0) {
-			for (int i = this.size - 1; i >= 0; i--)
+		final int size = this.size();
+		if (size > 0) {
+			for (int i = size - 1; i >= 0; i--)
 				this.peer.Delete((short) i);
-			this.peer.Refresh();
 			this.changeCount++;
-			this.size = 0;
 		}
 	}
 
 	@Override
 	public boolean contains(T element) {
-		this.updateSize();
-		for (int i = 0; i < this.size; i++) {
+		final int size = this.size();
+		for (int i = 0; i < size; i++) {
 			@SuppressWarnings("unchecked")
 			final E object = (E) this.peer.GetAt((short) i);
 			if (this.matches(object, element))
@@ -95,41 +95,31 @@ public abstract class CollectionImpl<T, E> implements Collection<T> {
 
 	@Override
 	public T add(String name, String type) {
+		this.peer.Refresh();
 		@SuppressWarnings("unchecked")
 		final E object = (E) this.peer.AddNew(name, type);
-		final T result = this.create(this.peer, object);
+		final T result = this.create(object);
 		this.changeCount++;
-		this.updateSize();
-		this.size++;
 		return result;
-		// TODO check Refresh and Update protocol
+		// TODO: check Refresh and Update protocol
 	}
 
 	@Override
 	public void remove(int index) {
-		if (index < 0 || index >= this.size)
+		if (index < 0 || index >= this.size())
 			throw new IndexOutOfBoundsException();
 
 		this.peer.Delete((short) index);
-		this.peer.Refresh();
 		this.changeCount++;
-		this.updateSize();
-		this.size--;
 	}
 
 	@Override
 	public T get(int index) {
-		this.updateSize();
-		if (index < 0 || index >= this.size)
+		if (index < 0 || index >= this.size())
 			throw new IndexOutOfBoundsException();
 
 		@SuppressWarnings("unchecked")
 		final E object = (E) this.peer.GetAt((short) index);
-		return this.create(this.peer, object);
-	}
-
-	private void updateSize() {
-		if (this.size < 0)
-			this.size = this.peer.get_Count();
+		return this.create(object);
 	}
 }

@@ -1,5 +1,8 @@
 package de.proskor.extension;
 
+import de.proskor.model.Diagram;
+import de.proskor.model.Element;
+import de.proskor.model.Package;
 import de.proskor.model.Repository;
 
 /**
@@ -24,7 +27,7 @@ public abstract class ExtensionAdapter implements Extension {
 	 * Get the current repository.
 	 * @return the current repository.
 	 */
-	protected Repository getRepository() {
+	protected final Repository getRepository() {
 		return this.repository;
 	}
 
@@ -54,5 +57,23 @@ public abstract class ExtensionAdapter implements Extension {
 			this.menu = this.createMenu();
 
 		return this.menu;
+	}
+
+	/** NOP */
+	@Override
+	public boolean deleteElement(Element element) {
+		return true;
+	}
+
+	/** NOP */
+	@Override
+	public boolean deletePackage(Package pkg) {
+		return true;
+	}
+
+	/** NOP */
+	@Override
+	public boolean deleteDiagram(Diagram diagram) {
+		return true;
 	}
 }

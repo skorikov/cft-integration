@@ -13,6 +13,8 @@ public interface Element {
 	String getStereotype();
 	void setStereotype(String stereotype);
 
+	boolean isChild();
+
 	Package getPackage();
 	Element getParent();
 	Collection<Element> getElements();

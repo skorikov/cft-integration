@@ -10,11 +10,14 @@ public interface Package {
 	String getDescription();
 	void setDescription(String description);
 
+	String getStereotype();
+	void setStereotype(String stereotype);
+
+	boolean isModel();
+
 	Element getElement();
 	Package getParent();
 	Collection<Package> getPackages();
+	Collection<Element> getElements();
 	Collection<Diagram> getDiagrams();
-
-	String getStereotype();
-	void setStereotype(String stereotype);
 }

@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cli.EA.ICollection;
-import cli.EA.IElement;
+import cli.EA.IDiagram;
 import cli.EA.IPackage;
 import cli.EA.IRepository;
 import de.proskor.model.Collection;
+import de.proskor.model.Diagram;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
 import de.proskor.model.Repository;
@@ -15,22 +16,14 @@ import de.proskor.model.Repository;
 /**
  * Repository implementation based on the Automation Interface.
  * Stores a reference to the repository peer and delegates operation calls to it.
+ * TODO: Fix the caching problem!
  */
 public class RepositoryImpl implements Repository {
 	/** Repository peer. */
 	private IRepository peer = null;
 
-	/** Models cache. */
-	private Collection<Package> models = null;
-
-	/** Global packages cache. */
-	private Map<Integer, Package> packageCache = new HashMap<Integer, Package>();
-
-	/** Global elements cache. */
-	private Map<Integer, Element> elementCache = new HashMap<Integer, Element>();
-
 	/** Output tabs. */
-	private Map<String, OutputTab> outputCache = new HashMap<String, OutputTab>();
+	private Map<String, OutputTab> tabs = new HashMap<String, OutputTab>();
 
 	/**
 	 * Represents an output tab in EA.
@@ -72,7 +65,7 @@ public class RepositoryImpl implements Repository {
 		public void close() {
 			this.closed = true;
 			RepositoryImpl.this.peer.RemoveOutputTab(this.name);
-			RepositoryImpl.this.outputCache.remove(this.name);
+			RepositoryImpl.this.tabs.remove(this.name);
 		}
 	}
 
@@ -90,71 +83,75 @@ public class RepositoryImpl implements Repository {
 	 */
 	@Override
 	public OutputTab getOutputTab(String name) {
-		final OutputTab cached = this.outputCache.get(name);
+		final OutputTab cached = this.tabs.get(name);
 		if (cached != null)
 			return cached;
 
 		final OutputTab result = new OutputTabImpl(name);
-		this.outputCache.put(name, result);
+		this.tabs.put(name, result);
 
 		return result;
 	}
 
 	@Override
 	public Collection<Package> getModels() {
-		if (this.models == null) {
-			final ICollection models = (ICollection) this.peer.get_Models();
-			this.models = new CollectionImpl<Package, IPackage>(models) {
-				@Override
-				protected boolean matches(IPackage object, Package element) {
-					return object.get_PackageID() == element.getId();
-				}
-	
-				@Override
-				protected Package create(ICollection collection, IPackage element) {
-					element.Update();
-					collection.Refresh();
-					return new PackageImpl(element, null, RepositoryImpl.this);
-				}
-			};
-		}
+		final ICollection models = (ICollection) this.peer.get_Models();
+		Collection<Package> modelz = new CollectionImpl<Package, IPackage>(models) {
+			@Override
+			protected boolean matches(IPackage object, Package element) {
+				return object.get_PackageID() == element.getId();
+			}
 
-		return this.models;
+			@Override
+			protected Package create(IPackage element) {
+				element.Update();
+				return new PackageImpl(RepositoryImpl.this.peer, element.get_PackageID());
+			}
+		};
+		return modelz;
 	}
 
-	Element getElementById(int id) {
-		final Element cached = this.elementCache.get(id);
-		if (cached != null)
-			return cached;
+	public Element getElementById(int id) {
+//		final IElement element = (IElement) this.peer.GetElementByID(id);
+//
+//		Element parent = null;
+//		final int parentId = element.get_ParentID();
+//		if (parentId != 0)
+//			parent = this.getElementById(parentId);
 
-		final IElement element = (IElement) this.peer.GetElementByID(id);
-
-		Element parent = null;
-		final int parentId = element.get_ParentID();
-		if (parentId != 0)
-			parent = this.getElementById(parentId);
-
-		final Package pkg = this.getPackageById(element.get_PackageID());
-		final Element result = new ElementImpl(element, parent, pkg);
-		this.elementCache.put(id, result);
+//		final Package pkg = this.getPackageById(element.get_PackageID());
+		final Element result = new ElementImpl(this.peer, id);
 
 		return result;
 	}
 
-	Package getPackageById(int id) {
-		final Package cached = this.packageCache.get(id);
-		if (cached != null)
-			return cached;
+	public Package getPackageById(int id) {
+//		final Package cached = this.packageCache.get(id);
+//		if (cached != null)
+//			return cached;
 
-		final IPackage pkg = (IPackage) this.peer.GetPackageByID(id);
+//		final IPackage pkg = (IPackage) this.peer.GetPackageByID(id);
 
-		Package parent = null;
-		final int parentId = pkg.get_ParentID();
-		if (parentId != 0)
-			parent = this.getPackageById(parentId);
+//		Package parent = null;
+//		final int parentId = pkg.get_ParentID();
+//		if (parentId != 0)
+//			parent = this.getPackageById(parentId);
 
-		final Package result = new PackageImpl(pkg, parent, this);
-		this.packageCache.put(id, result);
+		final Package result = new PackageImpl(this.peer, id);
+//		this.packageCache.put(id, result);
+
+		return result;
+	}
+
+	public Diagram getDiagramById(int id) {
+		final IDiagram diagram = (IDiagram) this.peer.GetDiagramByID(id);
+
+		Package pkg = null;
+		final int packageId = diagram.get_PackageID();
+		if (packageId != 0)
+			pkg = this.getPackageById(packageId);
+
+		final Diagram result = new DiagramImpl(diagram, pkg, this);
 
 		return result;
 	}

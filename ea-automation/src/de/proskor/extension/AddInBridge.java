@@ -7,6 +7,10 @@ import cli.EA.IEventProperties;
 import cli.EA.IRepository;
 import de.proskor.automation.AddInAdapter;
 import de.proskor.automation.MenuState;
+import de.proskor.model.Diagram;
+import de.proskor.model.Element;
+import de.proskor.model.Package;
+import de.proskor.model.Repository;
 import de.proskor.model.impl.RepositoryImpl;
 
 /**
@@ -16,6 +20,9 @@ import de.proskor.model.impl.RepositoryImpl;
 public abstract class AddInBridge extends AddInAdapter {
 	/** Actual extension implementation */
 	private Extension extension = null;
+
+	/** Repository implementation */
+	private Repository repository = null;
 
 	/**
 	 * Get the extension implementation.
@@ -49,7 +56,8 @@ public abstract class AddInBridge extends AddInAdapter {
 	 */
 	@Override
 	public void initialize(IRepository repository) {
-		this.getExtension().initialize(new RepositoryImpl(repository));
+		this.repository = new RepositoryImpl(repository);
+		this.getExtension().initialize(this.repository);
 	}
 
 	/**
@@ -114,27 +122,33 @@ public abstract class AddInBridge extends AddInAdapter {
 	}
 
 	/**
-	 * TODO
+	 * TODO: Test
 	 */
 	@Override
 	public boolean deleteElement(IRepository repository, IEventProperties properties) {
-		return true;
+		final int id = Integer.valueOf(properties.Get("ElementID").get_Value().toString());
+		final Element element = ((RepositoryImpl) this.repository).getElementById(id);
+		return this.getExtension().deleteElement(element);
 	}
 
 	/**
-	 * TODO
+	 * TODO: Test
 	 */
 	@Override
 	public boolean deletePackage(IRepository repository, IEventProperties properties) {
-		return true;
+		final int id = Integer.valueOf(properties.Get("PackageID").get_Value().toString());
+		final Package pkg = ((RepositoryImpl) this.repository).getPackageById(id);
+		return this.getExtension().deletePackage(pkg);
 	}
 
 	/**
-	 * TODO
+	 * TODO: Test
 	 */
 	@Override
 	public boolean deleteDiagram(IRepository repository, IEventProperties properties) {
-		return true;
+		final int id = Integer.valueOf(properties.Get("DiagramID").get_Value().toString());
+		final Diagram diagram = ((RepositoryImpl) this.repository).getDiagramById(id);
+		return this.getExtension().deleteDiagram(diagram);
 	}
 
 	/**
