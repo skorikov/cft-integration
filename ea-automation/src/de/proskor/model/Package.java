@@ -17,6 +17,7 @@ public interface Package {
 
 	Element getElement();
 	Package getParent();
+
 	Collection<Package> getPackages();
 	Collection<Element> getElements();
 	Collection<Diagram> getDiagrams();

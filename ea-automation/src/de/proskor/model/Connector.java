@@ -13,6 +13,9 @@ public interface Connector {
 	String getStereotype();
 	void setStereotype(String stereotype);
 
+	String getType();
+	void setType(String type);
+
 	Element getSource();
 	void setSource(Element source);
 

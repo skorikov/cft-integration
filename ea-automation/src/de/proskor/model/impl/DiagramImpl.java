@@ -9,7 +9,7 @@ import de.proskor.model.Diagram;
 import de.proskor.model.Node;
 import de.proskor.model.Package;
 
-public class DiagramImpl implements Diagram {
+class DiagramImpl implements Diagram {
 	private final IRepository repository;
 	private final int id;
 

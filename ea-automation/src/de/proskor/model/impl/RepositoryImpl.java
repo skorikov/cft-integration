@@ -5,6 +5,7 @@ import java.util.Map;
 
 import cli.EA.ICollection;
 import cli.EA.IDiagram;
+import cli.EA.IElement;
 import cli.EA.IPackage;
 import cli.EA.IRepository;
 import de.proskor.model.Collection;
@@ -95,8 +96,8 @@ public class RepositoryImpl implements Repository {
 
 	@Override
 	public Collection<Package> getModels() {
-		final ICollection models = (ICollection) this.peer.get_Models();
-		Collection<Package> modelz = new CollectionImpl<Package, IPackage>(models) {
+		final ICollection collection = (ICollection) this.peer.get_Models();
+		return new CollectionImpl<Package, IPackage>(collection) {
 			@Override
 			protected boolean matches(IPackage object, Package element) {
 				return object.get_PackageID() == element.getId();
@@ -108,51 +109,33 @@ public class RepositoryImpl implements Repository {
 				return new PackageImpl(RepositoryImpl.this.peer, element.get_PackageID());
 			}
 		};
-		return modelz;
 	}
 
 	public Element getElementById(int id) {
-//		final IElement element = (IElement) this.peer.GetElementByID(id);
-//
-//		Element parent = null;
-//		final int parentId = element.get_ParentID();
-//		if (parentId != 0)
-//			parent = this.getElementById(parentId);
+		final IElement element = (IElement) this.peer.GetElementByID(id);
 
-//		final Package pkg = this.getPackageById(element.get_PackageID());
-		final Element result = new ElementImpl(this.peer, id);
+		if (element == null)
+			throw new IllegalArgumentException();
 
-		return result;
+		return new ElementImpl(this.peer, id);
 	}
 
 	public Package getPackageById(int id) {
-//		final Package cached = this.packageCache.get(id);
-//		if (cached != null)
-//			return cached;
+		final IPackage pkg = (IPackage) this.peer.GetPackageByID(id);
 
-//		final IPackage pkg = (IPackage) this.peer.GetPackageByID(id);
+		if (pkg == null)
+			throw new IllegalArgumentException();
 
-//		Package parent = null;
-//		final int parentId = pkg.get_ParentID();
-//		if (parentId != 0)
-//			parent = this.getPackageById(parentId);
-
-		final Package result = new PackageImpl(this.peer, id);
-//		this.packageCache.put(id, result);
-
-		return result;
+		return new PackageImpl(this.peer, id);
 	}
 
+	@Override
 	public Diagram getDiagramById(int id) {
-//		final IDiagram diagram = (IDiagram) this.peer.GetDiagramByID(id);
-//
-//		Package pkg = null;
-//		final int packageId = diagram.get_PackageID();
-//		if (packageId != 0)
-//			pkg = this.getPackageById(packageId);
+		final IDiagram diagram = (IDiagram) this.peer.GetDiagramByID(id);
 
-		final Diagram result = new DiagramImpl(this.peer, id);
+		if (diagram == null)
+			throw new IllegalArgumentException();
 
-		return result;
+		return new DiagramImpl(this.peer, id);
 	}
 }

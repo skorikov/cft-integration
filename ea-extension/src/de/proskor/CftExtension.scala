@@ -93,22 +93,28 @@ class CftExtension extends ExtensionAdapter {
       }
     }
 
-    var c1: de.proskor.model.Collection[de.proskor.model.Package] = null
-
-    item("INIT") {
+    item("FOO") {
       val repository = this.getRepository();
+      val output = repository.getOutputTab("TEST");
       val models = repository.getModels();
       val iterator = models.iterator();
       while (iterator.hasNext()) {
         val model = iterator.next();
-        c1 = model.getPackages();
+        val it = model.getPackages().iterator();
+        while (it.hasNext()) {
+          val pkg = it.next();
+          val pi = pkg.getElements().iterator();
+          while (pi.hasNext()) {
+            val element = pi.next();
+            output.write(element.getName());
+            val ci = element.getConnectors().iterator();
+            while (ci.hasNext()) {
+              val connector = ci.next();
+              output.write(connector.getSource().getName() + " -> " + connector.getTarget().getName());
+            }
+          }
+        }
       }
-    }
-
-    item("GO") {
-      val repository = this.getRepository();
-      val output = repository.getOutputTab("TEST");
-      output.write(c1.size().toString)
     }
 
     item("Test") {

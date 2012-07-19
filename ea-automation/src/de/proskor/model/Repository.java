@@ -29,12 +29,33 @@ public interface Repository {
 	 * Get models.
 	 * @return collection of models.
 	 */
-	public Collection<Package> getModels();
+	Collection<Package> getModels();
 
 	/**
 	 * Get an output tab.
 	 * @param name name of the output tab.
 	 * @return output tab.
 	 */
-	public OutputTab getOutputTab(String name);
+	OutputTab getOutputTab(String name);
+
+	/**
+	 * Get package by id.
+	 * @param id id of the package.
+	 * @return the package with the specified id, or null if none exists.
+	 */
+	Package getPackageById(int id);
+
+	/**
+	 * Get element by id.
+	 * @param id id of the element.
+	 * @return the element with the specified id, or null if none exists.
+	 */
+	Element getElementById(int id);
+
+	/**
+	 * Get diagram by id.
+	 * @param id id of the diagram.
+	 * @return the diagram with the specified id, or null if none exists.
+	 */
+	Diagram getDiagramById(int id);
 }

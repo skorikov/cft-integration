@@ -8,7 +8,7 @@ import de.proskor.model.Diagram;
 import de.proskor.model.Element;
 import de.proskor.model.Node;
 
-public class NodeImpl implements Node {
+class NodeImpl implements Node {
 	private final IRepository repository;
 	private final int diagramId;
 	private final int nodeId;

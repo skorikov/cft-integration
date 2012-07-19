@@ -12,7 +12,7 @@ import de.proskor.model.Collection;
  * @param <T> type of elements.
  * @param <E> type of the underlying collection elements.
  */
-public abstract class CollectionImpl<T, E> implements Collection<T> {
+abstract class CollectionImpl<T, E> implements Collection<T> {
 	private final ICollection peer;
 	private int changeCount = 0;
 
@@ -121,5 +121,17 @@ public abstract class CollectionImpl<T, E> implements Collection<T> {
 		@SuppressWarnings("unchecked")
 		final E object = (E) this.peer.GetAt((short) index);
 		return this.create(object);
+	}
+
+	@Override
+	public int indexOf(T element) {
+		final int size = this.size();
+		for (int i = 0; i < size; i++) {
+			@SuppressWarnings("unchecked")
+			final E object = (E) this.peer.GetAt((short) i);
+			if (this.matches(object, element))
+				return i;
+		}
+		throw new NoSuchElementException();
 	}
 }

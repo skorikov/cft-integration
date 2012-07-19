@@ -127,7 +127,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	@Override
 	public boolean deleteElement(IRepository repository, IEventProperties properties) {
 		final int id = Integer.valueOf(properties.Get("ElementID").get_Value().toString());
-		final Element element = ((RepositoryImpl) this.repository).getElementById(id);
+		final Element element = this.repository.getElementById(id);
 		return this.getExtension().deleteElement(element);
 	}
 
@@ -137,7 +137,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	@Override
 	public boolean deletePackage(IRepository repository, IEventProperties properties) {
 		final int id = Integer.valueOf(properties.Get("PackageID").get_Value().toString());
-		final Package pkg = ((RepositoryImpl) this.repository).getPackageById(id);
+		final Package pkg = this.repository.getPackageById(id);
 		return this.getExtension().deletePackage(pkg);
 	}
 
@@ -147,7 +147,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	@Override
 	public boolean deleteDiagram(IRepository repository, IEventProperties properties) {
 		final int id = Integer.valueOf(properties.Get("DiagramID").get_Value().toString());
-		final Diagram diagram = ((RepositoryImpl) this.repository).getDiagramById(id);
+		final Diagram diagram = this.repository.getDiagramById(id);
 		return this.getExtension().deleteDiagram(diagram);
 	}
 

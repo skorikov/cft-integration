@@ -10,7 +10,7 @@ import de.proskor.model.Diagram;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
 
-public class PackageImpl implements Package {
+class PackageImpl implements Package {
 	private final IRepository repository;
 	private final int id;
 

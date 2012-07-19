@@ -18,4 +18,7 @@ public interface Element {
 	Package getPackage();
 	Element getParent();
 	Collection<Element> getElements();
+	Collection<Connector> getConnectors();
+
+	Connector connectTo(Element target);
 }

@@ -1,13 +1,15 @@
 package de.proskor.model.impl;
 
 import cli.EA.ICollection;
+import cli.EA.IConnector;
 import cli.EA.IElement;
 import cli.EA.IRepository;
 import de.proskor.model.Collection;
+import de.proskor.model.Connector;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
 
-public class ElementImpl implements Element {
+class ElementImpl implements Element {
 	private final IRepository repository;
 	private final int id;
 
@@ -106,5 +108,38 @@ public class ElementImpl implements Element {
 				return new ElementImpl(ElementImpl.this.repository, element.get_ElementID());
 			}
 		};
+	}
+
+	@Override
+	public Collection<Connector> getConnectors() {
+		final IElement peer = this.getPeer();
+		final ICollection collection = (ICollection) peer.get_Connectors();
+		return new CollectionImpl<Connector, IConnector>(collection) {
+			@Override
+			protected boolean matches(IConnector object, Connector element) {
+				return object.get_ConnectorID() == element.getId();
+			}
+
+			@Override
+			protected Connector create(IConnector element) {
+				return new ConnectorImpl(ElementImpl.this.repository, element.get_ConnectorID());
+			}
+
+			@Override
+			public Connector add(String name, String type) {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+
+	@Override
+	public Connector connectTo(Element target) {
+		final IElement peer = this.getPeer();
+		final ICollection collection = (ICollection) peer.get_Connectors();
+		final IConnector connector = (IConnector) collection.AddNew("", "Connector");
+		connector.set_ClientID(this.id);
+		connector.set_SupplierID(target.getId());
+		connector.Update();
+		return new ConnectorImpl(this.repository, connector.get_ConnectorID());
 	}
 }
