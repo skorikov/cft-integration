@@ -72,7 +72,7 @@ public class MenuItemAdapter implements MenuItem {
 
 	/** NOP */
 	@Override
-	public void invoke() {}
+	public void run() {}
 
 	@Override
 	public String toString() {

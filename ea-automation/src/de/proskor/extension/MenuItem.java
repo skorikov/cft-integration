@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Menu Item interface.
  */
-public interface MenuItem {
+public interface MenuItem extends Runnable {
 	/**
 	 * Get the name of this menu item.
 	 * @return name.
@@ -42,9 +42,4 @@ public interface MenuItem {
 	 * @return true if this menu item is checked, false otherwise.
 	 */
 	public boolean isChecked();
-
-	/**
-	 * Invoke the menu item.
-	 */
-	public void invoke();
 }

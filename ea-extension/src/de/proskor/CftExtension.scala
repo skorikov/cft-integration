@@ -38,7 +38,7 @@ class CftExtension extends ExtensionAdapter {
 
   private def item(name: String)(code: => Unit) =
     new MenuItemAdapter(menu, name) {
-      override def invoke = code
+      override def run = code
     }
 
   override def deleteElement(element: JavaElement): Boolean = {
@@ -49,7 +49,7 @@ class CftExtension extends ExtensionAdapter {
   override protected def createMenu = {
     new MenuItemAdapter(menu, "Run Tests") {
       setVisible(false)
-      override def invoke {
+      override def run {
         Repository.instance.write("---- RUNNING TESTS ----")
         runner.test(classOf[AdapterTests])
         runner.test(classOf[PeerTests])
@@ -154,7 +154,7 @@ class CftExtension extends ExtensionAdapter {
         case Some(diagram: Diagram) if diagram.stereotype != "CFT" => true
         case _ => false
       }
-      override def invoke {
+      override def run {
         val repository = Repository.instance
         val context = repository.context.get.asInstanceOf[Diagram]
         val cft = context.pkg.diagrams.add(context.name + ".CFT", "ObjectDiagram")
@@ -220,7 +220,7 @@ class CftExtension extends ExtensionAdapter {
         }
         for (cont <- er.getEventTypeContainers) yield new MenuItemAdapter(cont.getName) {
           override def isChecked = isConnected(el) && (cont.asInstanceOf[EventTypeContainerImpl].peer == typeContainer.peer)
-          override def invoke {
+          override def run {
             if (!isChecked) {
               el.connectors.find(_.stereotype == "instanceOf") match {
                 case Some(connector) => connector.target = cont.asInstanceOf[EventTypeContainerImpl].peer
@@ -241,7 +241,7 @@ class CftExtension extends ExtensionAdapter {
       override def isVisible = hasChildren
 
       override def getChildren: JavaList[MenuItem] = for (event <- eventTypes) yield new MenuItemAdapter(event.getName) {
-        override def invoke {
+        override def run {
           val el = repository.context.get.asInstanceOf[Element]
           val diagram = repository.diagram
           var node: Option[Node] = None

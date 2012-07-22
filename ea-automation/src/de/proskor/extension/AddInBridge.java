@@ -116,9 +116,9 @@ public abstract class AddInBridge extends AddInAdapter {
 	@Override
 	public void menuItemClicked(IRepository repository, String location, String menu, String item) {
 		final MenuItem topMenuItem = this.getMenu();
-		final MenuItem menuItem = this.findMenuItem(topMenuItem, menu, item);
+		final Runnable menuItem = this.findMenuItem(topMenuItem, menu, item);
 
-		menuItem.invoke();
+		menuItem.run();
 	}
 
 	/**
