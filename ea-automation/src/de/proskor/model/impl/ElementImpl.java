@@ -9,22 +9,14 @@ import de.proskor.model.Connector;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
 
-class ElementImpl implements Element {
-	private final IRepository repository;
-	private final int id;
-
+class ElementImpl extends IdentityImpl<IElement> implements Element {
 	public ElementImpl(IRepository repository, int id) {
-		this.repository = repository;
-		this.id = id;
-	}
-
-	private IElement getPeer() {
-		return (IElement) this.repository.GetElementByID(this.id);
+		super(repository, id);
 	}
 
 	@Override
-	public int getId() {
-		return this.id;
+	protected IElement getPeer() {
+		return (IElement) this.getRepository().GetElementByID(this.getId());
 	}
 
 	@Override
@@ -79,7 +71,7 @@ class ElementImpl implements Element {
 	public Package getPackage() {
 		final IElement peer = this.getPeer();
 		final int packageId = peer.get_PackageID();
-		return new PackageImpl(this.repository, packageId);
+		return new PackageImpl(this.getRepository(), packageId);
 	}
 
 	@Override
@@ -90,7 +82,7 @@ class ElementImpl implements Element {
 		if (parentId == 0)
 			throw new IllegalStateException();
 
-		return new ElementImpl(this.repository, parentId);
+		return new ElementImpl(this.getRepository(), parentId);
 	}
 
 	@Override
@@ -105,7 +97,7 @@ class ElementImpl implements Element {
 
 			@Override
 			protected Element create(IElement element) {
-				return new ElementImpl(ElementImpl.this.repository, element.get_ElementID());
+				return new ElementImpl(ElementImpl.this.getRepository(), element.get_ElementID());
 			}
 		};
 	}
@@ -122,7 +114,7 @@ class ElementImpl implements Element {
 
 			@Override
 			protected Connector create(IConnector element) {
-				return new ConnectorImpl(ElementImpl.this.repository, element.get_ConnectorID());
+				return new ConnectorImpl(ElementImpl.this.getRepository(), element.get_ConnectorID());
 			}
 
 			@Override
@@ -137,10 +129,15 @@ class ElementImpl implements Element {
 		final IElement peer = this.getPeer();
 		final ICollection collection = (ICollection) peer.get_Connectors();
 		final IConnector connector = (IConnector) collection.AddNew("", "Connector");
-		connector.set_ClientID(this.id);
+		connector.set_ClientID(this.getId());
 		connector.set_SupplierID(target.getId());
 		connector.Update();
-		return new ConnectorImpl(this.repository, connector.get_ConnectorID());
+		return new ConnectorImpl(this.getRepository(), connector.get_ConnectorID());
+	}
+
+	@Override
+	public String toString() {
+		return "ELEMENT[" + this.getId() + "|" + this.getName() + "]";
 	}
 
 	@Override
@@ -149,13 +146,13 @@ class ElementImpl implements Element {
 			return false;
 
 		if (that instanceof ElementImpl)
-			return this.id == ((ElementImpl) that).id;
+			return this.getId() == ((ElementImpl) that).getId();
 
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.id;
+		return this.getId();
 	}
 }

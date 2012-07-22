@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cli.EA.ICollection;
+import cli.EA.IConnector;
 import cli.EA.IDiagram;
 import cli.EA.IElement;
 import cli.EA.IPackage;
 import cli.EA.IRepository;
+import cli.EA.ObjectType;
 import de.proskor.model.Collection;
 import de.proskor.model.Diagram;
 import de.proskor.model.Element;
+import de.proskor.model.Entity;
 import de.proskor.model.Package;
 import de.proskor.model.Repository;
 
@@ -46,6 +49,9 @@ public class RepositoryImpl implements Repository {
 			RepositoryImpl.this.peer.CreateOutputTab(this.name);
 		}
 
+		/**
+		 * Write to the output.
+		 */
 		@Override
 		public void write(String text) {
 			if (this.closed)
@@ -55,6 +61,9 @@ public class RepositoryImpl implements Repository {
 			RepositoryImpl.this.peer.WriteOutput(this.name, text, 0);
 		}
 
+		/**
+		 * Clear the output tab.
+		 */
 		@Override
 		public void clear() {
 			if (this.closed)
@@ -63,6 +72,10 @@ public class RepositoryImpl implements Repository {
 			RepositoryImpl.this.peer.ClearOutput(this.name);
 		}
 
+		/**
+		 * Close the output tab.
+		 * Subsequent write calls will result in exceptions thrown.
+		 */
 		public void close() {
 			this.closed = true;
 			RepositoryImpl.this.peer.RemoveOutputTab(this.name);
@@ -137,6 +150,32 @@ public class RepositoryImpl implements Repository {
 			throw new IllegalArgumentException();
 
 		return new DiagramImpl(this.peer, id);
+	}
+
+	@Override
+	public Entity getContext() {
+		final ObjectType type = this.peer.GetContextItemType();
+		switch (type.Value) {
+		case ObjectType.otElement:
+			final int elementId = ((IElement) this.peer.GetContextObject()).get_ElementID();
+			return new ElementImpl(this.peer, elementId);
+		case ObjectType.otPackage:
+			final int packageId = ((IPackage) this.peer.GetContextObject()).get_PackageID();
+			return new PackageImpl(this.peer, packageId);
+		case ObjectType.otDiagram:
+			final int diagramId = ((IDiagram) this.peer.GetContextObject()).get_DiagramID();
+			return new DiagramImpl(this.peer, diagramId);
+		case ObjectType.otConnector:
+			final int connectorId = ((IConnector) this.peer.GetContextObject()).get_ConnectorID();
+			return new ConnectorImpl(this.peer, connectorId);
+		default:
+			return null;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "REPOSITORY[" + this.peer.get_ConnectionString() + "]";
 	}
 
 	@Override

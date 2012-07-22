@@ -8,44 +8,37 @@ import de.proskor.model.Diagram;
 import de.proskor.model.Element;
 import de.proskor.model.Node;
 
-class NodeImpl implements Node {
-	private final IRepository repository;
+class NodeImpl extends IdentityImpl<IDiagramObject> implements Node {
 	private final int diagramId;
-	private final int nodeId;
 
 	public NodeImpl(IRepository repository, int diagramId, int nodeId) {
-		this.repository = repository;
+		super(repository, nodeId);
 		this.diagramId = diagramId;
-		this.nodeId = nodeId;
 	}
 
-	private IDiagramObject getPeer() {
-		final IDiagram diagram = (IDiagram) this.repository.GetDiagramByID(this.diagramId);
+	@Override
+	protected IDiagramObject getPeer() {
+		final IDiagram diagram = (IDiagram) this.getRepository().GetDiagramByID(this.diagramId);
 		final ICollection collection = (ICollection) diagram.get_DiagramObjects();
 		final short count = collection.get_Count();
 		for (short i = 0; i < count; i++) {
 			final IDiagramObject node = (IDiagramObject) collection.GetAt(i);
-			if (node.get_InstanceID() == this.nodeId)
+			if (node.get_InstanceID() == this.getId())
 				return node;
 		}
 		throw new IllegalStateException();
 	}
 
 	@Override
-	public int getId() {
-		return this.nodeId;
-	}
-
-	@Override
 	public Element getElement() {
 		final IDiagramObject peer = this.getPeer();
 		final int elementId = peer.get_ElementID();
-		return new ElementImpl(this.repository, elementId);
+		return new ElementImpl(this.getRepository(), elementId);
 	}
 
 	@Override
 	public Diagram getDiagram() {
-		return new DiagramImpl(this.repository, this.diagramId);
+		return new DiagramImpl(this.getRepository(), this.diagramId);
 	}
 
 	@Override
@@ -109,18 +102,23 @@ class NodeImpl implements Node {
 	}
 
 	@Override
+	public String toString() {
+		return "NODE[" + this.getId() + "] FOR " + this.getElement().toString();
+	}
+
+	@Override
 	public boolean equals(Object that) {
 		if (that == null)
 			return false;
 
 		if (that instanceof NodeImpl)
-			return this.nodeId == ((NodeImpl) that).nodeId;
+			return this.getId() == ((NodeImpl) that).getId();
 
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.nodeId;
+		return this.getId();
 	}
 }

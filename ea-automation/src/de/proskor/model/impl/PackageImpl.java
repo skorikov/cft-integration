@@ -10,22 +10,14 @@ import de.proskor.model.Diagram;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
 
-class PackageImpl implements Package {
-	private final IRepository repository;
-	private final int id;
-
+class PackageImpl extends IdentityImpl<IPackage> implements Package {
 	public PackageImpl(IRepository repository, int id) {
-		this.repository = repository;
-		this.id = id;
-	}
-
-	private IPackage getPeer() {
-		return (IPackage) this.repository.GetPackageByID(this.id);
+		super(repository, id);
 	}
 
 	@Override
-	public int getId() {
-		return this.id;
+	protected IPackage getPeer() {
+		return (IPackage) this.getRepository().GetPackageByID(this.getId());
 	}
 
 	@Override
@@ -81,7 +73,7 @@ class PackageImpl implements Package {
 		final IPackage peer = this.getPeer();
 		final IElement element = (IElement) peer.get_Element();
 		final int elementId = element.get_ElementID();
-		return new ElementImpl(this.repository, elementId);
+		return new ElementImpl(this.getRepository(), elementId);
 	}
 
 	@Override
@@ -92,7 +84,7 @@ class PackageImpl implements Package {
 		if (parentId == 0)
 			throw new IllegalStateException();
 
-		return new PackageImpl(this.repository, parentId);
+		return new PackageImpl(this.getRepository(), parentId);
 	}
 
 	@Override
@@ -107,7 +99,7 @@ class PackageImpl implements Package {
 
 			@Override
 			protected Package create(IPackage element) {
-				return new PackageImpl(PackageImpl.this.repository, element.get_PackageID());
+				return new PackageImpl(PackageImpl.this.getRepository(), element.get_PackageID());
 			}
 		};
 	}
@@ -124,7 +116,7 @@ class PackageImpl implements Package {
 
 			@Override
 			protected Element create(IElement element) {
-				return new ElementImpl(PackageImpl.this.repository, element.get_ElementID());
+				return new ElementImpl(PackageImpl.this.getRepository(), element.get_ElementID());
 			}
 		};
 	}
@@ -141,9 +133,14 @@ class PackageImpl implements Package {
 
 			@Override
 			protected Diagram create(IDiagram element) {
-				return new DiagramImpl(PackageImpl.this.repository, element.get_DiagramID());
+				return new DiagramImpl(PackageImpl.this.getRepository(), element.get_DiagramID());
 			}
 		};
+	}
+
+	@Override
+	public String toString() {
+		return "PACKAGE[" + this.getId() + "|" + this.getName() + "]";
 	}
 
 	@Override
@@ -152,13 +149,13 @@ class PackageImpl implements Package {
 			return false;
 
 		if (that instanceof PackageImpl)
-			return this.id == ((PackageImpl) that).id;
+			return this.getId() == ((PackageImpl) that).getId();
 
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.id;
+		return this.getId();
 	}
 }

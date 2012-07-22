@@ -1,8 +1,6 @@
 package de.proskor.model;
 
-public interface Node {
-	int getId();
-
+public interface Node extends Identity {
 	int getLeft();
 	void setLeft(int left);
 

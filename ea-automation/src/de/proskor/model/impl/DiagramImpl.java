@@ -9,22 +9,14 @@ import de.proskor.model.Diagram;
 import de.proskor.model.Node;
 import de.proskor.model.Package;
 
-class DiagramImpl implements Diagram {
-	private final IRepository repository;
-	private final int id;
-
+class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 	public DiagramImpl(IRepository repository, int id) {
-		this.repository = repository;
-		this.id = id;
-	}
-
-	private IDiagram getPeer() {
-		return (IDiagram) this.repository.GetDiagramByID(this.id);
+		super(repository, id);
 	}
 
 	@Override
-	public int getId() {
-		return this.id;
+	protected IDiagram getPeer() {
+		return (IDiagram) this.getRepository().GetDiagramByID(this.getId());
 	}
 
 	@Override
@@ -73,7 +65,7 @@ class DiagramImpl implements Diagram {
 	public Package getPackage() {
 		final IDiagram peer = this.getPeer();
 		final int packageId = peer.get_PackageID();
-		return new PackageImpl(this.repository, packageId);
+		return new PackageImpl(this.getRepository(), packageId);
 	}
 
 	@Override
@@ -88,9 +80,14 @@ class DiagramImpl implements Diagram {
 
 			@Override
 			protected Node create(IDiagramObject element) {
-				return new NodeImpl(DiagramImpl.this.repository, DiagramImpl.this.id, element.get_InstanceID());
+				return new NodeImpl(DiagramImpl.this.getRepository(), DiagramImpl.this.getId(), element.get_InstanceID());
 			}
 		};
+	}
+
+	@Override
+	public String toString() {
+		return "DIAGRAM[" + this.getId() + "|" + this.getName() + "]";
 	}
 
 	@Override
@@ -99,13 +96,13 @@ class DiagramImpl implements Diagram {
 			return false;
 
 		if (that instanceof DiagramImpl)
-			return this.id == ((DiagramImpl) that).id;
+			return this.getId() == ((DiagramImpl) that).getId();
 
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.id;
+		return this.getId();
 	}
 }

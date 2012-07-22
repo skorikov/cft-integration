@@ -58,4 +58,10 @@ public interface Repository {
 	 * @return the diagram with the specified id, or null if none exists.
 	 */
 	Diagram getDiagramById(int id);
+
+	/**
+	 * Get context element.
+	 * @return context element or null if none is selected.
+	 */
+	Entity getContext();
 }

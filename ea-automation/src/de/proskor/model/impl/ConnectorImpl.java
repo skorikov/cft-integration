@@ -5,22 +5,14 @@ import cli.EA.IRepository;
 import de.proskor.model.Connector;
 import de.proskor.model.Element;
 
-class ConnectorImpl implements Connector {
-	private final IRepository repository;
-	private final int id;
-
+class ConnectorImpl extends IdentityImpl<IConnector> implements Connector {
 	public ConnectorImpl(IRepository repository, int id) {
-		this.repository = repository;
-		this.id = id;
-	}
-
-	private IConnector getPeer() {
-		return (IConnector) repository.GetConnectorByID(this.id);
+		super(repository, id);
 	}
 
 	@Override
-	public int getId() {
-		return this.id;
+	protected IConnector getPeer() {
+		return (IConnector) getRepository().GetConnectorByID(this.getId());
 	}
 
 	@Override
@@ -81,28 +73,33 @@ class ConnectorImpl implements Connector {
 	public Element getSource() {
 		final IConnector peer = this.getPeer();
 		final int sourceId = peer.get_ClientID();
-		return new ElementImpl(this.repository, sourceId);
+		return new ElementImpl(this.getRepository(), sourceId);
 	}
 
 	@Override
 	public void setSource(Element source) {
 		final IConnector peer = this.getPeer();
 		peer.set_ClientID(source.getId());
-		// TODO: Update
+		peer.Update();
 	}
 
 	@Override
 	public Element getTarget() {
 		final IConnector peer = this.getPeer();
 		final int targetId = peer.get_SupplierID();
-		return new ElementImpl(this.repository, targetId);
+		return new ElementImpl(this.getRepository(), targetId);
 	}
 
 	@Override
 	public void setTarget(Element target) {
 		final IConnector peer = this.getPeer();
 		peer.set_SupplierID(target.getId());
-		// TODO: Update
+		peer.Update();
+	}
+
+	@Override
+	public String toString() {
+		return "CONNECTOR[" + this.getId() + "|" + this.getName() + "]";
 	}
 
 	@Override
@@ -111,13 +108,13 @@ class ConnectorImpl implements Connector {
 			return false;
 
 		if (that instanceof ConnectorImpl)
-			return this.id == ((ConnectorImpl) that).id;
+			return this.getId() == ((ConnectorImpl) that).getId();
 
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.id;
+		return this.getId();
 	}
 }

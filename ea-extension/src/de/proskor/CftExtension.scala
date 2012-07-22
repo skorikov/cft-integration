@@ -93,6 +93,13 @@ class CftExtension extends ExtensionAdapter {
       }
     }
 
+    item("CONTEXT") {
+      val repository = this.getRepository();
+      val output = repository.getOutputTab("Context");
+      val context = repository.getContext();
+      output.write(if (context != null) context.toString() else "NULL");
+    }
+
     item("FOO") {
       val repository = this.getRepository();
       val output = repository.getOutputTab("TEST");
