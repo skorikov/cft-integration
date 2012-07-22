@@ -4,10 +4,12 @@ import cli.EA.ICollection;
 import cli.EA.IConnector;
 import cli.EA.IElement;
 import cli.EA.IRepository;
+import cli.EA.ITaggedValue;
 import de.proskor.model.Collection;
 import de.proskor.model.Connector;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
+import de.proskor.model.TaggedValue;
 
 class ElementImpl extends IdentityImpl<IElement> implements Element {
 	public ElementImpl(IRepository repository, int id) {
@@ -68,13 +70,6 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 	}
 
 	@Override
-	public Package getPackage() {
-		final IElement peer = this.getPeer();
-		final int packageId = peer.get_PackageID();
-		return new PackageImpl(this.getRepository(), packageId);
-	}
-
-	@Override
 	public Element getParent() {
 		final IElement peer = this.getPeer();
 		final int parentId = peer.get_ParentID();
@@ -83,6 +78,13 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 			throw new IllegalStateException();
 
 		return new ElementImpl(this.getRepository(), parentId);
+	}
+
+	@Override
+	public Package getPackage() {
+		final IElement peer = this.getPeer();
+		final int packageId = peer.get_PackageID();
+		return new PackageImpl(this.getRepository(), packageId);
 	}
 
 	@Override
@@ -98,6 +100,23 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 			@Override
 			protected Element create(IElement element) {
 				return new ElementImpl(ElementImpl.this.getRepository(), element.get_ElementID());
+			}
+		};
+	}
+
+	@Override
+	public Collection<TaggedValue> getTaggedValues() {
+		final IElement peer = this.getPeer();
+		final ICollection taggedValues = (ICollection) peer.get_TaggedValues();
+		return new CollectionImpl<TaggedValue, ITaggedValue>(taggedValues) {
+			@Override
+			protected boolean matches(ITaggedValue object, TaggedValue element) {
+				return object.get_PropertyID() == element.getId();
+			}
+
+			@Override
+			protected TaggedValue create(ITaggedValue element) {
+				return new TaggedValueImpl(ElementImpl.this.getRepository(), ElementImpl.this.getId(), element.get_PropertyID());
 			}
 		};
 	}

@@ -1,5 +1,9 @@
 package de.proskor.model;
 
+/**
+ * An Entity has a global id, a name and a description.
+ * It extends the Identity.
+ */
 public interface Entity extends Identity {
 	/**
 	 * Get the package globally unique id.
@@ -30,16 +34,4 @@ public interface Entity extends Identity {
 	 * @param description new notes value.
 	 */
 	void setDescription(String description);
-
-	/**
-	 * Get package stereotype.
-	 * @return stereotype.
-	 */
-	String getStereotype();
-
-	/**
-	 * Set package stereotype.
-	 * @param stereotype new stereotype value.
-	 */
-	void setStereotype(String stereotype);
 }

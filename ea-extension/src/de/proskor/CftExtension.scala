@@ -98,6 +98,14 @@ class CftExtension extends ExtensionAdapter {
       val output = repository.getOutputTab("Context");
       val context = repository.getContext();
       output.write(if (context != null) context.toString() else "NULL");
+      if (context.isInstanceOf[de.proskor.model.Package]) {
+        val element = context.asInstanceOf[de.proskor.model.Package].getElement();
+        val iterator = element.getTaggedValues().iterator();
+        while (iterator.hasNext()) {
+          val tv = iterator.next();
+          output.write(tv.toString());
+        }
+      }
     }
 
     item("FOO") {
