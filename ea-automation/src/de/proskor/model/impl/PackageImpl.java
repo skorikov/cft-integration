@@ -36,6 +36,7 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 	public void setName(String name) {
 		final IPackage peer = this.getPeer();
 		peer.set_Name(name);
+		peer.Update();
 	}
 
 	@Override
@@ -48,6 +49,7 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 	public void setDescription(String description) {
 		final IPackage peer = this.getPeer();
 		peer.set_Notes(description);
+		peer.Update();
 	}
 
 	@Override
@@ -60,6 +62,7 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 	public void setStereotype(String stereotype) {
 		final IPackage peer = this.getPeer();
 		peer.set_StereotypeEx(stereotype);
+		peer.Update();
 	}
 
 	@Override
@@ -99,7 +102,20 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 
 			@Override
 			protected Package create(IPackage element) {
+				element.Update();
 				return new PackageImpl(PackageImpl.this.getRepository(), element.get_PackageID());
+			}
+
+			@Override
+			public void clear() {
+				super.clear();
+				PackageImpl.this.getRepository().RefreshModelView(PackageImpl.this.getId());
+			}
+
+			@Override
+			public void remove(int index) {
+				super.remove(index);
+				PackageImpl.this.getRepository().RefreshModelView(PackageImpl.this.getId());
 			}
 		};
 	}

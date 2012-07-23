@@ -121,6 +121,18 @@ public class RepositoryImpl implements Repository {
 				element.Update();
 				return new PackageImpl(RepositoryImpl.this.peer, element.get_PackageID());
 			}
+
+			@Override
+			public void clear() {
+				super.clear();
+				RepositoryImpl.this.peer.RefreshModelView(0);
+			}
+
+			@Override
+			public void remove(int index) {
+				super.remove(index);
+				RepositoryImpl.this.peer.RefreshModelView(0);
+			}
 		};
 	}
 

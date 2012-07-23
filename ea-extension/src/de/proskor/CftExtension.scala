@@ -8,6 +8,7 @@ import de.proskor.automation.Diagram
 import de.proskor.automation.Element
 import de.proskor.automation.Node
 import de.proskor.automation.Repository
+import de.proskor.cft.test.AutomationTests
 import de.proskor.cft.test.AdapterTests
 import de.proskor.cft.test.CftTests
 import de.proskor.cft.test.PeerTests
@@ -29,7 +30,7 @@ import de.proskor.fel.view.ArchitecturalView
 import de.proskor.fel.view.ComponentFaultTree
 import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.ArchitecturalViewImpl
-import de.proskor.model.{Element => JavaElement}
+import de.proskor.model.{Element => JavaElement, Package => JavaPackage}
 import de.proskor.model.impl.DiagramImpl
 
 class CftExtension extends ExtensionAdapter {
@@ -46,14 +47,21 @@ class CftExtension extends ExtensionAdapter {
     !element.getName().equals("test")
   }
 
+  override def deletePackage(pkg: JavaPackage): Boolean = {
+    this.getRepository().getOutputTab("delete").write("deleting " + pkg.getName())
+    !pkg.getName().equals("test")
+  }
+
   override protected def createMenu = {
     new MenuItemAdapter(menu, "Run Tests") {
-      setVisible(false)
+//      setVisible(false)
       override def run {
+        AutomationTests.repository = CftExtension.this.getRepository
         Repository.instance.write("---- RUNNING TESTS ----")
-        runner.test(classOf[AdapterTests])
-        runner.test(classOf[PeerTests])
-        runner.test(classOf[CftTests])
+        runner.test(classOf[AutomationTests])
+//        runner.test(classOf[AdapterTests])
+//        runner.test(classOf[PeerTests])
+//        runner.test(classOf[CftTests])
         Repository.instance.write("---- ALL TESTS DONE ----")
       }
     }
