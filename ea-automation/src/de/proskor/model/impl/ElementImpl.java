@@ -80,6 +80,19 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 	}
 
 	@Override
+	public String getAuthor() {
+		final IElement peer = this.getPeer();
+		return (String) peer.get_Author();
+	}
+
+	@Override
+	public void setAuthor(String author) {
+		final IElement peer = this.getPeer();
+		peer.set_Author(author);
+		peer.Update();
+	}
+
+	@Override
 	public boolean isChild() {
 		final IElement peer = this.getPeer();
 		return peer.get_ParentID() != 0;

@@ -77,6 +77,18 @@ public interface Element extends Entity {
 	void setStereotype(String stereotype);
 
 	/**
+	 * Get author.
+	 * @return author.
+	 */
+	String getAuthor();
+
+	/**
+	 * Set author.
+	 * @param author new author value.
+	 */
+	void setAuthor(String author);
+
+	/**
 	 * Determines if the element is contained in another element.
 	 * @return true if it is contained in another element, false otherwise.
 	 */
