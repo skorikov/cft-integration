@@ -1,21 +1,30 @@
 package de.proskor.model;
 
-public interface Node extends Identity {
-	int getLeft();
-	void setLeft(int left);
-
-	int getTop();
-	void setTop(int top);
-
-	int getRight();
-	void setRight(int right);
-
-	int getBottom();
-	void setBottom(int bottom);
-
+/**
+ * A diagram node.
+ */
+public interface Node extends Identity, Rectangle {
+	/**
+	 * Get node z-layer.
+	 * @return z-layer.
+	 */
 	int getSequence();
+
+	/**
+	 * Set node z-layer.
+	 * @param sequence new z-layer value.
+	 */
 	void setSequence(int sequence);
 
+	/**
+	 * Get containing diagram.
+	 * @return containing diagram.
+	 */
 	Diagram getDiagram();
+
+	/**
+	 * Get associated element.
+	 * @return associated element.
+	 */
 	Element getElement();
 }

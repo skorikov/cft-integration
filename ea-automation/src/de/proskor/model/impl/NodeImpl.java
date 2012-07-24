@@ -51,6 +51,7 @@ class NodeImpl extends IdentityImpl<IDiagramObject> implements Node {
 	public void setLeft(int left) {
 		final IDiagramObject peer = this.getPeer();
 		peer.set_left(peer.get_right() - peer.get_left() + left);
+		peer.Update();
 	}
 
 	@Override
@@ -63,6 +64,7 @@ class NodeImpl extends IdentityImpl<IDiagramObject> implements Node {
 	public void setTop(int top) {
 		final IDiagramObject peer = this.getPeer();
 		peer.set_top(peer.get_bottom() - peer.get_top() - top);
+		peer.Update();
 	}
 
 	@Override
@@ -75,6 +77,7 @@ class NodeImpl extends IdentityImpl<IDiagramObject> implements Node {
 	public void setRight(int right) {
 		final IDiagramObject peer = this.getPeer();
 		peer.set_right(right);
+		peer.Update();
 	}
 
 	@Override
@@ -87,6 +90,7 @@ class NodeImpl extends IdentityImpl<IDiagramObject> implements Node {
 	public void setBottom(int bottom) {
 		final IDiagramObject peer = this.getPeer();
 		peer.set_bottom(-bottom);
+		peer.Update();
 	}
 
 	@Override
@@ -99,6 +103,7 @@ class NodeImpl extends IdentityImpl<IDiagramObject> implements Node {
 	public void setSequence(int sequence) {
 		final IDiagramObject peer = this.getPeer();
 		peer.set_Sequence(sequence);
+		peer.Update();
 	}
 
 	@Override
