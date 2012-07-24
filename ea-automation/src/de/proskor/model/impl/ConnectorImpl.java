@@ -31,6 +31,7 @@ class ConnectorImpl extends IdentityImpl<IConnector> implements Connector {
 	public void setName(String name) {
 		final IConnector peer = this.getPeer();
 		peer.set_Name(name);
+		peer.Update();
 	}
 
 	@Override
@@ -43,18 +44,7 @@ class ConnectorImpl extends IdentityImpl<IConnector> implements Connector {
 	public void setDescription(String description) {
 		final IConnector peer = this.getPeer();
 		peer.set_Notes(description);
-	}
-
-	@Override
-	public String getStereotype() {
-		final IConnector peer = this.getPeer();
-		return (String) peer.get_Stereotype();
-	}
-
-	@Override
-	public void setStereotype(String stereotype) {
-		final IConnector peer = this.getPeer();
-		peer.set_Stereotype(stereotype);
+		peer.Update();
 	}
 
 	@Override
@@ -67,6 +57,20 @@ class ConnectorImpl extends IdentityImpl<IConnector> implements Connector {
 	public void setType(String type) {
 		final IConnector peer = this.getPeer();
 		peer.set_Type(type);
+		peer.Update();
+	}
+
+	@Override
+	public String getStereotype() {
+		final IConnector peer = this.getPeer();
+		return (String) peer.get_Stereotype();
+	}
+
+	@Override
+	public void setStereotype(String stereotype) {
+		final IConnector peer = this.getPeer();
+		peer.set_Stereotype(stereotype);
+		peer.Update();
 	}
 
 	@Override

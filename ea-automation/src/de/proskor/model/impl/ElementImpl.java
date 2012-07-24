@@ -37,6 +37,7 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 	public void setName(String name) {
 		final IElement peer = this.getPeer();
 		peer.set_Name(name);
+		peer.Update();
 	}
 
 	@Override
@@ -49,6 +50,20 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 	public void setDescription(String description) {
 		final IElement peer = this.getPeer();
 		peer.set_Notes(description);
+		peer.Update();
+	}
+
+	@Override
+	public String getType() {
+		final IElement peer = this.getPeer();
+		return (String) peer.get_Type();
+	}
+
+	@Override
+	public void setType(String type) {
+		final IElement peer = this.getPeer();
+		peer.set_Type(type);
+		peer.Update();
 	}
 
 	@Override
@@ -61,6 +76,7 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 	public void setStereotype(String stereotype) {
 		final IElement peer = this.getPeer();
 		peer.set_StereotypeEx(stereotype);
+		peer.Update();
 	}
 
 	@Override
@@ -147,7 +163,7 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 	public Connector connectTo(Element target) {
 		final IElement peer = this.getPeer();
 		final ICollection collection = (ICollection) peer.get_Connectors();
-		final IConnector connector = (IConnector) collection.AddNew("", "Connector");
+		final IConnector connector = (IConnector) collection.AddNew("", Connector.CONNECTOR);
 		connector.set_ClientID(this.getId());
 		connector.set_SupplierID(target.getId());
 		connector.Update();

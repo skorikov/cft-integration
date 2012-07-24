@@ -1,14 +1,77 @@
 package de.proskor.model;
 
 public interface Element extends Entity {
+	/** Element types. */
+	String ACTION = "Action";
+	String ACTIVITY = "Activity";
+	String ACTIVITYPARTITION = "ActivityPartition";
+	String ACTIVITYREGION = "ActivityRegion";
+	String ACTOR = "Actor";
+	String ARTIFACT = "Artifact";
+	String ASSOCIATION = "Association";
+	String BOUNDARY = "Boundary";
+	String CHANGE = "Change";
+	String CLASS = "Class";
+	String COLLABORATION = "Collaboration";
+	String COMPONENT = "Component";
+	String CONSTRAINT = "Constraint";
+	String DECISION = "Decision";
+	String DEPLOYMENTSPECIFICATION = "DeploymentSpecification";
+	String DIAGRAMFRAME = "DiagramFrame";
+	String EMBEDDEDELEMENT = "EmbeddedElement";
+	String ENTRYPOINT = "EntryPoint";
+	String EVENT = "Event";
+	String EXCEPTIONHANDLER = "ExceptionHandler";
+	String EXITPOINT = "ExitPoint";
+	String EXPANSIONNODE = "ExpansionNode";
+	String EXPANSIONREGION = "ExpansionRegion";
+	String INTERACTIONFRAGMENT = "GUIElement InteractionFragment";
+	String INTERACTIONOCCURENCE = "InteractionOccurrence";
+	String INTERACTIONSTATE = "InteractionState";
+	String INTERFACE = "Interface";
+	String INTERRUPTIBLEACTIVITYREGION = "InterruptibleActivityRegion";
+	String ISSUE = "Issue";
+	String NODE = "Node";
+	String NOTE = "Note";
+	String OBJECT = "Object";
+	String PACKAGE = "Package";
+	String PARAMETER = "Parameter";
+	String PART = "Part";
+	String PORT = "Port";
+	String PROVIDEDINTERFACE = "ProvidedInterface";
+	String REPORT = "Report";
+	String REQUIREDINTERFACE = "RequiredInterface";
+	String REQUIREMENT = "Requirement";
+	String SCREEN = "Screen";
+	String SEQUENCE = "Sequence";
+	String STATE = "State";
+	String STATENODE = "StateNode";
+	String SYNCHRONIZATION = "Synchronization";
+	String TEXT = "Text";
+	String TIMELINE = "TimeLine";
+	String UMLDIAGRAM = "UMLDiagram";
+	String USECASE = "UseCase";
+
 	/**
-	 * Get element stereotype.
+	 * Get type.
+	 * @return type.
+	 */
+	String getType();
+
+	/**
+	 * Set type.
+	 * @param type new type value.
+	 */
+	void setType(String type);
+
+	/**
+	 * Get stereotype.
 	 * @return stereotype.
 	 */
 	String getStereotype();
 
 	/**
-	 * Set element stereotype.
+	 * Set stereotype.
 	 * @param stereotype new stereotype value.
 	 */
 	void setStereotype(String stereotype);

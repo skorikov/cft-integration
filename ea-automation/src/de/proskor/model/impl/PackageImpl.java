@@ -74,6 +74,10 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 	@Override
 	public Element getElement() {
 		final IPackage peer = this.getPeer();
+
+		if (peer.get_ParentID() == 0)
+			throw new IllegalStateException();
+
 		final IElement element = (IElement) peer.get_Element();
 		final int elementId = element.get_ElementID();
 		return new ElementImpl(this.getRepository(), elementId);
@@ -109,12 +113,22 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 			@Override
 			public void clear() {
 				super.clear();
-				PackageImpl.this.getRepository().RefreshModelView(PackageImpl.this.getId());
+				this.refresh();
 			}
 
 			@Override
-			public void remove(int index) {
-				super.remove(index);
+			public void removeAt(int index) {
+				super.removeAt(index);
+				this.refresh();
+			}
+
+			@Override
+			public void remove(Package pkg) {
+				super.remove(pkg);
+				this.refresh();
+			}
+
+			private void refresh() {
 				PackageImpl.this.getRepository().RefreshModelView(PackageImpl.this.getId());
 			}
 		};

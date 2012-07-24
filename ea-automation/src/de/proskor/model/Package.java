@@ -5,14 +5,17 @@ package de.proskor.model;
  * If isModel is true, then it is a top-level package (model).
  */
 public interface Package extends Entity {
+	/** Package types. */
+	String PACKAGE = "Package";
+
 	/**
-	 * Get package stereotype.
+	 * Get stereotype.
 	 * @return stereotype.
 	 */
 	String getStereotype();
 
 	/**
-	 * Set package stereotype.
+	 * Set stereotype.
 	 * @param stereotype new stereotype value.
 	 */
 	void setStereotype(String stereotype);

@@ -125,12 +125,22 @@ public class RepositoryImpl implements Repository {
 			@Override
 			public void clear() {
 				super.clear();
-				RepositoryImpl.this.peer.RefreshModelView(0);
+				this.refresh();
 			}
 
 			@Override
-			public void remove(int index) {
-				super.remove(index);
+			public void removeAt(int index) {
+				super.removeAt(index);
+				this.refresh();
+			}
+
+			@Override
+			public void remove(Package pkg) {
+				super.remove(pkg);
+				this.refresh();
+			}
+
+			private void refresh() {
 				RepositoryImpl.this.peer.RefreshModelView(0);
 			}
 		};

@@ -105,12 +105,26 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 	}
 
 	@Override
-	public void remove(int index) {
+	public void removeAt(int index) {
 		if (index < 0 || index >= this.size())
 			throw new IndexOutOfBoundsException();
 
 		this.peer.Delete((short) index);
 		this.changeCount++;
+	}
+
+	@Override
+	public void remove(T element) {
+		final int size = this.size();
+		for (int i = 0; i < size; i++) {
+			@SuppressWarnings("unchecked")
+			final E object = (E) this.peer.GetAt((short) i);
+			if (this.matches(object, element)) {
+				this.peer.Delete((short) i);
+				return;
+			}
+		}
+		throw new NoSuchElementException();
 	}
 
 	@Override

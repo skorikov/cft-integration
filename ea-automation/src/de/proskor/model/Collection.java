@@ -41,9 +41,17 @@ public interface Collection<T> extends Iterable<T> {
 
 	/**
 	 * Remove an element from the collection at given position.
+	 * Throws IndexOutOfBoundsException if index is invalid.
 	 * @param index position of the element to remove.
 	 */
-	void remove(int index);
+	void removeAt(int index);
+
+	/**
+	 * Remove an element from the collection.
+	 * Throws NoSuchElementException if the element is not contained in the collection.
+	 * @param element element to remove.
+	 */
+	void remove(T element);
 
 	/**
 	 * Get an element at given position.

@@ -50,6 +50,18 @@ class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 	}
 
 	@Override
+	public String getType() {
+		final IDiagram peer = this.getPeer();
+		return (String) peer.get_Type();
+	}
+
+	@Override
+	public void setType(String type) {
+		final IDiagram peer = this.getPeer();
+		peer.set_Type(type);
+	}
+
+	@Override
 	public String getStereotype() {
 		final IDiagram peer = this.getPeer();
 		return (String) peer.get_Stereotype();
