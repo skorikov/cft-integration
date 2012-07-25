@@ -54,7 +54,7 @@ class CftExtension extends ExtensionAdapter {
 
   override protected def createMenu = {
     new MenuItemAdapter(menu, "Run Tests") {
-//      setVisible(false)
+      setEnabled(false)
       override def run {
         AutomationTests.repository = CftExtension.this.getRepository
         Repository.instance.write("---- RUNNING TESTS ----")
@@ -74,70 +74,6 @@ class CftExtension extends ExtensionAdapter {
 
     item("Epsilon Shell...") {
       new EpsilonShell
-    }
-
-    item("Write") {
-      val repository = this.getRepository();
-      val output = repository.getOutputTab("TEST");
-      val models = repository.getModels();
-      val iterator = models.iterator();
-      while (iterator.hasNext()) {
-        val model = iterator.next();
-        var it = model.getPackages().iterator();
-        while (it.hasNext()) {
-          val pkg = it.next();
-          output.write(pkg.getName());
-          val di = pkg.getDiagrams().iterator();
-          while (di.hasNext()) {
-            val diagram = di.next();
-            output.write(diagram.getName());
-            val ni = diagram.getNodes().iterator();
-            while (ni.hasNext()) {
-              val node = ni.next();
-              output.write("[" + node.getId() + "] " + node.getElement().getName() + " (" + node.getLeft() + "," + node.getTop() + "," + node.getRight() + "," + node.getBottom() + "|" + node.getSequence() + ")");
-            }
-          }
-        }
-      }
-    }
-
-    item("CONTEXT") {
-      val repository = this.getRepository();
-      val output = repository.getOutputTab("Context");
-      val context = repository.getContext();
-      output.write(if (context != null) context.toString() else "NULL");
-      if (context.isInstanceOf[de.proskor.model.Package]) {
-        val element = context.asInstanceOf[de.proskor.model.Package].getElement();
-        val iterator = element.getTaggedValues().iterator();
-        while (iterator.hasNext()) {
-          val tv = iterator.next();
-          output.write(tv.toString());
-        }
-      }
-    }
-
-    item("FOO") {
-      val repository = this.getRepository();
-      val output = repository.getOutputTab("TEST");
-      val models = repository.getModels();
-      val iterator = models.iterator();
-      while (iterator.hasNext()) {
-        val model = iterator.next();
-        val it = model.getPackages().iterator();
-        while (it.hasNext()) {
-          val pkg = it.next();
-          val pi = pkg.getElements().iterator();
-          while (pi.hasNext()) {
-            val element = pi.next();
-            output.write(element.getName());
-            val ci = element.getConnectors().iterator();
-            while (ci.hasNext()) {
-              val connector = ci.next();
-              output.write(connector.getSource().getName() + " -> " + connector.getTarget().getName());
-            }
-          }
-        }
-      }
     }
 
     item("Test") {
@@ -187,7 +123,23 @@ class CftExtension extends ExtensionAdapter {
         val cft = new ComponentFaultTreeImpl(diagram)
         if (cft.getContext == null) return List()
         for (container <- cft.getContext.getEventTypeContainers)
-          yield new MenuItemAdapter(container.getName)
+          yield new MenuItemAdapter(container.getName) {
+            override def run {
+              val pkg = diagram.pkg
+              val element = pkg.elements.add(container.getName, "Object")
+              element.stereotype = "Component"
+              val connector = element.connectors.add("", "Connector")
+              connector.source = element
+              connector.target = container.asInstanceOf[EventTypeContainerImpl].peer
+              connector.stereotype = "instanceOf"
+              val node = diagram.nodes.add(container.getName, "Object")
+              node.element = element
+              node.left = 10
+              node.top = 10
+              node.width = 300
+              node.height = 200
+            }
+          }
       }
     }
 
