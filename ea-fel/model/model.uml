@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20110701" xmlns:xmi="http://www.omg.org/spec/XMI/20110701" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_EunogNUeEeGCVax3ePaAog" name="model">
+  <packagedElement xmi:type="uml:Class" xmi:id="_HIwIoNUeEeGCVax3ePaAog" name="Class1"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_Js9KwNUeEeGCVax3ePaAog" name="Type"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_K1AX8NUeEeGCVax3ePaAog" name="Instance"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_Ma9CENUeEeGCVax3ePaAog" name="Event">
+    <generalization xmi:id="_tayOQNUgEeGCVax3ePaAog" general="_nJB8UNUgEeGCVax3ePaAog"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_NCxQANUeEeGCVax3ePaAog" name="Container">
+    <generalization xmi:id="_s4pKgNUgEeGCVax3ePaAog" general="_nJB8UNUgEeGCVax3ePaAog"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_iBnBcNUeEeGCVax3ePaAog" name="EventType">
+    <generalization xmi:id="_-dBSINUeEeGCVax3ePaAog" general="_Js9KwNUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="__s1UMNUeEeGCVax3ePaAog" general="_Ma9CENUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_Pw3jENUgEeGCVax3ePaAog" general="_Ma9CENUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_UEwaINUgEeGCVax3ePaAog" general="_Js9KwNUeEeGCVax3ePaAog"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_pIngYNUeEeGCVax3ePaAog" name="EventInstance">
+    <generalization xmi:id="_Bo6mYNUfEeGCVax3ePaAog" general="_Ma9CENUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_EGGagNUfEeGCVax3ePaAog" general="_K1AX8NUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_Yq4tMNUfEeGCVax3ePaAog" general="_Ma9CENUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_RND0QNUgEeGCVax3ePaAog" general="_Ma9CENUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_Tiid4NUgEeGCVax3ePaAog" general="_K1AX8NUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_bOrDINUgEeGCVax3ePaAog" general="_Ma9CENUeEeGCVax3ePaAog"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_G3Ab4NUfEeGCVax3ePaAog" clientDependency="_pkMhwNUhEeGCVax3ePaAog" name="EventTypeContainer">
+    <generalization xmi:id="_OX3lQNUfEeGCVax3ePaAog" general="_NCxQANUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_QTinwNUfEeGCVax3ePaAog" general="_Js9KwNUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_vJa6UNUgEeGCVax3ePaAog" general="_NCxQANUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_3aQvINUgEeGCVax3ePaAog" general="_Js9KwNUeEeGCVax3ePaAog"/>
+    <substitution xmi:id="_pkMhwNUhEeGCVax3ePaAog" name="substitution in FEL context" client="_G3Ab4NUfEeGCVax3ePaAog" supplier="_dHOqwNUhEeGCVax3ePaAog" contract="_dHOqwNUhEeGCVax3ePaAog"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_LKwwENUfEeGCVax3ePaAog" clientDependency="_mlJWsNUhEeGCVax3ePaAog" name="EventInstanceContainer">
+    <generalization xmi:id="_PBDFINUfEeGCVax3ePaAog" general="_NCxQANUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_SCUdwNUfEeGCVax3ePaAog" general="_K1AX8NUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_v6IlkNUgEeGCVax3ePaAog" general="_NCxQANUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_zk9RgNUgEeGCVax3ePaAog" general="_NCxQANUeEeGCVax3ePaAog"/>
+    <generalization xmi:id="_2hetANUgEeGCVax3ePaAog" general="_K1AX8NUeEeGCVax3ePaAog"/>
+    <substitution xmi:id="_mlJWsNUhEeGCVax3ePaAog" name="substitution in FEL context" client="_LKwwENUfEeGCVax3ePaAog" supplier="_dwId0NUhEeGCVax3ePaAog" contract="_dwId0NUhEeGCVax3ePaAog"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_nJB8UNUgEeGCVax3ePaAog" name="Entity">
+    <generalization xmi:id="_sEyrsNUgEeGCVax3ePaAog" general="_NCxQANUeEeGCVax3ePaAog"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_Ud-V8NUhEeGCVax3ePaAog" name="EventRepository"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_dHOqwNUhEeGCVax3ePaAog" name="Component"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_dwId0NUhEeGCVax3ePaAog" name="CFT"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_62nEwNUhEeGCVax3ePaAog" name="eventTypeContainer_eventInstanceContainer_1" memberEnd="_62nExNUhEeGCVax3ePaAog _62nEwdUhEeGCVax3ePaAog">
+    <ownedEnd xmi:id="_62nEwdUhEeGCVax3ePaAog" name="eventInstanceContainer" type="_LKwwENUfEeGCVax3ePaAog" association="_62nEwNUhEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_62nEwtUhEeGCVax3ePaAog" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_62nEw9UhEeGCVax3ePaAog" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_62nExNUhEeGCVax3ePaAog" name="eventTypeContainer" type="_G3Ab4NUfEeGCVax3ePaAog" association="_62nEwNUhEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_62nExdUhEeGCVax3ePaAog" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_62nExtUhEeGCVax3ePaAog" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OrjO4NUiEeGCVax3ePaAog" name="eventInstanceContainer_eventInstanceContainer_1" memberEnd="_OrjO5NUiEeGCVax3ePaAog _OrjO4dUiEeGCVax3ePaAog">
+    <ownedEnd xmi:id="_OrjO4dUiEeGCVax3ePaAog" name="child" type="_LKwwENUfEeGCVax3ePaAog" association="_OrjO4NUiEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OrjO4tUiEeGCVax3ePaAog"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OrjO49UiEeGCVax3ePaAog" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_OrjO5NUiEeGCVax3ePaAog" name="parent" type="_LKwwENUfEeGCVax3ePaAog" association="_OrjO4NUiEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OrjO5dUiEeGCVax3ePaAog" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OrjO5tUiEeGCVax3ePaAog" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_uc9yENUiEeGCVax3ePaAog" name="eventInstanceContainer_eventInstance_1" memberEnd="_uc9yFNUiEeGCVax3ePaAog _uc9yEdUiEeGCVax3ePaAog">
+    <ownedEnd xmi:id="_uc9yEdUiEeGCVax3ePaAog" name="" type="_pIngYNUeEeGCVax3ePaAog" aggregation="composite" association="_uc9yENUiEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_uc9yEtUiEeGCVax3ePaAog"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uc9yE9UiEeGCVax3ePaAog" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_uc9yFNUiEeGCVax3ePaAog" name="" type="_LKwwENUfEeGCVax3ePaAog" association="_uc9yENUiEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_uc9yFdUiEeGCVax3ePaAog" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uc9yFtUiEeGCVax3ePaAog" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_DnkuoNUjEeGCVax3ePaAog" name="eventTypeContainer_eventType_1" memberEnd="_DnkupNUjEeGCVax3ePaAog _DnkuodUjEeGCVax3ePaAog">
+    <ownedEnd xmi:id="_DnkuodUjEeGCVax3ePaAog" name="eventType" type="_iBnBcNUeEeGCVax3ePaAog" aggregation="composite" association="_DnkuoNUjEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_DnkuotUjEeGCVax3ePaAog" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Dnkuo9UjEeGCVax3ePaAog" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_DnkupNUjEeGCVax3ePaAog" name="eventTypeContainer" type="_G3Ab4NUfEeGCVax3ePaAog" association="_DnkuoNUjEeGCVax3ePaAog">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_DnkupdUjEeGCVax3ePaAog" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_DnkuptUjEeGCVax3ePaAog" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_uACJANUjEeGhOMn5OLiOBA" name="eventTypeContainer_eventTypeContainer_1" memberEnd="_uACJBNUjEeGhOMn5OLiOBA _uACJAdUjEeGhOMn5OLiOBA">
+    <ownedEnd xmi:id="_uACJAdUjEeGhOMn5OLiOBA" name="child" type="_G3Ab4NUfEeGCVax3ePaAog" association="_uACJANUjEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_uACJAtUjEeGhOMn5OLiOBA"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uACJA9UjEeGhOMn5OLiOBA" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_uACJBNUjEeGhOMn5OLiOBA" name="parent" type="_G3Ab4NUfEeGCVax3ePaAog" association="_uACJANUjEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_uACJBdUjEeGhOMn5OLiOBA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uACJBtUjEeGhOMn5OLiOBA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_46cBENUjEeGhOMn5OLiOBA" name="eventTypeContainer_eventInstanceContainer_2" memberEnd="_46cBFNUjEeGhOMn5OLiOBA _46cBEdUjEeGhOMn5OLiOBA">
+    <ownedEnd xmi:id="_46cBEdUjEeGhOMn5OLiOBA" name="instance" type="_LKwwENUfEeGCVax3ePaAog" association="_46cBENUjEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_46cBEtUjEeGhOMn5OLiOBA"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_46cBE9UjEeGhOMn5OLiOBA" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_46cBFNUjEeGhOMn5OLiOBA" name="type" type="_G3Ab4NUfEeGCVax3ePaAog" association="_46cBENUjEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_46cBFdUjEeGhOMn5OLiOBA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_46cBFtUjEeGhOMn5OLiOBA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_LkuV8NUkEeGhOMn5OLiOBA" name="eventTypeContainer_eventType_2" memberEnd="_LkuV9NUkEeGhOMn5OLiOBA _LkuV8dUkEeGhOMn5OLiOBA">
+    <ownedEnd xmi:id="_LkuV8dUkEeGhOMn5OLiOBA" name="eventType" type="_iBnBcNUeEeGCVax3ePaAog" aggregation="composite" association="_LkuV8NUkEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LkuV8tUkEeGhOMn5OLiOBA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_LkuV89UkEeGhOMn5OLiOBA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_LkuV9NUkEeGhOMn5OLiOBA" name="eventTypeContainer" type="_G3Ab4NUfEeGCVax3ePaAog" association="_LkuV8NUkEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Lku9ANUkEeGhOMn5OLiOBA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Lku9AdUkEeGhOMn5OLiOBA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_mQgcENUkEeGhOMn5OLiOBA" name="eventInstance_eventType_1" memberEnd="_mQgcFNUkEeGhOMn5OLiOBA _mQgcEdUkEeGhOMn5OLiOBA">
+    <ownedEnd xmi:id="_mQgcEdUkEeGhOMn5OLiOBA" name="type" type="_iBnBcNUeEeGCVax3ePaAog" association="_mQgcENUkEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_mQgcEtUkEeGhOMn5OLiOBA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_mQgcE9UkEeGhOMn5OLiOBA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_mQgcFNUkEeGhOMn5OLiOBA" name="instance" type="_pIngYNUeEeGCVax3ePaAog" association="_mQgcENUkEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_mQgcFdUkEeGhOMn5OLiOBA"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_mQgcFtUkEeGhOMn5OLiOBA" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_2zPOkNUkEeGhOMn5OLiOBA" name="eventRepository_eventTypeContainer_1" memberEnd="_2zPOlNUkEeGhOMn5OLiOBA _2zPOkdUkEeGhOMn5OLiOBA">
+    <ownedEnd xmi:id="_2zPOkdUkEeGhOMn5OLiOBA" name="eventTypeContainer" type="_G3Ab4NUfEeGCVax3ePaAog" association="_2zPOkNUkEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2zPOktUkEeGhOMn5OLiOBA"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2zPOk9UkEeGhOMn5OLiOBA" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_2zPOlNUkEeGhOMn5OLiOBA" name="eventRepository" type="_Ud-V8NUhEeGCVax3ePaAog" association="_2zPOkNUkEeGhOMn5OLiOBA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2zPOldUkEeGhOMn5OLiOBA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2zPOltUkEeGhOMn5OLiOBA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+</uml:Model>

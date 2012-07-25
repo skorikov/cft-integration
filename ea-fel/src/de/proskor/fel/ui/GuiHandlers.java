@@ -185,7 +185,12 @@ public class GuiHandlers {
 		private void componentsSelectionOrFilterChanged() {
 			eventTypeFilter.applyGuiFilterConfig();
 			
-			for(EventTypeContainer container : currentComponentsSelection) { // Container aus Selection...
+			List<EventTypeContainer> currentComponentsSelectionReversed = new ArrayList<EventTypeContainer>();
+			for(EventTypeContainer container : currentComponentsSelection)
+				currentComponentsSelectionReversed.add(0, container);
+				
+			
+			for(EventTypeContainer container : currentComponentsSelectionReversed) { // Container aus Selection...
 				for(EventType event : container.getEvents()) { // beinhalten Events...
 					if (eventTypeFilter.typeConformsToFilter(event)) { // es werden die verwendet, die dem Filter entsprechen
 						guiRepositoryEvents.addEvent(event);
