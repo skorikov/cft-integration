@@ -13,5 +13,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/fel-adapter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/epsilon-shell"/>
 	<classpathentry kind="var" path="SWT_LIB"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fel-impl"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

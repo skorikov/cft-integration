@@ -32,6 +32,7 @@ import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.ArchitecturalViewImpl
 import de.proskor.model.{Element => JavaElement, Package => JavaPackage}
 import de.proskor.model.impl.DiagramImpl
+import de.proskor.fel.impl2.{EventRepositoryImpl => EventRepositoryImpl2}
 
 class CftExtension extends ExtensionAdapter {
   private val runner = new TestRunner(Repository.instance.write)
@@ -68,6 +69,12 @@ class CftExtension extends ExtensionAdapter {
 
     item("Failure Event List...") {
       val er: EventRepository = new EventRepositoryImpl(Repository.instance)
+      val dialog: FailureEventList = new FailureEventListImpl(er)
+      dialog.showDialog
+    }
+
+    item("Failure Event List 2...") {
+      val er: EventRepository = new EventRepositoryImpl2(this.getRepository())
       val dialog: FailureEventList = new FailureEventListImpl(er)
       dialog.showDialog
     }
