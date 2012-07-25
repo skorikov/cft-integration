@@ -31,8 +31,16 @@ class EventTypeContainerImpl extends EntityImpl implements EventTypeContainer {
 
 	@Override
 	public List<EventInstanceContainer> getInstances() {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+		final Element peer = this.getPeer();
+		final List<EventInstanceContainer> result = new LinkedList<EventInstanceContainer>();
+		for (final Connector connector : peer.getConnectors()) {
+			if (connector.getTarget().equals(peer) && connector.getStereotype().equals("instanceOf")) {
+				final Element element = connector.getSource();
+				final EventInstanceContainer container = new EventInstanceContainerImpl(element);
+				result.add(container);
+			}
+		}
+		return result;
 	}
 
 	@Override
