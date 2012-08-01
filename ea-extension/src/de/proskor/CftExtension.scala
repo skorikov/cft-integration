@@ -33,8 +33,10 @@ import de.proskor.fel.impl.ArchitecturalViewImpl
 import de.proskor.model.{Element => JavaElement, Package => JavaPackage}
 import de.proskor.model.impl.DiagramImpl
 import de.proskor.fel.impl2.{EventRepositoryImpl => EventRepositoryImpl2}
+import de.proskor.model.ModelTests
+import org.junit.runners.Parameterized.Parameters
 
-class CftExtension extends ExtensionAdapter {
+class CftExtension extends ExtensionWithTest {
   private val runner = new TestRunner(Repository.instance.write)
   private val menu = new MenuItemAdapter("CFT")
 
@@ -55,11 +57,12 @@ class CftExtension extends ExtensionAdapter {
 
   override protected def createMenu = {
     new MenuItemAdapter(menu, "Run Tests") {
-      setEnabled(false)
+//      setEnabled(false)
       override def run {
-        AutomationTests.repository = CftExtension.this.getRepository
+//        AutomationTests.repository = CftExtension.this.getRepository
         Repository.instance.write("---- RUNNING TESTS ----")
-        runner.test(classOf[AutomationTests])
+        runner.test(classOf[ModelTests])
+//        runner.test(classOf[AutomationTests])
 //        runner.test(classOf[AdapterTests])
 //        runner.test(classOf[PeerTests])
 //        runner.test(classOf[CftTests])

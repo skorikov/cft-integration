@@ -122,7 +122,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	}
 
 	/**
-	 * TODO: Test
+	 * Callback for element deletion.
 	 */
 	@Override
 	public boolean deleteElement(IRepository repository, IEventProperties properties) {
@@ -132,7 +132,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	}
 
 	/**
-	 * TODO: Test
+	 * Callback for package deletion.
 	 */
 	@Override
 	public boolean deletePackage(IRepository repository, IEventProperties properties) {
@@ -142,7 +142,7 @@ public abstract class AddInBridge extends AddInAdapter {
 	}
 
 	/**
-	 * TODO: Test
+	 * Callback for diagram deletion.
 	 */
 	@Override
 	public boolean deleteDiagram(IRepository repository, IEventProperties properties) {

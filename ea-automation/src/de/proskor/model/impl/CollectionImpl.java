@@ -17,12 +17,13 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 	private int changeCount = 0;
 
 	private class IteratorImpl implements Iterator<T> {
-		private int current = 0;
+		private int current = -1;
 		private int changeCount = CollectionImpl.this.changeCount;
+		private boolean deleted = false;
 
 		@Override
 		public boolean hasNext() {
-			return this.current < CollectionImpl.this.size();
+			return (this.current + 1) < CollectionImpl.this.size();
 		}
 
 		@Override
@@ -33,21 +34,29 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 			if (!this.hasNext())
 				throw new NoSuchElementException();
 
-			try {
-				return CollectionImpl.this.get(current);
-			} finally {
-				this.current++;
-			}
+			this.current++;
+			this.deleted = false;
+
+			return CollectionImpl.this.get(current);
 		}
 
 		@Override
 		public void remove() {
-			throw new UnsupportedOperationException();
+			if ((this.current < 0) || this.deleted)
+				throw new IllegalStateException();
+
+			CollectionImpl.this.removeAt(current);
+			this.changeCount++;
+			this.current--;
+			this.deleted = true;
 		}
 		
 	}
 
 	public CollectionImpl(ICollection peer) {
+		if (peer == null)
+			throw new NullPointerException();
+
 		this.peer = peer;
 	}
 
@@ -83,6 +92,9 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 
 	@Override
 	public boolean contains(T element) {
+		if (element == null)
+			throw new NullPointerException();
+
 		final int size = this.size();
 		for (int i = 0; i < size; i++) {
 			@SuppressWarnings("unchecked")
@@ -95,13 +107,15 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 
 	@Override
 	public T add(String name, String type) {
+		if ((name == null) || (type == null))
+			throw new NullPointerException();
+
 		this.peer.Refresh();
 		@SuppressWarnings("unchecked")
 		final E object = (E) this.peer.AddNew(name, type);
 		final T result = this.create(object);
 		this.changeCount++;
 		return result;
-		// TODO: check Refresh and Update protocol
 	}
 
 	@Override
@@ -115,6 +129,9 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 
 	@Override
 	public void remove(T element) {
+		if (element == null)
+			throw new NullPointerException();
+
 		final int size = this.size();
 		for (int i = 0; i < size; i++) {
 			@SuppressWarnings("unchecked")
@@ -139,6 +156,9 @@ abstract class CollectionImpl<T, E> implements Collection<T> {
 
 	@Override
 	public int indexOf(T element) {
+		if (element == null)
+			throw new NullPointerException();
+
 		final int size = this.size();
 		for (int i = 0; i < size; i++) {
 			@SuppressWarnings("unchecked")

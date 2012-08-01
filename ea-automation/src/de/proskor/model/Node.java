@@ -4,6 +4,9 @@ package de.proskor.model;
  * A diagram node.
  */
 public interface Node extends Identity, Rectangle {
+	/** Note types. */
+	String NODE = "";
+
 	/**
 	 * Get node z-layer.
 	 * @return z-layer.
@@ -27,4 +30,10 @@ public interface Node extends Identity, Rectangle {
 	 * @return associated element.
 	 */
 	Element getElement();
+
+	/**
+	 * Set associated element.
+	 * @param element element.
+	 */
+	void setElement(Element element);
 }

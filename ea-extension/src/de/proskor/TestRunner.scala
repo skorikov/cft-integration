@@ -29,7 +29,7 @@ class TestRunner(write: String => Unit) {
       this.printTrace(failure)
     }
     private def printTrace(failure: Failure) {
-      write(":: " + failure.getDescription().toString())
+      write(":: " + failure.getDescription().toString + ": " + failure.getMessage)
       failure.getTrace.split("\n").map(_.trim).map(":: " + _).map(write)
       write("-" * 60)
     }

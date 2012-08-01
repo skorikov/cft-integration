@@ -110,10 +110,24 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 	}
 
 	@Override
+	public void setParent(Element parent) {
+		final IElement peer = this.getPeer();
+		peer.set_ParentID(parent.getId());
+		peer.Update();
+	}
+
+	@Override
 	public Package getPackage() {
 		final IElement peer = this.getPeer();
 		final int packageId = peer.get_PackageID();
 		return new PackageImpl(this.getRepository(), packageId);
+	}
+
+	@Override
+	public void setPackage(Package pkg) {
+		final IElement peer = this.getPeer();
+		peer.set_PackageID(pkg.getId());
+		peer.Update();
 	}
 
 	@Override

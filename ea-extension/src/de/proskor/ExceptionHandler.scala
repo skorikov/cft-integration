@@ -24,7 +24,7 @@ trait ExceptionHandler extends AddIn {
 
   private def print(e: Throwable) {
     val repository = Repository.instance
-    repository.write(e.toString + ": " + e.getLocalizedMessage)
+    repository.write(e.toString + ": " + e.getLocalizedMessage + " (" + e.getMessage() + ")")
     e.getStackTraceString.split("\n").map(_.trim).map(repository.write)
     val cause = e.getCause
     if (e.getCause != null) {

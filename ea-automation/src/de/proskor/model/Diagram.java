@@ -8,6 +8,7 @@ public interface Diagram extends Entity {
 	String CUSTOM = "Custom";
 	String DEPLOYMENT = "Deployment";
 	String LOGICAL = "Logical";
+	String OBJECT = "Object";
 	String SEQUENCE = "Sequence";
 	String STATECHART = "Statechart";
 	String USECASE = "UseCase";
@@ -17,12 +18,6 @@ public interface Diagram extends Entity {
 	 * @return type.
 	 */
 	String getType();
-
-	/**
-	 * Set type.
-	 * @param type new type value.
-	 */
-	void setType(String type);
 
 	/**
 	 * Get stereotype.
@@ -43,8 +38,21 @@ public interface Diagram extends Entity {
 	Package getPackage();
 
 	/**
+	 * Set parent package.
+	 * @param pkg parent package.
+	 */
+	void setPackage(Package pkg);
+
+	/**
 	 * Get diagram nodes.
 	 * @return collection of diagram nodes.
 	 */
 	Collection<Node> getNodes();
+
+	/**
+	 * Create node for an element.
+	 * @param element element.
+	 * @return newly created node.
+	 */
+	Node createNode(Element element);
 }

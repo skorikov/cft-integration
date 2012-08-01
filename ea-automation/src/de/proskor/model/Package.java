@@ -40,6 +40,13 @@ public interface Package extends Entity {
 	Package getParent();
 
 	/**
+	 * Set package parent.
+	 * Throws IllegalStateException if called on a model.
+	 * @param parent new parent.
+	 */
+	void setParent(Package parent);
+
+	/**
 	 * Get sub-packages.
 	 * @return sub-packages.
 	 */

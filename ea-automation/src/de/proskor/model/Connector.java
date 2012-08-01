@@ -27,6 +27,12 @@ public interface Connector extends Entity {
 	String STATEFLOW = "StateFlow";
 	String USECASE = "UseCase";
 
+	/** Connector directions. */
+	String DIRECTION_UNSPECIFIED = "Unspecified";
+	String DIRECTION_FORWARD = "Source -> Destination";
+	String DIRECTION_BACKWARD = "Destination -> Source";
+	String DIRECTION_BIDIRECTIONAL = "Bi-Directional";
+
 	/**
 	 * Get type.
 	 * @return type.
@@ -50,6 +56,18 @@ public interface Connector extends Entity {
 	 * @param stereotype new stereotype value.
 	 */
 	void setStereotype(String stereotype);
+
+	/**
+	 * Get connector direction.
+	 * @return connector direction.
+	 */
+	String getDirection();
+
+	/**
+	 * Set connector direction.
+	 * @param direction new direction value.
+	 */
+	void setDirection(String direction);
 
 	/**
 	 * Get connector source.

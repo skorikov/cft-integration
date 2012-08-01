@@ -95,6 +95,19 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 	}
 
 	@Override
+	public void setParent(Package parent) {
+		final IPackage peer = this.getPeer();
+		final int parentId = peer.get_ParentID();
+
+		if (parentId == 0)
+			throw new IllegalStateException();
+
+		peer.set_ParentID(parent.getId());
+		peer.Update();
+		this.getRepository().RefreshModelView(parentId);
+	}
+
+	@Override
 	public Collection<Package> getPackages() {
 		final IPackage peer = this.getPeer();
 		final ICollection collection = (ICollection) peer.get_Packages();
@@ -146,6 +159,7 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 
 			@Override
 			protected Element create(IElement element) {
+				element.Update();
 				return new ElementImpl(PackageImpl.this.getRepository(), element.get_ElementID());
 			}
 		};
@@ -163,6 +177,7 @@ class PackageImpl extends IdentityImpl<IPackage> implements Package {
 
 			@Override
 			protected Diagram create(IDiagram element) {
+				element.Update();
 				return new DiagramImpl(PackageImpl.this.getRepository(), element.get_DiagramID());
 			}
 		};

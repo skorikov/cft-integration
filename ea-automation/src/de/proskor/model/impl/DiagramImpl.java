@@ -6,6 +6,7 @@ import cli.EA.IDiagramObject;
 import cli.EA.IRepository;
 import de.proskor.model.Collection;
 import de.proskor.model.Diagram;
+import de.proskor.model.Element;
 import de.proskor.model.Node;
 import de.proskor.model.Package;
 
@@ -35,6 +36,7 @@ class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 	public void setName(String name) {
 		final IDiagram peer = this.getPeer();
 		peer.set_Name(name);
+		peer.Update();
 	}
 
 	@Override
@@ -47,18 +49,13 @@ class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 	public void setDescription(String description) {
 		final IDiagram peer = this.getPeer();
 		peer.set_Notes(description);
+		peer.Update();
 	}
 
 	@Override
 	public String getType() {
 		final IDiagram peer = this.getPeer();
 		return (String) peer.get_Type();
-	}
-
-	@Override
-	public void setType(String type) {
-		final IDiagram peer = this.getPeer();
-		peer.set_Type(type);
 	}
 
 	@Override
@@ -71,6 +68,7 @@ class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 	public void setStereotype(String stereotype) {
 		final IDiagram peer = this.getPeer();
 		peer.set_Stereotype(stereotype);
+		peer.Update();
 	}
 
 	@Override
@@ -78,6 +76,13 @@ class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 		final IDiagram peer = this.getPeer();
 		final int packageId = peer.get_PackageID();
 		return new PackageImpl(this.getRepository(), packageId);
+	}
+
+	@Override
+	public void setPackage(Package pkg) {
+		final IDiagram peer = this.getPeer();
+		peer.set_PackageID(pkg.getId());
+		peer.Update();
 	}
 
 	@Override
@@ -94,7 +99,22 @@ class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 			protected Node create(IDiagramObject element) {
 				return new NodeImpl(DiagramImpl.this.getRepository(), DiagramImpl.this.getId(), element.get_InstanceID());
 			}
+
+			@Override
+			public Node add(String name, String type) {
+				throw new UnsupportedOperationException();
+			}
 		};
+	}
+
+	@Override
+	public Node createNode(Element element) {
+		final IDiagram peer = this.getPeer();
+		final ICollection collection = (ICollection) peer.get_DiagramObjects();
+		final IDiagramObject node = (IDiagramObject) collection.AddNew(element.getName(), Node.NODE);
+		node.set_ElementID(element.getId());
+		node.Update();
+		return new NodeImpl(this.getRepository(), peer.get_DiagramID(), node.get_InstanceID());
 	}
 
 	@Override

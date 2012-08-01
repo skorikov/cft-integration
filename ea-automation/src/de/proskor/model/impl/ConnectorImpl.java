@@ -74,6 +74,19 @@ class ConnectorImpl extends IdentityImpl<IConnector> implements Connector {
 	}
 
 	@Override
+	public String getDirection() {
+		final IConnector peer = this.getPeer();
+		return (String) peer.get_Direction();
+	}
+
+	@Override
+	public void setDirection(String direction) {
+		final IConnector peer = this.getPeer();
+		peer.set_Direction(direction);
+		peer.Update();
+	}
+
+	@Override
 	public Element getSource() {
 		final IConnector peer = this.getPeer();
 		final int sourceId = peer.get_ClientID();

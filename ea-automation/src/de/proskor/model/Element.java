@@ -102,10 +102,22 @@ public interface Element extends Entity {
 	Element getParent();
 
 	/**
+	 * Set the parent.
+	 * @param parent new parent element.
+	 */
+	void setParent(Element parent);
+
+	/**
 	 * Get containing package.
 	 * @return containing package.
 	 */
 	Package getPackage();
+
+	/**
+	 * Set package.
+	 * @param pkg new package.
+	 */
+	void setPackage(Package pkg);
 
 	/**
 	 * Get contained elements.

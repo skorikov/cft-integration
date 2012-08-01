@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="Automation" systemlibrary="false">
+        <archive path="/home/andrey/git/cft-integration/automation-lib/Interop.EA.jar"/>
+        <archive path="/home/andrey/git/cft-integration/automation-lib/mscorlib.jar"/>
+    </library>
+</eclipse-userlibraries>

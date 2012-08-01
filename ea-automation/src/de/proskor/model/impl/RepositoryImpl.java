@@ -20,7 +20,6 @@ import de.proskor.model.Repository;
 /**
  * Repository implementation based on the Automation Interface.
  * Stores a reference to the repository peer and delegates operation calls to it.
- * TODO: Fix the caching problem!
  */
 public class RepositoryImpl implements Repository {
 	/** Repository peer. */
