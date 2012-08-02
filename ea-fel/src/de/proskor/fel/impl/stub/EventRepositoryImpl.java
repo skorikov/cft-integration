@@ -1,4 +1,4 @@
-package de.proskor.fel.stub;
+package de.proskor.fel.impl.stub;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

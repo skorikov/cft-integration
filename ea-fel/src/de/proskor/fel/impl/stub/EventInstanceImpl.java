@@ -1,4 +1,4 @@
-package de.proskor.fel.stub;
+package de.proskor.fel.impl.stub;
 
 import de.proskor.fel.container.EventInstanceContainer;
 import de.proskor.fel.event.EventInstance;

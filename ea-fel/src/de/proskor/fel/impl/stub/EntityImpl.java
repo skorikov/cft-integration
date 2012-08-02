@@ -1,4 +1,4 @@
-package de.proskor.fel.stub;
+package de.proskor.fel.impl.stub;
 
 import de.proskor.fel.Entity;
 
