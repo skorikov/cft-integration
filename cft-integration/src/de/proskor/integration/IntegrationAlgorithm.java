@@ -1,5 +1,6 @@
 package de.proskor.integration;
 
+import de.proskor.integration.model.BasicEvent;
 import de.proskor.integration.model.Component;
 import de.proskor.integration.model.impl.ComponentImpl;
 

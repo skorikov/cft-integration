@@ -2,6 +2,7 @@ package de.proskor.integration.model;
 
 import java.util.Set;
 
+
 public interface Component {
 	String getName();
 
