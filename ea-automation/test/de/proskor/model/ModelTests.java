@@ -340,4 +340,17 @@ public class ModelTests {
 	    assertEquals(1, target.getConnectors().size());
 	    assertTrue(target.getConnectors().contains(connector));
 	}
+
+	@Test
+	public void testConnectorRemoval() {
+		final Package model = repository.getModels().add("model", Package.PACKAGE);
+		final Package pkg = model.getPackages().add("pkg", Package.PACKAGE);
+		final Collection<Element> elements = pkg.getElements();
+		final Element source = elements.add("source", Element.OBJECT);
+		final Element target = elements.add("target", Element.OBJECT);
+		final Connector connector = source.connectTo(target);
+		source.getConnectors().remove(connector);
+		assertTrue(source.getConnectors().isEmpty());
+		assertTrue(target.getConnectors().isEmpty());
+	}
 }

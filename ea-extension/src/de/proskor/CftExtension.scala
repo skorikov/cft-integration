@@ -8,8 +8,6 @@ import de.proskor.automation.Diagram
 import de.proskor.automation.Element
 import de.proskor.automation.Node
 import de.proskor.automation.Repository
-import de.proskor.cft.test.AutomationTests
-import de.proskor.cft.test.AdapterTests
 import de.proskor.cft.test.CftTests
 import de.proskor.cft.test.PeerTests
 import de.proskor.extension.ExtensionAdapter
