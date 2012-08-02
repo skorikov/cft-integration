@@ -18,10 +18,8 @@
 			<fileset dir="ea-adapter/bin" />
 			<fileset dir="ea-fel/bin" />
 			<fileset dir="fel-adapter/bin" />
-			<fileset dir="fel-impl/bin" />
 			<fileset dir="epsilon-shell/bin" />
 			<fileset dir="emc-model/bin" />
-			<fileset dir="redundancy-removal/bin" />
 		</jar>
 	</target>
 	<target name="ikvm" depends="jar">
