@@ -21,7 +21,7 @@ public class EventRepositoryImpl implements EventRepository {
 		final List<EventTypeContainer> result = new LinkedList<EventTypeContainer>();
 
 		for (final Element element : this.getAllElements()) {
-			final EventTypeContainer etc = new EventTypeContainerImpl(element);
+			final EventTypeContainer etc = new EventTypeContainerImpl(this.peer, element);
 			result.add(etc);
 		}
 
@@ -58,9 +58,10 @@ public class EventRepositoryImpl implements EventRepository {
 		if (element.getStereotype().equals("EventTypeContainer"))
 			result.add(element);
 
-		for (final Element kid : element.getElements()) {
-			result.addAll(this.getAllElements(kid));
-		}
+//		TODO: Check protocol!
+//		for (final Element kid : element.getElements()) {
+//			result.addAll(this.getAllElements(kid));
+//		}
 
 		return result;
 	}

@@ -40,6 +40,6 @@
 		</exec>
 	</target>
 	<target name="deploy" depends="ikvm">
-		<!--scp sftp="true" keyfile="/home/andrey/.ssh/id_rsa" file="ea-extension/dist/${dll}" todir="andrey:@${host}:/" /-->
+		<scp sftp="true" keyfile="/home/andrey/.ssh/id_rsa" file="ea-extension/dist/${dll}" todir="andrey:@${host}:/" />
 	</target>
 </project>

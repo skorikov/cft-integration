@@ -1,6 +1,5 @@
 package de.proskor.fel.impl2;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,10 +8,12 @@ import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.EventType;
 import de.proskor.model.Connector;
 import de.proskor.model.Element;
+import de.proskor.model.Package;
+import de.proskor.model.Repository;
 
 class EventTypeContainerImpl extends EntityImpl implements EventTypeContainer {
-	EventTypeContainerImpl(Element peer) {
-		super(peer);
+	EventTypeContainerImpl(Repository repository, Element peer) {
+		super(repository, peer);
 	}
 
 	@Override
@@ -22,7 +23,7 @@ class EventTypeContainerImpl extends EntityImpl implements EventTypeContainer {
 		for (final Connector connector : peer.getConnectors()) {
 			if (connector.getTarget().equals(peer) && connector.getStereotype().equals("belongsTo")) {
 				final Element element = connector.getSource();
-				final EventType event = new EventTypeImpl(element);
+				final EventType event = new EventTypeImpl(this.getRepository(), element);
 				result.add(event);
 			}
 		}
@@ -36,7 +37,7 @@ class EventTypeContainerImpl extends EntityImpl implements EventTypeContainer {
 		for (final Connector connector : peer.getConnectors()) {
 			if (connector.getTarget().equals(peer) && connector.getStereotype().equals("instanceOf")) {
 				final Element element = connector.getSource();
-				final EventInstanceContainer container = new EventInstanceContainerImpl(element);
+				final EventInstanceContainer container = new EventInstanceContainerImpl(this.getRepository(), element);
 				result.add(container);
 			}
 		}
@@ -45,25 +46,61 @@ class EventTypeContainerImpl extends EntityImpl implements EventTypeContainer {
 
 	@Override
 	public EventType createEventType(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		final Element peer = this.getPeer();
+		final Package fel = this.getFEL();
+		final Element element = fel.getElements().add(name, Element.OBJECT);
+		element.setStereotype("EventType");
+		final Connector connector = element.connectTo(peer);
+		connector.setStereotype("belongsTo");
+		return new EventTypeImpl(this.getRepository(), element);
+	}
+
+	private Package getFEL() {
+		final Repository repository = this.getRepository();
+		final Package model = repository.getModels().get(0);
+		for (final Package pkg : model.getPackages()) {
+			if (pkg.getName().equals("FEL"))
+				return pkg;
+		}
+		return model.getPackages().add("FEL", Package.PACKAGE);
 	}
 
 	@Override
 	public void addInstance(EventInstanceContainer instance) {
-		// TODO Auto-generated method stub
+		if (!(instance instanceof EventInstanceContainerImpl))
+			throw new IllegalArgumentException();
 
+		final Element peer = this.getPeer();
+		final Element other = ((EventInstanceContainerImpl) instance).getPeer();
+
+		final Connector connector = other.connectTo(peer);
+		connector.setStereotype("instanceOf");
 	}
 
 	@Override
 	public EventTypeContainer getParent() {
-		// TODO Auto-generated method stub
+		final Element peer = this.getPeer();
+
+		if (!peer.isChild())
+			return null;
+
+		final Element parent = peer.getParent();
+		if (parent.getStereotype().equals("EventTypeContainer"))
+			return new EventTypeContainerImpl(this.getRepository(), parent);
+
 		return null;
 	}
 
 	@Override
 	public List<EventTypeContainer> getChildren() {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+		final Element peer = this.getPeer();
+		final List<EventTypeContainer> result = new LinkedList<EventTypeContainer>();
+		for (final Element kid : peer.getElements()) {
+			if (kid.getStereotype().equals("EventTypeContainer")) {
+				final EventTypeContainer etc = new EventTypeContainerImpl(this.getRepository(), kid);
+				result.add(etc);
+			}
+		}
+		return result;
 	}
 }

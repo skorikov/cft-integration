@@ -218,6 +218,27 @@ public class ModelTests {
 	}
 
 	@Test
+	public void testElementKids() {
+		final String name = "kid";
+		final Package model = repository.getModels().add("model", Package.PACKAGE);
+		final Package pkg = model.getPackages().add("pkg", Package.PACKAGE);
+		final Element element = pkg.getElements().add("element", Element.OBJECT);
+		final Collection<Element> elements = element.getElements();
+		final Element kid = elements.add(name, Element.OBJECT);
+		assertNotNull(kid);
+		assertTrue(kid.isChild());
+		assertEquals(element, kid.getParent());
+	    assertEquals(name, kid.getName());
+	    assertEquals("", kid.getDescription());
+	    assertEquals("", kid.getStereotype());
+	    assertEquals(1, elements.size());
+	    assertTrue(elements.contains(kid));
+	    assertEquals(0, elements.indexOf(kid));
+	    assertEquals(kid, elements.get(0));
+	    assertTrue(kid.getElements().isEmpty());
+	}
+
+	@Test
 	public void testDiagramCreation() {
 		final String name = "diagram";
 		final Package model = repository.getModels().add("model", Package.PACKAGE);
