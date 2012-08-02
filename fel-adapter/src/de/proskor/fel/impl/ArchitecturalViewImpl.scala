@@ -12,7 +12,7 @@ class ArchitecturalViewImpl(val diagram: Diagram) extends ViewImpl(diagram) with
       node <- diagram.nodes
       element = node.element
       if element.stereotype == "EventTypeContainer"
-    } yield new EventTypeContainerImpl(element)
+    } yield null//new EventTypeContainerImpl(element)
     list.toList
   }
 }

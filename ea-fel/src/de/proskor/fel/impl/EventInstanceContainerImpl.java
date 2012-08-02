@@ -1,4 +1,4 @@
-package de.proskor.fel.impl2;
+package de.proskor.fel.impl;
 
 import java.util.LinkedList;
 import java.util.List;

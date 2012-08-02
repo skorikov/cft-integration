@@ -10,7 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-model"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/redundancy-removal"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-fel"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/fel-adapter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-automation"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

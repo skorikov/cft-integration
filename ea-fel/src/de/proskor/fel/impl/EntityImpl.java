@@ -1,4 +1,4 @@
-package de.proskor.fel.impl2;
+package de.proskor.fel.impl;
 
 import de.proskor.fel.Entity;
 import de.proskor.model.Element;

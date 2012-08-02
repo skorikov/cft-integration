@@ -11,14 +11,10 @@ import de.proskor.fel.view.ViewRepository
 import de.proskor.fel.view.View
 import de.proskor.automation.Diagram
 
-class EventRepositoryImpl(repository: Repository) extends EventRepository with ViewRepository {
+class EventRepositoryImpl2(repository: Repository) extends ViewRepository {
   private def fel: Package = {
     val model = repository.models.headOption getOrElse repository.models.add("Model", "Package")
     model.packages.find(_.name == "FEL") getOrElse model.packages.add("FEL", "Package")
-  }
-
-  override def getEventTypeContainers: JavaList[EventTypeContainer] = {
-    repository.models.flatMap(allObjects).map(new EventTypeContainerImpl(_)).toList
   }
 
   override def getViews: JavaList[View] = allDiagrams(repository.models.head) map {

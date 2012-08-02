@@ -32,7 +32,7 @@ import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.ArchitecturalViewImpl
 import de.proskor.model.{Element => JavaElement, Package => JavaPackage}
 import de.proskor.model.impl.DiagramImpl
-import de.proskor.fel.impl2.{EventRepositoryImpl => EventRepositoryImpl2}
+import de.proskor.fel.impl.EventRepositoryImpl
 import de.proskor.model.ModelTests
 import org.junit.runners.Parameterized.Parameters
 
@@ -70,14 +70,14 @@ class CftExtension extends ExtensionWithTest {
       }
     }
 
-    item("Failure Event List...") {
+    /*item("Failure Event List...") {
       val er: EventRepository = new EventRepositoryImpl(Repository.instance)
       val dialog: FailureEventList = new FailureEventListImpl(er)
       dialog.showDialog
-    }
+    }*/
 
-    item("Failure Event List 2...") {
-      val er: EventRepository = new EventRepositoryImpl2(this.getRepository())
+    item("Failure Event List...") {
+      val er: EventRepository = new EventRepositoryImpl(this.getRepository())
       val dialog: FailureEventList = new FailureEventListImpl(er)
       dialog.showDialog
     }
@@ -86,7 +86,7 @@ class CftExtension extends ExtensionWithTest {
       new EpsilonShell
     }
 
-    item("Test") {
+  /*  item("Test") {
       val repository = Repository.instance
       val vr: ViewRepository = new EventRepositoryImpl(repository)
       for (view <- vr.getViews) view match {
@@ -101,7 +101,7 @@ class CftExtension extends ExtensionWithTest {
           }
         }
       }
-    }
+    }*/
 
     new MenuItemAdapter(menu, "Derive CFT") {
       override def isVisible = Repository.instance.context match {
@@ -119,7 +119,7 @@ class CftExtension extends ExtensionWithTest {
       }
     }
 
-    new MenuItemAdapter(menu, "Available Components") {
+  /*  new MenuItemAdapter(menu, "Available Components") {
       override def isVisible = Repository.instance.diagram match {
         case Some(diagram: Diagram) if diagram.stereotype == "CFT" => true
         case _ => false
@@ -151,7 +151,7 @@ class CftExtension extends ExtensionWithTest {
             }
           }
       }
-    }
+    }*/
 
     def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
 
@@ -167,7 +167,7 @@ class CftExtension extends ExtensionWithTest {
 
     def isConnected(element: Element): Boolean = element.connectors.exists(_.stereotype == "instanceOf")
 
-    new MenuItemAdapter(menu, "Assign Component Type") {
+  /*  new MenuItemAdapter(menu, "Assign Component Type") {
       override def isVisible = hasChildren
 
       override def hasChildren = {
@@ -205,9 +205,9 @@ class CftExtension extends ExtensionWithTest {
           }
         }
       }
-    }
+    }*/
 
-    new MenuItemAdapter(menu, "Create Event Instance") {
+  /*  new MenuItemAdapter(menu, "Create Event Instance") {
       override def isVisible = hasChildren
 
       override def getChildren: JavaList[MenuItem] = for (event <- eventTypes) yield new MenuItemAdapter(event.getName) {
@@ -237,7 +237,7 @@ class CftExtension extends ExtensionWithTest {
       }
 
       private def eventTypes: JavaList[EventType] = selectedContainer map { _.getType.getEvents } getOrElse Collections.emptyList()
-    }
+    }*/
 
     menu
   }
