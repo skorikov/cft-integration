@@ -5,5 +5,5 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({AutomationTests.class, AdapterTests.class, CftTests.class, PeerTests.class})
+@SuiteClasses({AdapterTests.class, CftTests.class, PeerTests.class})
 public class ModelTests {}
