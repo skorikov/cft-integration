@@ -151,6 +151,19 @@ public class GuiRepositories {
 		public GuiRepositoryEventTypes(Tree eventsTree) {
 			super(eventsTree);
 		}
+		
+		@Override
+		protected String[] getTypeTreeItemText(Type type) {
+			EventType eventType = (EventType)type;
+			return new String[] {
+					// name, component, description, author, id
+					eventType.getName(),
+					eventType.getContainer().getName(),
+					eventType.getDescription(),
+					eventType.getAuthor(),
+					eventType.getId()+" / "+type.getGuid()
+			};
+		}
 
 		public TreeItem addEvent(EventType event) {
 			TreeItem item = addType(event);

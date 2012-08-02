@@ -371,15 +371,15 @@ public class FailureEventListGui extends Shell {
 		trclmnEventName.setWidth(150);
 		trclmnEventName.setText("Event");
 
-		trclmnEventComponent = new TreeColumn(treeEvents, SWT.CENTER);
+		trclmnEventComponent = new TreeColumn(treeEvents, SWT.LEFT);
 		trclmnEventComponent.setWidth(120);
 		trclmnEventComponent.setText("Component");
 		
-		treeColumnEventDescription = new TreeColumn(treeEvents, SWT.NONE);
+		treeColumnEventDescription = new TreeColumn(treeEvents, SWT.LEFT);
 		treeColumnEventDescription.setWidth(120);
 		treeColumnEventDescription.setText("Description");
 		
-		trclmnEventAuthor = new TreeColumn(treeEvents, SWT.NONE);
+		trclmnEventAuthor = new TreeColumn(treeEvents, SWT.LEFT);
 		trclmnEventAuthor.setWidth(120);
 		trclmnEventAuthor.setText("Author");
 
