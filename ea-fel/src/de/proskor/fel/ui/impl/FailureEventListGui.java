@@ -28,14 +28,14 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-import de.proskor.fel.EventRepository;
-import de.proskor.fel.container.EventTypeContainer;
-import de.proskor.fel.event.EventType;
+import de.proskor.fel.model.EventRepository;
+import de.proskor.fel.model.container.EventTypeContainer;
+import de.proskor.fel.model.event.EventType;
 import de.proskor.fel.ui.FailureEventList;
 import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerComponents;
 import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerCreateEvent;
-import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerEvents;
 import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerCreateEvent.EventData;
+import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerEvents;
 
 class FailureEventListGui extends Shell {
 	private final FailureEventList failureEventList;

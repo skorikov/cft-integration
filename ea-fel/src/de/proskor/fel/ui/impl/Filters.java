@@ -3,7 +3,7 @@ package de.proskor.fel.ui.impl;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
-import de.proskor.fel.Type;
+import de.proskor.fel.model.Type;
 
 class Filters {
 	public static class TypeFilter {

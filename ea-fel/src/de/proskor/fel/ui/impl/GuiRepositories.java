@@ -6,10 +6,9 @@ import java.util.List;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.fel.Type;
-import de.proskor.fel.container.EventTypeContainer;
-import de.proskor.fel.event.EventType;
-import de.proskor.fel.ui.impl.GuiHandlers.DataUtils;
+import de.proskor.fel.model.Type;
+import de.proskor.fel.model.container.EventTypeContainer;
+import de.proskor.fel.model.event.EventType;
 import de.proskor.fel.ui.impl.MappingUtils.ObjectMapping;
 
 class GuiRepositories {

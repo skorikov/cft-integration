@@ -1,13 +1,13 @@
 package de.proskor
 
 import de.proskor.extension.MenuItemAdapter
-import de.proskor.fel.EventRepository
-import de.proskor.fel.impl.ArchitecturalViewImpl
-import de.proskor.fel.impl.ComponentFaultTreeImpl
-import de.proskor.fel.impl.EventRepositoryImpl
+import de.proskor.fel.model.EventRepository
+import de.proskor.fel.model.impl.ArchitecturalViewImpl
+import de.proskor.fel.model.impl.ComponentFaultTreeImpl
+import de.proskor.fel.model.impl.EventRepositoryImpl
+import de.proskor.fel.model.view.ArchitecturalView
 import de.proskor.fel.ui.FailureEventList
 import de.proskor.fel.ui.FailureEventListFactory
-import de.proskor.fel.view.ArchitecturalView
 import de.proskor.model.Diagram
 import de.proskor.model.ModelTests
 import de.proskor.shell.EpsilonShell

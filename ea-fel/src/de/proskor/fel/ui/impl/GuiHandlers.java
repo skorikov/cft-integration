@@ -10,11 +10,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.proskor.fel.EventRepository;
-import de.proskor.fel.Type;
-import de.proskor.fel.container.EventTypeContainer;
-import de.proskor.fel.event.Event;
-import de.proskor.fel.event.EventType;
+import de.proskor.fel.model.EventRepository;
+import de.proskor.fel.model.Type;
+import de.proskor.fel.model.container.EventTypeContainer;
+import de.proskor.fel.model.event.Event;
+import de.proskor.fel.model.event.EventType;
 import de.proskor.fel.ui.impl.Filters.EventTypeContainerFilter;
 import de.proskor.fel.ui.impl.Filters.EventTypeFilter;
 import de.proskor.fel.ui.impl.GuiRepositories.GuiRepository;

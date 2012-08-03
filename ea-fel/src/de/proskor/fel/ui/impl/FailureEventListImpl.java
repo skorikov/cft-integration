@@ -1,9 +1,12 @@
 package de.proskor.fel.ui.impl;
 
-import de.proskor.fel.*;
-import de.proskor.fel.container.*;
-import de.proskor.fel.event.*;
-import de.proskor.fel.impl.stub.*;
+import de.proskor.fel.model.Entity;
+import de.proskor.fel.model.EventRepository;
+import de.proskor.fel.model.container.EventTypeContainer;
+import de.proskor.fel.model.event.EventType;
+import de.proskor.fel.model.impl.stub.EntityImpl;
+import de.proskor.fel.model.impl.stub.EventRepositoryImpl;
+import de.proskor.fel.model.impl.stub.EventTypeContainerImpl;
 import de.proskor.fel.ui.FailureEventList;
 
 public class FailureEventListImpl implements FailureEventList {
