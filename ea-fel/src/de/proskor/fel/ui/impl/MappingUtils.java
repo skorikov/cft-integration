@@ -1,4 +1,4 @@
-package de.proskor.fel.ui;
+package de.proskor.fel.ui.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,22 +9,22 @@ import java.util.Iterator;
  * ============================================================================================================================================
  * Mapping Problem: 
  * ============================================================================================================================================
- * Einseitiges überschreiben eines Mappings. Gibt es beispielsweise ein Mapping A<->B,
- * so existiert dieses Mapping in ZWEI HashMaps. Das heißt beide Objekte sind einmal Schlüssel
- * und einmal Wert. Wird jetzt nur ein Objekt als Schlüssel überschrieben, so kommt ein
+ * Einseitiges ï¿½berschreiben eines Mappings. Gibt es beispielsweise ein Mapping A<->B,
+ * so existiert dieses Mapping in ZWEI HashMaps. Das heiï¿½t beide Objekte sind einmal Schlï¿½ssel
+ * und einmal Wert. Wird jetzt nur ein Objekt als Schlï¿½ssel ï¿½berschrieben, so kommt ein
  * inkonsistenter Zustand der Hash-Map zustande.
  *
  * Inkonsistenz: 
  * Das Mapping eines Mappings muss das Element selbst liefern!
  * D.h. x == mapping(mapping(x))
- * Diese Eigenschaft wird durch das beschriebene Problem jedoch zerstört!
+ * Diese Eigenschaft wird durch das beschriebene Problem jedoch zerstï¿½rt!
  * 
- * Lösung:
+ * Lï¿½sung:
  * Vor dem Schreiben eines Mappings werden alle alten Mappings beider Objekte
- * gelöscht.
+ * gelï¿½scht.
  * 
  * --------------------------------------------------------------------------------------------------------------------------------------------
- * Das heißt:
+ * Das heiï¿½t:
  * --------------------------------------------------------------------------------------------------------------------------------------------
  * put(A, B)
  * mapping(A) == B.
@@ -48,15 +48,15 @@ import java.util.Iterator;
  * yx-Hash: 	[B -> A]
  * 
  * put(A, C)
- * xy-Hash: 	[A -> C] 	<überschreibt Mapping [A -> B] !>
+ * xy-Hash: 	[A -> C] 	<ï¿½berschreibt Mapping [A -> B] !>
  * yx-Hash: 	[B -> A]
  * 				[C -> A]
  *
  * 
  * --------------------------------------------------------------------------------------------------------------------------------------------
- * Mappings sicher löschen:
+ * Mappings sicher lï¿½schen:
  * --------------------------------------------------------------------------------------------------------------------------------------------
- * Vor dem Einfügen eines neuen Mappings durch put(A, C):
+ * Vor dem Einfï¿½gen eines neuen Mappings durch put(A, C):
  * if (mapping(A) != null)
  * 		yx-Hash.remove(mapping(A))
  * if (mapping(C) != null)
@@ -67,14 +67,14 @@ import java.util.Iterator;
  */
 
 /**
- * @author Tewanima Löwe, 2010-11-18
+ * @author Tewanima Lï¿½we, 2010-11-18
  */
-public class MappingUtils {
+class MappingUtils {
 	/**
 	 * Erstellt eine <b>Bijektion</b> zwischen jeweils zwei Objekten der Klassen <b>ObjectA</b> und <b>ObjectB</b>, 
 	 * sodass <b>objA</b> auf <b>objB</b> <i>gemappt</i> wird und umgekehrt.
 	 * <p>
-	 * <b>Es gilt für alle Mappings (objA, objB):</b><br>
+	 * <b>Es gilt fï¿½r alle Mappings (objA, objB):</b><br>
 	 * <i>objA == mapping(objB)</i>  <b>sowie</b>  <i>objB == mapping(ObjA)</i>. <br>
 	 * <i>objA == mapping(mapping(objA))</i>  <b>und</b>  <i>objB == mapping(mapping(objB))</i>. 
 	 */
@@ -104,15 +104,15 @@ public class MappingUtils {
 		
 		public void removeObjectAMapping(ObjectA objA) {
 			/*
-			 * Sicheres Löschen der Bijektion:
-			 * 1. B = mapping(A) holen und B als Schlüssel löschen.
-			 * 2. A als Schlüssel löschen.
+			 * Sicheres Lï¿½schen der Bijektion:
+			 * 1. B = mapping(A) holen und B als Schlï¿½ssel lï¿½schen.
+			 * 2. A als Schlï¿½ssel lï¿½schen.
 			 */
 			if (objectAToObjectBMappingHash.containsKey(objA)) {
 				ObjectB mappedObjB = objectAToObjectBMappingHash.get(objA); // Mapping(ObjA) [== B] aus AB-Hash holen
 				
-				objectBToObjectAMappingHash.remove(mappedObjB); // B als Schlüssel verwenden um aus BA-Hash zu löschen. 
-				objectAToObjectBMappingHash.remove(objA); // A selbst löschen 
+				objectBToObjectAMappingHash.remove(mappedObjB); // B als Schlï¿½ssel verwenden um aus BA-Hash zu lï¿½schen. 
+				objectAToObjectBMappingHash.remove(objA); // A selbst lï¿½schen 
 			}
 		}
 
@@ -142,7 +142,7 @@ public class MappingUtils {
 		}
 
 		/**
-		 * Liefert alle <b>ObjectA</b> Instanzen, für die es ein <i>Mapping</i> gibt.
+		 * Liefert alle <b>ObjectA</b> Instanzen, fï¿½r die es ein <i>Mapping</i> gibt.
 		 * @see #getMappedObjectBs()
 		 */
 		public ArrayList<ObjectA> getMappedObjectAs() {
@@ -156,7 +156,7 @@ public class MappingUtils {
 		}
 
 		/**
-		 * Liefert alle <b>ObjectB</b> Instanzen, für die es ein <i>Mapping</i> gibt.
+		 * Liefert alle <b>ObjectB</b> Instanzen, fï¿½r die es ein <i>Mapping</i> gibt.
 		 * @see #getMappedObjectAs()
 		 */
 		public ArrayList<ObjectB> getMappedObjectBs() {

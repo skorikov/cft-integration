@@ -1,9 +1,10 @@
-package de.proskor.fel.ui;
+package de.proskor.fel.ui.impl;
 
 import de.proskor.fel.*;
 import de.proskor.fel.container.*;
 import de.proskor.fel.event.*;
 import de.proskor.fel.impl.stub.*;
+import de.proskor.fel.ui.FailureEventList;
 
 public class FailureEventListImpl implements FailureEventList {
 	private FailureEventListGui felGui;

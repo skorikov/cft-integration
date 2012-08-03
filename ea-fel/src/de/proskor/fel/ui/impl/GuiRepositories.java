@@ -1,4 +1,4 @@
-package de.proskor.fel.ui;
+package de.proskor.fel.ui.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +9,15 @@ import org.eclipse.swt.widgets.TreeItem;
 import de.proskor.fel.Type;
 import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.EventType;
-import de.proskor.fel.ui.GuiHandlers.DataUtils;
-import de.proskor.fel.ui.MappingUtils.ObjectMapping;
+import de.proskor.fel.ui.impl.GuiHandlers.DataUtils;
+import de.proskor.fel.ui.impl.MappingUtils.ObjectMapping;
 
-public class GuiRepositories {
+class GuiRepositories {
 	public static abstract class GuiRepository {
 		protected final Tree elementsTree;
 
 		//		protected final ObjectMapping<Type, TreeItem> mapping; 
-		protected final ObjectMapping mapping; // extra keine Typ-Sicherheit, da ich sonst beim Exportieren der Listen diese Abschreiben müsste - weil Java keinen Cast erlaubt. -.-
+		protected final ObjectMapping mapping; // extra keine Typ-Sicherheit, da ich sonst beim Exportieren der Listen diese Abschreiben mï¿½sste - weil Java keinen Cast erlaubt. -.-
 
 
 		public GuiRepository(Tree elementsTree) {

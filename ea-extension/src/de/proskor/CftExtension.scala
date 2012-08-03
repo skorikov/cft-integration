@@ -1,41 +1,20 @@
 package de.proskor
 
-import java.util.Collections
-import java.util.{List => JavaList}
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.collection.JavaConversions.seqAsJavaList
-import de.proskor.automation.Element
-import de.proskor.automation.Node
-import de.proskor.automation.Repository
-import de.proskor.cft.test.CftTests
-import de.proskor.cft.test.PeerTests
-import de.proskor.extension.ExtensionAdapter
-import de.proskor.extension.MenuItem
 import de.proskor.extension.MenuItemAdapter
-import de.proskor.fel.container.EventInstanceContainer
-import de.proskor.fel.event.EventType
-import de.proskor.fel.impl.EventInstanceContainerImpl
-import de.proskor.fel.impl.EventRepositoryImpl
-import de.proskor.fel.impl.EventTypeContainerImpl
-import de.proskor.fel.impl.EventTypeImpl
-import de.proskor.fel.ui.FailureEventListImpl
 import de.proskor.fel.EventRepository
-import de.proskor.shell.EpsilonShell
-import de.proskor.fel.ui.FailureEventList
-import de.proskor.fel.view.ViewRepository
-import de.proskor.fel.view.ArchitecturalView
-import de.proskor.fel.view.ComponentFaultTree
-import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.ArchitecturalViewImpl
-import de.proskor.model.{Element => JavaElement, Package => JavaPackage}
-import de.proskor.model.impl.DiagramImpl
-import de.proskor.model.Diagram
+import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.EventRepositoryImpl
+import de.proskor.fel.ui.FailureEventList
+import de.proskor.fel.ui.FailureEventListFactory
+import de.proskor.fel.view.ArchitecturalView
+import de.proskor.model.Diagram
 import de.proskor.model.ModelTests
-import org.junit.runners.Parameterized.Parameters
+import de.proskor.shell.EpsilonShell
 
 class CftExtension extends ExtensionWithTest {
-  private val runner = new TestRunner(Repository.instance.write)
+  private lazy val tab = this.getRepository.getOutputTab("TESTS")
+  private lazy val runner = new TestRunner(this.tab.write)
   private val menu = new MenuItemAdapter("CFT")
 
   private def item(name: String)(code: => Unit) =
@@ -43,29 +22,19 @@ class CftExtension extends ExtensionWithTest {
       override def run = code
     }
 
-  override def deleteElement(element: JavaElement): Boolean = {
-    this.getRepository().getOutputTab("delete").write("deleting " + element.getName())
-    !element.getName().equals("test")
-  }
-
-  override def deletePackage(pkg: JavaPackage): Boolean = {
-    this.getRepository().getOutputTab("delete").write("deleting " + pkg.getName())
-    !pkg.getName().equals("test")
-  }
-
   override protected def createMenu = {
     val repository = this.getRepository
     new MenuItemAdapter(menu, "Run Tests") {
 //      setEnabled(false)
       override def run {
 //        AutomationTests.repository = CftExtension.this.getRepository
-        Repository.instance.write("---- RUNNING TESTS ----")
+        tab.write("---- RUNNING TESTS ----")
         runner.test(classOf[ModelTests])
 //        runner.test(classOf[AutomationTests])
 //        runner.test(classOf[AdapterTests])
 //        runner.test(classOf[PeerTests])
 //        runner.test(classOf[CftTests])
-        Repository.instance.write("---- ALL TESTS DONE ----")
+        tab.write("---- ALL TESTS DONE ----")
       }
     }
 
@@ -77,7 +46,7 @@ class CftExtension extends ExtensionWithTest {
 
     item("Failure Event List...") {
       val er: EventRepository = new EventRepositoryImpl(this.getRepository())
-      val dialog: FailureEventList = new FailureEventListImpl(er)
+      val dialog: FailureEventList = FailureEventListFactory.createGUI(er)
       dialog.showDialog
     }
 

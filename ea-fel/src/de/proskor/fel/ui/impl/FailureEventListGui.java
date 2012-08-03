@@ -1,4 +1,4 @@
-package de.proskor.fel.ui;
+package de.proskor.fel.ui.impl;
 
 import java.util.List;
 
@@ -31,12 +31,13 @@ import org.eclipse.swt.widgets.TreeColumn;
 import de.proskor.fel.EventRepository;
 import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.EventType;
-import de.proskor.fel.ui.GuiHandlers.GuiHandlerComponents;
-import de.proskor.fel.ui.GuiHandlers.GuiHandlerCreateEvent;
-import de.proskor.fel.ui.GuiHandlers.GuiHandlerCreateEvent.EventData;
-import de.proskor.fel.ui.GuiHandlers.GuiHandlerEvents;
+import de.proskor.fel.ui.FailureEventList;
+import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerComponents;
+import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerCreateEvent;
+import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerEvents;
+import de.proskor.fel.ui.impl.GuiHandlers.GuiHandlerCreateEvent.EventData;
 
-public class FailureEventListGui extends Shell {
+class FailureEventListGui extends Shell {
 	private final FailureEventList failureEventList;
 	private final EventRepository eventRepository;
 
@@ -108,7 +109,7 @@ public class FailureEventListGui extends Shell {
 		
 		statusManager = new StatusManager(lblStatusComponentsCount, lblComponentsSelectedCount, lblStatusEventsVisibleCount);
 		
-		// Ausgangs-Zustände herstellen:
+		// Ausgangs-Zustï¿½nde herstellen:
 		guiHandlerComponents.loadContainerList();
 		guiHandlerComponents.selectFirstTypeInTree(); // Ersten Component markieren
 		guiOpComponentsTreeChanged();
@@ -130,7 +131,7 @@ public class FailureEventListGui extends Shell {
 		guiHandlerCreateEvent.componentsSelectionChanged(guiHandlerComponents.getSelectedComponent());					
 		
 		statusManager.setComponentsSelectedCount(selectedComponents.size());		
-		statusManager.setComponentsCount(guiHandlerComponents.getComponents().size()); // eigentlich nur einmal nötig - aber falls components nachgeladen werden (z.B. durch eine weitere Funktion "Reload"), muss diese Zahl aktualisiert werden.
+		statusManager.setComponentsCount(guiHandlerComponents.getComponents().size()); // eigentlich nur einmal nï¿½tig - aber falls components nachgeladen werden (z.B. durch eine weitere Funktion "Reload"), muss diese Zahl aktualisiert werden.
 	
 		guiOpEventsTreeChanged();
 	}
@@ -186,11 +187,11 @@ public class FailureEventListGui extends Shell {
 	}
 	
 	public void show(EventType selectedEvent) {
-		// Component auswählen und Änderung im GUI+Handler übernehmen
+		// Component auswï¿½hlen und ï¿½nderung im GUI+Handler ï¿½bernehmen
 		guiHandlerComponents.selectComponent(selectedEvent.getContainer());
 		guiOpComponentsTreeChanged();
 		
-		// Event auswählen und Änderung im GUI+Handler übernehmen
+		// Event auswï¿½hlen und ï¿½nderung im GUI+Handler ï¿½bernehmen
 		guiHandlerEvents.selectEvent(selectedEvent);
 		guiOpEventsTreeChanged();
 		
@@ -252,7 +253,7 @@ public class FailureEventListGui extends Shell {
 		});
 		// Nur zur Vorschau:
 		comboEventFilterMode.setItems(new String[] {"[[ Any Field ]]", "Name", "Author", "Description", "ID", "GUID"});
-		// Tatsächliche Items werden im GUI-Handler geschrieben
+		// Tatsï¿½chliche Items werden im GUI-Handler geschrieben
 		comboEventFilterMode.select(0);
 		
 				Label lblReuseData = new Label(grpEvents, SWT.NONE);
@@ -533,7 +534,7 @@ public class FailureEventListGui extends Shell {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (keyEventIsReturn(e)) {
-					// Führt Button-OnClick aus. 
+					// Fï¿½hrt Button-OnClick aus. 
 					guiHandlerComponents.selectContainerByFieldMatch(true); 
 					guiOpComponentsTreeChanged();
 				}
@@ -791,7 +792,7 @@ public class FailureEventListGui extends Shell {
 	
 	private void createWidgetAlignmentsAndSizes() {
 		/* Setzt die Alginments der Widgets.
-		 * ==> Die Widget-Größen sind dadurch impliziert.
+		 * ==> Die Widget-Grï¿½ï¿½en sind dadurch impliziert.
 		 */
 		
 		// ------------------------------------------------------------------------------------------
@@ -860,7 +861,7 @@ public class FailureEventListGui extends Shell {
 		this.addShellListener(new ShellAdapter() {
 			@Override
 			public void shellClosed(ShellEvent e) {
-				// Wenn Fenster schließt.
+				// Wenn Fenster schlieï¿½t.
 			}
 		});
 		setLayout(new FormLayout());

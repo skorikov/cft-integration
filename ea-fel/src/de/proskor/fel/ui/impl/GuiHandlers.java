@@ -1,4 +1,4 @@
-package de.proskor.fel.ui;
+package de.proskor.fel.ui.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +15,13 @@ import de.proskor.fel.Type;
 import de.proskor.fel.container.EventTypeContainer;
 import de.proskor.fel.event.Event;
 import de.proskor.fel.event.EventType;
-import de.proskor.fel.ui.Filters.EventTypeContainerFilter;
-import de.proskor.fel.ui.Filters.EventTypeFilter;
-import de.proskor.fel.ui.GuiRepositories.GuiRepository;
-import de.proskor.fel.ui.GuiRepositories.GuiRepositoryEventTypeContainer;
-import de.proskor.fel.ui.GuiRepositories.GuiRepositoryEventTypes;
+import de.proskor.fel.ui.impl.Filters.EventTypeContainerFilter;
+import de.proskor.fel.ui.impl.Filters.EventTypeFilter;
+import de.proskor.fel.ui.impl.GuiRepositories.GuiRepository;
+import de.proskor.fel.ui.impl.GuiRepositories.GuiRepositoryEventTypeContainer;
+import de.proskor.fel.ui.impl.GuiRepositories.GuiRepositoryEventTypes;
 
-public class GuiHandlers {
+class GuiHandlers {
 	private static abstract class GuiHandler {
 		protected void expandTreeItems(Tree tree, boolean expanded) {
 			for(TreeItem item : tree.getItems())
@@ -268,13 +268,13 @@ public class GuiHandlers {
 			
 			eventsCreatedByUser = new ArrayList<EventType>();
 
-			/* 1. Nicht nötig da Per default keine Daten vorhanden. 
+			/* 1. Nicht nï¿½tig da Per default keine Daten vorhanden. 
 			 * 2. Erzeugt null-pointer Exception durch: 
 			 *    GuiHandlerCreateEvent guiHandlerCreateEvent = new GuiHandlerCreateEvent(...);
 			 *    --> GuiHandlerCreateEvent.<Init>
 			 *    --> clearData()
 			 *    --> Text.setText() 
-			 *    --> Text-Listener wird auf guiHandlerCreateEvent ausgelöst, welches noch nicht fertig instanziiert wurde,
+			 *    --> Text-Listener wird auf guiHandlerCreateEvent ausgelï¿½st, welches noch nicht fertig instanziiert wurde,
 			 *        da Konstruktor noch nicht terminiert.
 			 */
 			// clearData(); 

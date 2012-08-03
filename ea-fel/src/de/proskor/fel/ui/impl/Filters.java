@@ -1,11 +1,11 @@
-package de.proskor.fel.ui;
+package de.proskor.fel.ui.impl;
 
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
 import de.proskor.fel.Type;
 
-public class Filters {
+class Filters {
 	public static class TypeFilter {
 		/**
 		 * Specifies which field the <b>filter-String</b> needs to match.
@@ -27,7 +27,7 @@ public class Filters {
 				case guid: return filterPrefix + "GUID";
 				case id: return filterPrefix + "ID";
 
-				default: return ""; // alle Fälle behandelt, wird nicht eintreten.
+				default: return ""; // alle Fï¿½lle behandelt, wird nicht eintreten.
 				}
 			};
 		}
@@ -95,7 +95,7 @@ public class Filters {
 				return textIsMatch(type.getId() + "");
 			}
 
-			// Nach Java-Spec nötig, wird jedoch nie eintreten, da alle Fälle behandelt wurden.
+			// Nach Java-Spec nï¿½tig, wird jedoch nie eintreten, da alle Fï¿½lle behandelt wurden.
 			default: {
 				return false;
 			}
