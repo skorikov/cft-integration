@@ -4,7 +4,7 @@
 	<property name="jar" value="cft-integration.jar" />
 	<property name="dll" value="cft-integration.dll" />
 	<target name="jar">
-		<jar destfile="ea-extension/dist/${jar}">
+		<jar destfile="ea-deployment/dist/${jar}">
 			<fileset dir="ea-automation/bin">
 				<exclude name="**/MenuState.class" />
 				<exclude name="**/AddIn.class" />
@@ -25,18 +25,18 @@
 		<exec executable="ikvmc">
 			<arg value="-target:library" />
 			<arg value="-version:1.0.0.0" />
-			<arg value="-out:ea-extension/dist/${dll}" />
+			<arg value="-out:ea-deployment/dist/${dll}" />
 			<arg value="-keyfile:ea-integration/integration/proskor.snk" />
-			<arg value="-r:ea-extension/dll/Interop.EA.dll" />
-			<arg value="-r:ea-extension/dll/addin.dll" />
-			<arg value="-r:ea-extension/dll/scala.dll" />
-			<arg value="-r:ea-extension/dll/swt.dll" />
-			<arg value="-r:ea-extension/dll/junit.dll" />
-			<arg value="-r:ea-extension/dll/epsilon.dll" />
-			<arg value="ea-extension/dist/${jar}" />
+			<arg value="-r:ea-deployment/dll/Interop.EA.dll" />
+			<arg value="-r:ea-deployment/dll/addin.dll" />
+			<arg value="-r:ea-deployment/dll/scala.dll" />
+			<arg value="-r:ea-deployment/dll/swt.dll" />
+			<arg value="-r:ea-deployment/dll/junit.dll" />
+			<arg value="-r:ea-deployment/dll/epsilon.dll" />
+			<arg value="ea-deployment/dist/${jar}" />
 		</exec>
 	</target>
 	<target name="deploy" depends="ikvm">
-		<scp sftp="true" keyfile="/home/andrey/.ssh/id_rsa" file="ea-extension/dist/${dll}" todir="andrey:@${host}:/" />
+		<scp sftp="true" keyfile="/home/andrey/.ssh/id_rsa" file="ea-deployment/dist/${dll}" todir="andrey:@${host}:/" />
 	</target>
 </project>
