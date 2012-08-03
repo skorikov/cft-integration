@@ -1,17 +1,17 @@
 package de.proskor.integration.model;
 
-import java.util.Set;
-
+import java.util.Collection;
 
 public interface Component {
 	String getName();
+	void setName(String name);
 
-	Component find(Component kid);
+	Component find(Component component);
 
-	Set<Inport> getInports();
-	Set<Outport> getOutports();
-	Set<BasicEvent> getBasicEvents();
+	Collection<Inport> getInports();
+	Collection<Outport> getOutports();
+	Collection<BasicEvent> getBasicEvents();
 
-	Set<Component> getComponents();
-	Set<Connection> getConnections();
+	Collection<Component> getComponents();
+	Collection<Connection> getConnections();
 }

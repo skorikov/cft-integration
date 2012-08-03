@@ -1,6 +1,7 @@
 package de.proskor.integration.model.impl;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import de.proskor.integration.model.BasicEvent;
 import de.proskor.integration.model.Component;
@@ -9,10 +10,20 @@ import de.proskor.integration.model.Inport;
 import de.proskor.integration.model.Outport;
 
 public class ComponentImpl implements Component {
+	private String name;
+	private Collection<BasicEvent> events = new ArrayList<BasicEvent>();
+
+	public ComponentImpl(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public String getName() {
-		// TODO
-		return "NAME";
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -22,31 +33,30 @@ public class ComponentImpl implements Component {
 	}
 
 	@Override
-	public Set<Inport> getInports() {
+	public Collection<Inport> getInports() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Set<Outport> getOutports() {
+	public Collection<Outport> getOutports() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Set<BasicEvent> getBasicEvents() {
+	public Collection<BasicEvent> getBasicEvents() {
+		return this.events;
+	}
+
+	@Override
+	public Collection<Component> getComponents() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Set<Component> getComponents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<Connection> getConnections() {
+	public Collection<Connection> getConnections() {
 		// TODO Auto-generated method stub
 		return null;
 	}
