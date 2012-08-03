@@ -1,4 +1,4 @@
-package de.proskor.ea.ui
+package de.proskor.ui
 import org.eclipse.swt.events.SelectionAdapter
 import org.eclipse.swt.events.SelectionEvent
 import org.eclipse.swt.graphics.Image
@@ -18,7 +18,7 @@ import org.eclipse.swt.events.DisposeEvent
 import org.eclipse.swt.widgets.Control
 import de.proskor.cft.merge.MergeAlgorithm
 import de.proskor.cft.merge.MergeTrace
-import de.proskor.ea.ui.RichElement._
+import de.proskor.ui.RichElement._
 
 class RichElement(val self: Element) {
   def fullName: String = self.parent match {
