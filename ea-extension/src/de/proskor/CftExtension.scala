@@ -1,5 +1,6 @@
 package de.proskor
 
+import de.proskor.extension.ExtensionAdapter
 import de.proskor.extension.MenuItemAdapter
 import de.proskor.fel.model.EventRepository
 import de.proskor.fel.model.impl.ArchitecturalViewImpl
@@ -11,8 +12,9 @@ import de.proskor.fel.ui.FailureEventListFactory
 import de.proskor.model.Diagram
 import de.proskor.model.ModelTests
 import de.proskor.shell.EpsilonShell
+import de.proskor.utils.RepositoryProviderInitializer
 
-class CftExtension extends ExtensionWithTest {
+class CftExtension extends ExtensionAdapter with RepositoryProviderInitializer {
   private lazy val tab = this.getRepository.getOutputTab("TESTS")
   private lazy val runner = new TestRunner(this.tab.write)
   private val menu = new MenuItemAdapter("CFT")
