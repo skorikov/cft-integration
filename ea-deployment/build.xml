@@ -3,7 +3,13 @@
 	<property name="host" value="192.168.122.39" />
 	<property name="jar" value="cft-integration.jar" />
 	<property name="dll" value="cft-integration.dll" />
-	<target name="jar">
+	<target name="clean">
+		<delete dir="ea-deployment/dist" />
+	</target>
+	<target name="init">
+		<mkdir dir="ea-deployment/dist"/>
+	</target>
+	<target name="jar" depends="init">
 		<jar destfile="ea-deployment/dist/${jar}">
 			<fileset dir="ea-automation/bin">
 				<exclude name="**/MenuState.class" />
@@ -19,6 +25,7 @@
 			<fileset dir="ea-fel/bin" />
 			<fileset dir="epsilon-shell/bin" />
 			<fileset dir="emc-model/bin" />
+			<fileset dir="ea-utils/bin" />
 		</jar>
 	</target>
 	<target name="ikvm" depends="jar">
