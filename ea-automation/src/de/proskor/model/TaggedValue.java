@@ -1,6 +1,8 @@
 package de.proskor.model;
 
 public interface TaggedValue extends Entity {
+	String TAGGEDVALUE = "";
+
 	/**
 	 * Get the value of the tagged value.
 	 * @return value of the tagged value.

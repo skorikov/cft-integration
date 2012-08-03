@@ -17,7 +17,6 @@
 			<fileset dir="ea-extension/bin" />
 			<fileset dir="ea-adapter/bin" />
 			<fileset dir="ea-fel/bin" />
-			<fileset dir="fel-adapter/bin" />
 			<fileset dir="epsilon-shell/bin" />
 			<fileset dir="emc-model/bin" />
 		</jar>

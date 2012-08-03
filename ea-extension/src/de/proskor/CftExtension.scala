@@ -4,7 +4,6 @@ import java.util.Collections
 import java.util.{List => JavaList}
 import scala.collection.JavaConversions.asScalaBuffer
 import scala.collection.JavaConversions.seqAsJavaList
-import de.proskor.automation.Diagram
 import de.proskor.automation.Element
 import de.proskor.automation.Node
 import de.proskor.automation.Repository
@@ -30,6 +29,7 @@ import de.proskor.fel.impl.ComponentFaultTreeImpl
 import de.proskor.fel.impl.ArchitecturalViewImpl
 import de.proskor.model.{Element => JavaElement, Package => JavaPackage}
 import de.proskor.model.impl.DiagramImpl
+import de.proskor.model.Diagram
 import de.proskor.fel.impl.EventRepositoryImpl
 import de.proskor.model.ModelTests
 import org.junit.runners.Parameterized.Parameters
@@ -54,6 +54,7 @@ class CftExtension extends ExtensionWithTest {
   }
 
   override protected def createMenu = {
+    val repository = this.getRepository
     new MenuItemAdapter(menu, "Run Tests") {
 //      setEnabled(false)
       override def run {
@@ -102,17 +103,18 @@ class CftExtension extends ExtensionWithTest {
     }*/
 
     new MenuItemAdapter(menu, "Derive CFT") {
-      override def isVisible = Repository.instance.context match {
-        case Some(diagram: Diagram) if diagram.stereotype != "CFT" => true
+      override def isVisible = repository.getContext match {
+        case diagram: Diagram if diagram.getStereotype != "CFT" => true
         case _ => false
       }
       override def run {
-        val repository = Repository.instance
-        val context = repository.context.get.asInstanceOf[Diagram]
-        val cft = context.pkg.diagrams.add(context.name + ".CFT", "ObjectDiagram")
-        cft.stereotype = "CFT"
-        val av = new ArchitecturalViewImpl(context)
-        new ComponentFaultTreeImpl(cft).setContext(av)
+      //  val repository = Repository.instance
+      //  val context = repository.context.get.asInstanceOf[Diagram]
+        val context = repository.getContext.asInstanceOf[Diagram]
+        val cft = context.getPackage.getDiagrams.add(context.getName + ".CFT", Diagram.OBJECT)
+        cft.setStereotype("CFT")
+        val av: ArchitecturalView = new ArchitecturalViewImpl(repository, context)
+        new ComponentFaultTreeImpl(repository, cft).setContext(av)
         cft.open()
       }
     }
@@ -151,7 +153,7 @@ class CftExtension extends ExtensionWithTest {
       }
     }*/
 
-    def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
+  /*  def findNode(diagram: Diagram, element: Element): Option[Node] = diagram.nodes.find(_.element == element)
 
     def createNode(diagram: Diagram, parent: Node, kid: Element) {
       val node = diagram.nodes.add("", "Object")
@@ -163,7 +165,7 @@ class CftExtension extends ExtensionWithTest {
       node.sequence = parent.sequence - 1
     }
 
-    def isConnected(element: Element): Boolean = element.connectors.exists(_.stereotype == "instanceOf")
+    def isConnected(element: Element): Boolean = element.connectors.exists(_.stereotype == "instanceOf")*/
 
   /*  new MenuItemAdapter(menu, "Assign Component Type") {
       override def isVisible = hasChildren

@@ -142,6 +142,7 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 
 			@Override
 			protected Element create(IElement element) {
+				element.Update();
 				return new ElementImpl(ElementImpl.this.getRepository(), element.get_ElementID());
 			}
 		};
@@ -159,6 +160,7 @@ class ElementImpl extends IdentityImpl<IElement> implements Element {
 
 			@Override
 			protected TaggedValue create(ITaggedValue element) {
+				element.Update();
 				return new TaggedValueImpl(ElementImpl.this.getRepository(), ElementImpl.this.getId(), element.get_PropertyID());
 			}
 		};

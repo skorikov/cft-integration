@@ -55,4 +55,9 @@ public interface Diagram extends Entity {
 	 * @return newly created node.
 	 */
 	Node createNode(Element element);
+
+	/**
+	 * Show the diagram.
+	 */
+	void open();
 }

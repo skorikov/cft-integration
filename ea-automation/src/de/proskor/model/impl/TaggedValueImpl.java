@@ -44,6 +44,7 @@ class TaggedValueImpl extends IdentityImpl<ITaggedValue> implements TaggedValue 
 	public void setName(String name) {
 		final ITaggedValue peer = this.getPeer();
 		peer.set_Name(name);
+		peer.Update();
 	}
 
 	@Override
@@ -56,6 +57,7 @@ class TaggedValueImpl extends IdentityImpl<ITaggedValue> implements TaggedValue 
 	public void setDescription(String description) {
 		final ITaggedValue peer = this.getPeer();
 		peer.set_Notes(description);
+		peer.Update();
 	}
 
 	@Override
@@ -68,6 +70,7 @@ class TaggedValueImpl extends IdentityImpl<ITaggedValue> implements TaggedValue 
 	public void setValue(String value) {
 		final ITaggedValue peer = this.getPeer();
 		peer.set_Value(value);
+		peer.Update();
 	}
 
 	@Override

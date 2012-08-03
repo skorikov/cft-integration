@@ -118,6 +118,11 @@ class DiagramImpl extends IdentityImpl<IDiagram> implements Diagram {
 	}
 
 	@Override
+	public void open() {
+		this.getRepository().OpenDiagram(this.getId());
+	}
+
+	@Override
 	public String toString() {
 		return "DIAGRAM[" + this.getId() + "|" + this.getName() + "]";
 	}

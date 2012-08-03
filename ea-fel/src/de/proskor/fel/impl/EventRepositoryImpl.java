@@ -5,11 +5,14 @@ import java.util.List;
 
 import de.proskor.fel.EventRepository;
 import de.proskor.fel.container.EventTypeContainer;
+import de.proskor.fel.view.View;
+import de.proskor.fel.view.ViewRepository;
+import de.proskor.model.Diagram;
 import de.proskor.model.Element;
 import de.proskor.model.Package;
 import de.proskor.model.Repository;
 
-public class EventRepositoryImpl implements EventRepository {
+public class EventRepositoryImpl implements EventRepository, ViewRepository {
 	private final Repository peer;
 
 	public EventRepositoryImpl(Repository peer) {
@@ -63,6 +66,40 @@ public class EventRepositoryImpl implements EventRepository {
 //			result.addAll(this.getAllElements(kid));
 //		}
 
+		return result;
+	}
+
+	private List<Diagram> getAllDiagrams() {
+		final List<Diagram> result = new LinkedList<Diagram>();
+
+		for (final Package model : this.peer.getModels())
+			result.addAll(this.getAllDiagrams(model));
+
+		return result;
+	}
+
+	private List<Diagram> getAllDiagrams(Package pkg) {
+		final List<Diagram> result = new LinkedList<Diagram>();
+
+		for (final Diagram diagram : pkg.getDiagrams())
+			result.add(diagram);
+
+		for (final Package kid : pkg.getPackages())
+			result.addAll(this.getAllDiagrams(kid));
+
+		return result;
+	}
+
+	@Override
+	public List<? extends View> getViews() {
+		final List<View> result = new LinkedList<View>();
+		for (final Diagram diagram : this.getAllDiagrams()) {
+			if (diagram.getStereotype().equals("CFT")) {
+				result.add(new ComponentFaultTreeImpl(peer, diagram));
+			} else {
+				result.add(new ArchitecturalViewImpl(peer, diagram));
+			}
+		}
 		return result;
 	}
 }
