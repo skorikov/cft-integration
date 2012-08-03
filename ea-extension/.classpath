@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/cft-model"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/merge-algorithm"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/cft-test"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ea-model"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ea-adapter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-automation"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/epsilon-shell"/>
 	<classpathentry kind="var" path="SWT_LIB"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-fel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-utils"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/epsilon-shell"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cft-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/merge-algorithm"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
