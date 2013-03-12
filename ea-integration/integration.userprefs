@@ -1,8 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="integration/Main.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="integration/AssemblyInfo.cs">
     <Files>
-      <File FileName="integration/Main.cs" Line="112" Column="35" />
+      <File FileName="integration/Main.cs" Line="66" Column="4" />
       <File FileName="integration/AssemblyInfo.cs" Line="7" Column="34" />
     </Files>
   </MonoDevelop.Ide.Workbench>

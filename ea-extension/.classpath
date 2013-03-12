@@ -9,7 +9,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ea-utils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/epsilon-shell"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/cft-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cft-model-old"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/merge-algorithm"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

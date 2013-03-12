@@ -13,6 +13,8 @@ public class ComponentImpl implements Component {
 	private String name;
 	private Collection<BasicEvent> events = new ArrayList<BasicEvent>();
 
+	public ComponentImpl() {}
+
 	public ComponentImpl(String name) {
 		this.name = name;
 	}

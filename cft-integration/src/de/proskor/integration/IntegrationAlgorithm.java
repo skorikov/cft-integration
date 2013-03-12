@@ -1,20 +1,14 @@
 package de.proskor.integration;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.proskor.integration.model.BasicEvent;
 import de.proskor.integration.model.Component;
-import de.proskor.integration.model.Source;
-import de.proskor.integration.model.Target;
+import de.proskor.integration.model.EventType;
 import de.proskor.integration.model.impl.BasicEventImpl;
 import de.proskor.integration.model.impl.ComponentImpl;
 
-public class IntegrationAlgorithm {
-	private Map<Source, Source> sources = new HashMap<Source, Source>();
-	private Map<Target, Target> targets = new HashMap<Target, Target>();
-
+public class IntegrationAlgorithm extends MappingContext {
 	public Component integrate(Component left, Component right) {
 		final Component result = this.copy(left);
 		this.merge(result, right);
@@ -29,6 +23,7 @@ public class IntegrationAlgorithm {
 		for (final BasicEvent event : component.getBasicEvents()) {
 			final BasicEvent copy = new BasicEventImpl(event.getName());
 			events.add(copy);
+			this.put(event, copy);
 		}
 		return result;
 	}
@@ -41,6 +36,7 @@ public class IntegrationAlgorithm {
 			if (!this.containsEvent(left, event)) {
 				final BasicEvent copy = new BasicEventImpl(event.getName());
 				events.add(copy);
+				this.put(event, copy);
 			}
 		}
 	/*	for (final Inport inport : right.getInports()) {
@@ -72,5 +68,30 @@ public class IntegrationAlgorithm {
 	}
 
 	private void checkAnamoly(Component component) {
+	}
+
+	private Component merge2(Component left, Component right) throws MergeException {
+		final String name = left.getName();
+
+		final Component result = new ComponentImpl();
+		result.setName(name);
+	
+		return result;
+	}
+
+	private BasicEvent merge(BasicEvent left, BasicEvent right) throws MergeException {
+		final String name = left.getName();
+		if (!right.getName().equals(name))
+			throw new MergeException();
+
+		final EventType type = left.getType();
+		if (!right.getType().equals(type))
+			throw new MergeException();
+
+		final BasicEvent result = new BasicEventImpl();
+		result.setName(name);
+		result.setType(type);
+
+		return result;
 	}
 }

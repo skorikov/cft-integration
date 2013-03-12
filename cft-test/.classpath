@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry combineaccessrules="false" kind="src" path="/cft-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cft-model-old"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/merge-algorithm"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
