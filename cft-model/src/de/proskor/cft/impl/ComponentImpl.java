@@ -10,34 +10,15 @@ import de.proskor.cft.Gate;
 import de.proskor.cft.Inport;
 import de.proskor.cft.Outport;
 
-public class ComponentImpl implements Component {
-	private final static String STEREOTYPE = "component";
-	private final de.proskor.model.Element peer;
-
+public class ComponentImpl extends ElementImpl implements Component {
 	public ComponentImpl(de.proskor.model.Element peer) {
-		if (peer == null)
-			throw new IllegalArgumentException("peer is null");
-
-		if (!STEREOTYPE.equals(peer.getStereotype()))
-			throw new IllegalArgumentException("invalid stereotype");
-
-		this.peer = peer;
+		super(peer);
 	}
 
 	@Override
 	public Collection<Element> getElements() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public String getName() {
-		return this.peer.getName();
-	}
-
-	@Override
-	public void setName(String name) {
-		this.peer.setName(name);
 	}
 
 	@Override

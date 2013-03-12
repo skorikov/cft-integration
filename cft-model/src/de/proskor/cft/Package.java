@@ -9,4 +9,6 @@ public interface Package extends Container {
 	Collection<Package> getPackages();
 
 	Collection<Component> getComponents();
+
+	Component createComponent();
 }
