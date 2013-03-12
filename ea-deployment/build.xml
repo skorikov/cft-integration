@@ -15,9 +15,10 @@
 				<exclude name="**/MenuState.class" />
 				<exclude name="**/AddIn.class" />
 			</fileset>
-			<zipfileset dir="epsilon-shell" includes="icons/**" />
+			<!--zipfileset dir="epsilon-shell" includes="icons/**" /-->
 			<fileset dir="cft-model/bin" />
-			<fileset dir="cft-test/bin" />
+			<fileset dir="cft-plugin/bin" />
+			<!--fileset dir="cft-test/bin" />
 			<fileset dir="ea-model/bin" />
 			<fileset dir="merge-algorithm/bin" />
 			<fileset dir="ea-extension/bin" />
@@ -25,7 +26,7 @@
 			<fileset dir="ea-fel/bin" />
 			<fileset dir="epsilon-shell/bin" />
 			<fileset dir="emc-model/bin" />
-			<fileset dir="ea-utils/bin" />
+			<fileset dir="ea-utils/bin" /-->
 		</jar>
 	</target>
 	<target name="ikvm" depends="jar">
@@ -36,10 +37,10 @@
 			<arg value="-keyfile:ea-integration/integration/proskor.snk" />
 			<arg value="-r:ea-deployment/dll/Interop.EA.dll" />
 			<arg value="-r:ea-deployment/dll/addin.dll" />
-			<arg value="-r:ea-deployment/dll/scala.dll" />
+			<!--arg value="-r:ea-deployment/dll/scala.dll" />
 			<arg value="-r:ea-deployment/dll/swt.dll" />
 			<arg value="-r:ea-deployment/dll/junit.dll" />
-			<arg value="-r:ea-deployment/dll/epsilon.dll" />
+			<arg value="-r:ea-deployment/dll/epsilon.dll" /-->
 			<arg value="ea-deployment/dist/${jar}" />
 		</exec>
 	</target>

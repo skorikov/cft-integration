@@ -1,6 +1,7 @@
 package de.proskor.cft.impl;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import de.proskor.cft.Component;
 import de.proskor.cft.Element;
@@ -40,8 +41,11 @@ public class PackageImpl implements Package {
 
 	@Override
 	public Collection<Package> getPackages() {
-		// TODO Auto-generated method stub
-		return null;
+		final Collection<Package> packages = new LinkedList<Package>();
+		for (final de.proskor.model.Package kid : this.peer.getPackages()) {
+			packages.add(new PackageImpl(kid));
+		}
+		return packages;
 	}
 
 	@Override
