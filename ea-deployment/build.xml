@@ -18,6 +18,7 @@
 			<!--zipfileset dir="epsilon-shell" includes="icons/**" /-->
 			<fileset dir="cft-model/bin" />
 			<fileset dir="cft-plugin/bin" />
+			<fileset dir="cft-merge/bin" />
 			<!--fileset dir="cft-test/bin" />
 			<fileset dir="ea-model/bin" />
 			<fileset dir="merge-algorithm/bin" />
@@ -37,9 +38,9 @@
 			<arg value="-keyfile:ea-integration/integration/proskor.snk" />
 			<arg value="-r:ea-deployment/dll/Interop.EA.dll" />
 			<arg value="-r:ea-deployment/dll/addin.dll" />
-			<!--arg value="-r:ea-deployment/dll/scala.dll" />
+			<!--arg value="-r:ea-deployment/dll/scala.dll" /-->
 			<arg value="-r:ea-deployment/dll/swt.dll" />
-			<arg value="-r:ea-deployment/dll/junit.dll" />
+			<!--arg value="-r:ea-deployment/dll/junit.dll" />
 			<arg value="-r:ea-deployment/dll/epsilon.dll" /-->
 			<arg value="ea-deployment/dist/${jar}" />
 		</exec>

@@ -35,8 +35,11 @@ public class PackageImpl implements Package {
 
 	@Override
 	public Package getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		if (this.peer.isModel()) {
+			return null;
+		} else {
+			return new PackageImpl(this.peer.getParent());
+		}
 	}
 
 	@Override
@@ -50,13 +53,19 @@ public class PackageImpl implements Package {
 
 	@Override
 	public Collection<Component> getComponents() {
-		// TODO Auto-generated method stub
-		return null;
+		final Collection<Component> components = new LinkedList<Component>();
+		for (final de.proskor.model.Element kid : this.peer.getElements()) {
+			if (kid.getStereotype().equals("Component")) {
+				components.add(new ComponentImpl(kid));
+			}
+		}
+		return components;
 	}
 
 	@Override
 	public Component createComponent() {
 		de.proskor.model.Element kid = this.peer.getElements().add("", de.proskor.model.Element.OBJECT);
+		kid.setStereotype("Component");
 		return new ComponentImpl(kid);
 	}
 }

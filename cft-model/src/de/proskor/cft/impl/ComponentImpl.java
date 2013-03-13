@@ -23,8 +23,12 @@ public class ComponentImpl extends ElementImpl implements Component {
 
 	@Override
 	public Container getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		final de.proskor.model.Element peer = this.getPeer();
+		if (peer.isChild()) {
+			return new ComponentImpl(peer.getParent());
+		} else {
+			return new PackageImpl(peer.getPackage());
+		}
 	}
 
 	@Override
