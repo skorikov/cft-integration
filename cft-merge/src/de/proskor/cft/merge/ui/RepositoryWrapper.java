@@ -2,6 +2,7 @@ package de.proskor.cft.merge.ui;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import de.proskor.cft.Component;
 import de.proskor.cft.Package;
@@ -17,8 +18,8 @@ final class RepositoryWrapper {
 		this.repository = repository;
 	}
 
-	public Collection<PackageWrapper> getPackages() {
-		final Collection<PackageWrapper> packages = new LinkedList<PackageWrapper>();
+	public List<PackageWrapper> getPackages() {
+		final List<PackageWrapper> packages = new LinkedList<PackageWrapper>();
 		for (final Package pkg : this.repository.getPackages()) {
 			packages.add(new PackageWrapper(pkg));
 			packages.addAll(this.getPackages(pkg));
@@ -35,8 +36,8 @@ final class RepositoryWrapper {
 		return packages;
 	}
 
-	public Collection<ComponentWrapper> getComponents() {
-		final Collection<ComponentWrapper> components = new LinkedList<ComponentWrapper>();
+	public List<ComponentWrapper> getComponents() {
+		final List<ComponentWrapper> components = new LinkedList<ComponentWrapper>();
 		for (final Package pkg : this.repository.getPackages()) {
 			components.addAll(this.getComponents(pkg));
 		}
